@@ -1,7 +1,15 @@
-POSTGRES_USER=
-POSTGRES_PASSWORD=
-POSTGRES_DB=
-JWT_SECRET=
-DATABASE_URL=
+# PostgreSQL
 
-API_URL=
+POSTGRES_USER=gamer_user
+POSTGRES_PASSWORD=changeme
+POSTGRES_DB=gamer_challenges
+
+# API
+
+DATABASE_URL=postgresql://gamer_user:password@my-little-db:5432/gamer_challenges
+JWT_SECRET=generate_with_crypto
+NODE_ENV=development
+
+# Client
+
+API_URL=http://api:3000
