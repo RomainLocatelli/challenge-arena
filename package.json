@@ -12,7 +12,11 @@
     "db:generate": "prisma generate",
     "dev": "node --watch index.ts",
     "devdb": "npm run db:generate && npm run db:deploy && node --watch index.ts",
-    "start": "npm run db:generate && npm run db:deploy && node index.ts"
+    "start": "npm run db:generate && npm run db:deploy && node index.ts",
+    "format": "prettier --write \"**/*.{ts,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,json,md}\"",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix"
   },
   "dependencies": {
     "@prisma/client": "^7.2.0",
@@ -23,6 +27,7 @@
     "jsonwebtoken": "^9.0.3",
     "pg": "^8.16.3",
     "typescript": "^5.9.3",
+    "typescript-eslint": "^8.52.0",
     "zod": "^4.3.5"
   },
   "devDependencies": {
@@ -30,6 +35,8 @@
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/pg": "^8.16.0",
+    "@typescript-eslint/eslint-plugin": "^8.52.0",
+    "@typescript-eslint/parser": "^8.52.0",
     "eslint": "^9.39.2",
     "prettier": "^3.7.4",
     "prisma": "^7.2.0"
