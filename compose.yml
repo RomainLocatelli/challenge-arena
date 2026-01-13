@@ -14,10 +14,10 @@ services:
       - ./api:/app
       - /app/node_modules
     command: npm run dev
-    
+
     networks:
       - gamer-network
-  
+
   my-little-db:
     image: postgres:18
     restart: unless-stopped
@@ -31,14 +31,14 @@ services:
     volumes:
       - my-little-db:/mydbdata
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "$$POSTGRES_USER", "-d", "$$POSTGRES_DB"]
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
     networks:
       - gamer-network
-    
+
   client:
     build: ./client
     restart: unless-stopped
