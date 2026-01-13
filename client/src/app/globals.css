@@ -6,6 +6,7 @@
   --background-header: #0c1326;
   --button-area: #1f283b;
   --button-select: #7c39ed;
+  --shadow-color: var(--button-select);
 }
 
 @theme inline {
