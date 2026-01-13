@@ -2,6 +2,7 @@
 
 import { Request, Response, NextFunction } from 'express'
 import { AppError } from '../utils/AppError.js'
+import { prisma } from '../../lib/prisma'
 
 const RAWG_API_KEY = process.env.RAWG_API_KEY
 const RAWG_BASE_URL = 'https://api.rawg.io/api'
@@ -36,6 +37,22 @@ export const searchGames = async (
         background_image: game.background_image,
       })),
     })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const getAllGames = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const games = await prisma.game.findMany({
+      orderBy: { title: 'asc' },
+    })
+
+    res.json({ games })
   } catch (error) {
     next(error)
   }

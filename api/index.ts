@@ -15,7 +15,7 @@ app.use(cors())
 app.use(express.json())
 app.use(logger)
 
-// Route de test
+// Route
 app.use('/games', gamesRoutes)
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'API is running' })
