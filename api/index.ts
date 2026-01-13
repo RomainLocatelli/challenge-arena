@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import { logger } from './src/middlewares/logger.js';
 import { errorHandler } from './src/middlewares/errorHandler.js';
 import authRoutes from './src/routes/authRoutes.js';
+import gamesRoutes from './src/routes/games.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -20,8 +21,9 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'API is running' });
 });
 
-// Routes Auth
+// Routes API
 app.use('/auth', authRoutes);
+app.use('/games', gamesRoutes);
 
 // Error handler (toujours en dernier)
 app.use(errorHandler);
