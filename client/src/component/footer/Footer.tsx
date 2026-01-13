@@ -10,7 +10,7 @@ export default function Footer() {
         {/* Logo et titre */}
         <div className="flex items-center gap-2 mb-8">
             <div>
-                <Image className="h-36 w-36" src="/icone manette.png" width={100} height={100} alt="gamerchallenge logo" />
+                <Image className="h-16 w-16" src="/icone-manette.png" width={80} height={80} alt="gamerchallenge logo" />
             </div>
                 <h2 className="text-xl font-bold">GamerChallenge</h2>
         </div>
