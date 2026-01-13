@@ -1,6 +1,27 @@
-import express from 'express';
+import 'dotenv/config'
+import express from 'express'
+import cors from 'cors'
+import helmet from 'helmet'
+import { logger } from './src/middlewares/logger.js'
+import { errorHandler } from './src/middlewares/errorHandler.js'
 
-const app = express();
+const app = express()
+const PORT = process.env.PORT || 3000
 
-app.get('/', (req, res) => res.send('Hello World'));
-app.listen(3000, () => console.log('API ready on port 3000'));
+// Middlewares globaux
+app.use(helmet())
+app.use(cors())
+app.use(express.json())
+app.use(logger)
+
+// Route de test
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', message: 'API is running' })
+})
+
+// Error handler (toujours en dernier)
+app.use(errorHandler)
+
+app.listen(PORT, () => {
+  console.log(`API ready on port ${PORT}`)
+})
