@@ -23,21 +23,20 @@ model User {
   createdAt            DateTime             @default(now()) @map("created_at")
   updatedAt            DateTime             @updatedAt @map("updated_at")
   
-  // Relations
   participations       Participation[]
   challengeVotes       ChallengeVote[]
   participationVotes   ParticipationVote[]
+  createdChallenges    Challenge[]          @relation("ChallengeCreator")
 
   @@map("users")
 }
 
 model Game {
-  id          String      @id @default(uuid(7))
+  id          String      @id
   title       String
   imageUrl    String      @map("image_url")
   description String
   
-  // Relations
   challenges  Challenge[]
 
   @@map("games")
@@ -48,11 +47,12 @@ model Challenge {
   title       String       @unique
   scoreFormat String       @map("score_format")
   description String
+  createdBy   String       @map("created_by")
   gameId      String       @map("game_id")
   createdAt   DateTime     @default(now()) @map("created_at")
   updatedAt   DateTime     @updatedAt @map("updated_at")
   
-  // Relations
+  creator         User                @relation("ChallengeCreator", fields: [createdBy], references: [id])
   game            Game                @relation(fields: [gameId], references: [id])
   participations  Participation[]
   votes           ChallengeVote[]
@@ -69,10 +69,9 @@ model Participation {
   challengeId   String    @map("challenge_id")
   createdAt     DateTime  @default(now()) @map("created_at")
   
-  // Relations
-  user  User      @relation(fields: [userId], references: [id])
-  challenge Challenge @relation(fields: [challengeId], references: [id])
-  votes ParticipationVote[]
+  user      User                @relation(fields: [userId], references: [id])
+  challenge Challenge           @relation(fields: [challengeId], references: [id])
+  votes     ParticipationVote[]
 
   @@map("participations")
 }
@@ -83,11 +82,10 @@ model ChallengeVote {
   challengeId String    @map("challenge_id")
   createdAt   DateTime  @default(now()) @map("created_at")
   
-  // Relations
   user      User      @relation(fields: [userId], references: [id])
   challenge Challenge @relation(fields: [challengeId], references: [id])
 
-  @@unique([userId, challengeId])  // Un user vote 1 fois par challenge
+  @@unique([userId, challengeId])
   @@map("challenge_votes")
 }
 
@@ -97,10 +95,9 @@ model ParticipationVote {
   participationId String        @map("participation_id")
   createdAt       DateTime      @default(now()) @map("created_at")
   
-  // Relations
   user          User          @relation(fields: [userId], references: [id])
   participation Participation @relation(fields: [participationId], references: [id])
 
-  @@unique([userId, participationId])  // Un user vote 1 fois par participation
+  @@unique([userId, participationId])
   @@map("participation_votes")
 }
