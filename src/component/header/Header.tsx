@@ -12,7 +12,7 @@ export default function Header() {
   const pathname = usePathname();
   const pathActive = (path: string) => pathname === path;
   return (
-    <div className="bg-(--background-header) text-white flex justify-between h-24 ">
+    <div className="bg-(--background-header) flex justify-between h-24 ">
       <Link href="/" className="flex">
         <Image
           className="ml-5"
@@ -21,7 +21,7 @@ export default function Header() {
           height={100}
           alt="gamerchallenge logo"
         />
-        <h1 className="ml-4 text-3xl font-extrabold content-center">GamerChallenge</h1>
+        <h1 className="ml-4 text-xl lg:text-3xl font-extrabold content-center">GamerChallenge</h1>
       </Link>
 
       {/* desktop menu */}
