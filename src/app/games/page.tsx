@@ -1,19 +1,133 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
+import Link from "next/link";
 
 export default function GamesPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const [visiblePages, setVisiblePages] = useState(4);
+    const [pageBlockStart, setPageBlockStart] = useState(2);
+    const [itemsPerPage, setItemsPerPage] = useState(6);
+
+    useEffect(() => {
+    const update = () => {
+        setItemsPerPage(window.innerWidth >= 768 ? 9 : 6);
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+    }, []);
+
 
     // TODO: remplacer par les jeux réels
-    const games = Array(9).fill({
-        title: 'Dark Game',
-        image: '/real-rat.png'
+    const games = [
+{ id: "the-legend-of-zelda-breath-of-the-wild", title: "The Legend of Zelda: Breath of the Wild", image: "/real-rat.png" },
+{ id: "the-legend-of-zelda-tears-of-the-kingdom", title: "The Legend of Zelda: Tears of the Kingdom", image: "/real-rat.png" },
+{ id: "elden-ring", title: "Elden Ring", image: "/real-rat.png" },
+{ id: "dark-souls", title: "Dark Souls", image: "/real-rat.png" },
+{ id: "dark-souls-ii", title: "Dark Souls II", image: "/real-rat.png" },
+{ id: "dark-souls-iii", title: "Dark Souls III", image: "/real-rat.png" },
+{ id: "bloodborne", title: "Bloodborne", image: "/real-rat.png" },
+{ id: "sekiro-shadows-die-twice", title: "Sekiro: Shadows Die Twice", image: "/real-rat.png" },
+{ id: "hollow-knight", title: "Hollow Knight", image: "/real-rat.png" },
+{ id: "hades", title: "Hades", image: "/real-rat.png" },
+{ id: "dead-cells", title: "Dead Cells", image: "/real-rat.png" },
+{ id: "celeste", title: "Celeste", image: "/real-rat.png" },
+{ id: "minecraft", title: "Minecraft", image: "/real-rat.png" },
+{ id: "fortnite", title: "Fortnite", image: "/real-rat.png" },
+{ id: "call-of-duty-warzone", title: "Call of Duty: Warzone", image: "/real-rat.png" },
+{ id: "counter-strike-2", title: "Counter-Strike 2", image: "/real-rat.png" },
+{ id: "valorant", title: "VALORANT", image: "/real-rat.png" },
+{ id: "league-of-legends", title: "League of Legends", image: "/real-rat.png" },
+{ id: "dota-2", title: "Dota 2", image: "/real-rat.png" },
+{ id: "overwatch-2", title: "Overwatch 2", image: "/real-rat.png" },
+{ id: "rocket-league", title: "Rocket League", image: "/real-rat.png" },
+{ id: "grand-theft-auto-v", title: "Grand Theft Auto V", image: "/real-rat.png" },
+{ id: "red-dead-redemption-2", title: "Red Dead Redemption 2", image: "/real-rat.png" },
+{ id: "the-witcher-3-wild-hunt", title: "The Witcher 3: Wild Hunt", image: "/real-rat.png" },
+{ id: "cyberpunk-2077", title: "Cyberpunk 2077", image: "/real-rat.png" },
+{ id: "skyrim", title: "The Elder Scrolls V: Skyrim", image: "/real-rat.png" },
+{ id: "fallout-4", title: "Fallout 4", image: "/real-rat.png" },
+{ id: "stardew-valley", title: "Stardew Valley", image: "/real-rat.png" },
+{ id: "animal-crossing-new-horizons", title: "Animal Crossing: New Horizons", image: "/real-rat.png" },
+{ id: "super-mario-odyssey", title: "Super Mario Odyssey", image: "/real-rat.png" },
+{ id: "mario-kart-8-deluxe", title: "Mario Kart 8 Deluxe", image: "/real-rat.png" },
+{ id: "super-smash-bros-ultimate", title: "Super Smash Bros. Ultimate", image: "/real-rat.png" },
+{ id: "god-of-war", title: "God of War", image: "/real-rat.png" },
+{ id: "god-of-war-ragnarok", title: "God of War Ragnarök", image: "/real-rat.png" },
+{ id: "the-last-of-us-part-i", title: "The Last of Us Part I", image: "/real-rat.png" },
+{ id: "the-last-of-us-part-ii", title: "The Last of Us Part II", image: "/real-rat.png" },
+{ id: "horizon-zero-dawn", title: "Horizon Zero Dawn", image: "/real-rat.png" },
+{ id: "horizon-forbidden-west", title: "Horizon Forbidden West", image: "/real-rat.png" },
+{ id: "ghost-of-tsushima", title: "Ghost of Tsushima", image: "/real-rat.png" },
+{ id: "spider-man-remastered", title: "Marvel’s Spider-Man Remastered", image: "/real-rat.png" },
+{ id: "spider-man-2", title: "Marvel’s Spider-Man 2", image: "/real-rat.png" },
+{ id: "resident-evil-4", title: "Resident Evil 4", image: "/real-rat.png" },
+{ id: "resident-evil-village", title: "Resident Evil Village", image: "/real-rat.png" },
+{ id: "monster-hunter-world", title: "Monster Hunter: World", image: "/real-rat.png" },
+{ id: "final-fantasy-vii-remake", title: "Final Fantasy VII Remake", image: "/real-rat.png" },
+{ id: "final-fantasy-xvi", title: "Final Fantasy XVI", image: "/real-rat.png" },
+{ id: "baldurs-gate-3", title: "Baldur’s Gate 3", image: "/real-rat.png" },
+{ id: "persona-5-royal", title: "Persona 5 Royal", image: "/real-rat.png" },
+{ id: "metroid-dread", title: "Metroid Dread", image: "/real-rat.png" },
+];
+
+    const filteredGames = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) {
+        return games;
+    }
+    return games.filter((g) => g.title.toLowerCase().includes(q));
+    }, [searchQuery]);
+
+    const totalPages = Math.max(1, Math.ceil(filteredGames.length / itemsPerPage));
+
+    // Calculer directement les valeurs au lieu d'utiliser useEffect
+    const adjustedCurrentPage = useMemo(() => {
+        return Math.min(Math.max(1, currentPage), totalPages);
+    }, [currentPage, totalPages]);
+
+    // Utiliser les valeurs ajustées pour la pagination
+    const startIndex = (adjustedCurrentPage - 1) * itemsPerPage;
+    const paginatedGames = filteredGames.slice(startIndex, startIndex + itemsPerPage);
+
+    // Pages affichées (toujours page 1 + bloc de 4 pages)
+    const blockPages = useMemo(() => {
+    const pages: number[] = [];
+    for (let p = pageBlockStart; p <= pageBlockStart + 3; p++) {
+        if (p <= totalPages) { pages.push(p); }
+    }
+    return pages;
+    }, [pageBlockStart, totalPages]);
+
+    const goToPage = (page: number) => {
+    setCurrentPage(page);
+
+    // si on clique une page hors bloc, on recale le bloc autour
+    if (page === 1) {
+        setPageBlockStart(2);
+        return;
+    }
+    if (page < pageBlockStart) {
+        setPageBlockStart(page);
+    }
+    if (page > pageBlockStart + 3) {
+        setPageBlockStart(page - 3);
+    }
+    };
+
+    const nextBlock = () => {
+    const maxStart = Math.max(2, totalPages - 3);
+    setPageBlockStart((s) => Math.min(s + 4, maxStart));
+    setCurrentPage((p) => {
+      // si la page actuelle était dans l'ancien bloc, on la garde,
+      // sinon on met la première page du nouveau bloc
+        const candidate = Math.min(pageBlockStart + 4, totalPages);
+        return p === 1 ? candidate : p;
     });
+    };
+
 
 return (
     <div className="min-h-screen bg-slate-950 text-white flex flex-col">
@@ -39,7 +153,11 @@ return (
                     type="text"
                     placeholder="Search a game..."
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        setCurrentPage(1);
+                        setPageBlockStart(2);
+                    }}
                     className="relative w-full rounded-full bg-transparent py-3 pl-14 pr-4 text-white text-center text-xl placeholder:text-white/50 focus:outline-none"
                     />
                 </div>
@@ -53,52 +171,70 @@ return (
     
     {/* Games icons */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-            {games.map((game, index) => (
-                <div
-                key={index}
+            {paginatedGames.map((game) => (
+                <Link
+                key={game.id}
+                href={`/games/${game.id}`}
                 className="bg-slate-900 rounded-lg overflow-hidden hover:ring-2 hover:ring-purple-600 transition-all cursor-pointer"
                 >
-                <div className="aspect-square bg-slate-700 relative">
-                    <img
+                <div className="relative aspect-square w-full overflow-hidden bg-slate-700">
+                    <Image
                     src={game.image}
                     alt={game.title}
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="(max-width: 767px) 50vw, 33vw"
+                    className="object-cover"
                     />
-                </div>
+                    </div>
                 <div className="p-3">
-                    <h3 className="font-semibold">{game.title}</h3>
+                    <h3 className="font-semibold line-clamp-2 min-h-[3rem]">{game.title}</h3>
                 </div>
-                </div>
+                </Link>
             ))}
-            </div>
         </div>
+    </div>
 
-   {/* Pages */}
+        {filteredGames.length === 0 && (
+            <p className="mt-6 text-center text-white/60">No game found.</p>
+        )}
+
+    {/* Pages */}
         <div className="flex justify-center gap-2 mb-12">
-            {Array.from({ length: visiblePages }, (_, i) => i + 1).map((page) => (
-                <button
-                    key={page}
-                    className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                        currentPage === page
-                            ? "bg-purple-600"
-                            : "bg-slate-800 hover:bg-slate-700"
-                    }`}
-                    onClick={() => setCurrentPage(page)}
-                >
-                    {page}
-                </button>
+        
+        {/* Page 1 toujours visible */}
+            <button
+            className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                currentPage === 1 ? "bg-purple-600" : "bg-slate-800 hover:bg-slate-700"
+            }`}
+            onClick={() => goToPage(1)}
+            >
+            1
+            </button>
+
+        {/* Les 4 pages du bloc */}
+            {Array.from({ length: 4 }, (_, i) => pageBlockStart + i).map((page) => (
+            <button
+                key={page}
+                className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                currentPage === page ? "bg-purple-600" : "bg-slate-800 hover:bg-slate-700"
+                }`}
+                onClick={() => goToPage(page)}
+            >
+                {page}
+            </button>
             ))}
 
-                <button
+        {/* Bouton ... : passe au bloc suivant */}
+            <button
                 type="button"
                 className="w-8 h-8 bg-slate-800 hover:bg-slate-700 rounded-full flex items-center justify-center"
-                onClick={() => setVisiblePages((v) => v + 4)}
-                >
+                onClick={nextBlock}
+                aria-label="Afficher les pages suivantes"
+            >
                 ...
-                </button>
+            </button>
         </div>
     </main>
-
     </div>
     );
 }
