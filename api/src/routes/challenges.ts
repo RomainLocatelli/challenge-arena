@@ -1,8 +1,9 @@
 import { Router } from 'express'
-import { getAllChallenges } from '../controllers/challengesController.js'
+import { getAllChallenges, getChallengeById } from '../controllers/challengesController.js'
 
 const router = Router();
 
+router.get('/:id', getChallengeById)
 router.get('/', getAllChallenges)
 
 export default router
