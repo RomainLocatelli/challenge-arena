@@ -1,4 +1,6 @@
-// Contrôleur qui proxy la recherche de jeux vers l'API RAWG et retourne les résultats formatés (id, slug, name, image) pour l'autocompletion
+// searchGames : qui proxy la recherche de jeux vers l'API RAWG et retourne les résultats formatés (id, slug, name, image) pour l'autocompletion
+// getAllGames : récupère tous les jeux de la BDD
+// getGameById : récupère un jeu avec tous ses challenges associés
 
 import { Request, Response, NextFunction } from 'express'
 import { AppError } from '../utils/AppError.js'
