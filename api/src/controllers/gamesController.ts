@@ -57,3 +57,28 @@ export const getAllGames = async (
     next(error)
   }
 }
+
+export const getGameById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params
+
+    const game = await prisma.game.findUnique({
+      where: { id },
+      include: {
+        challenges: true,
+      },
+    })
+
+    if (!game) {
+      throw new AppError('Game not found', 404)
+    }
+
+    res.json({ game })
+  } catch (error) {
+    next(error)
+  }
+}
