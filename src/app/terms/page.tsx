@@ -32,7 +32,7 @@ export default function termsOfService() {
         <li className="p-3 pb-8">
           <h3 className="pb-2 pl-10 text-xl">5. Prohibited Activities</h3>
           <p>Users agree not to:</p>
-          <ul>
+          <ul className="pl-6">
             <li>- Post offensive or illegal content</li>
             <li>- Cheat or manipulate challenges</li>
             <li>- Attempt to disrupt the platform’s operation</li>
