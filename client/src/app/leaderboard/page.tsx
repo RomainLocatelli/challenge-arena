@@ -94,7 +94,7 @@ export default function Leaderboard() {
   return (
     <div className="flex justify-center flex-col">
       <Image
-        className="m-5 "
+        className="m-5 flex self-center h-30 w-90 lg:h-40 lg:w-150"
         src="/baniere-leaderboard.png"
         width={500}
         height={500}
