@@ -1,0 +1,46 @@
+### Variables
+@baseUrl = http://localhost:3000
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMTliYmNiNi01Y2JmLTcxM2ItODMzNi0wMjA3ZGY0YTIyZjkiLCJlbWFpbCI6ImNvdWNvdUBleGFtcGxlLmNvbSIsImlhdCI6MTc2ODM5ODA4NCwiZXhwIjoxNzY5MDAyODg0fQ.DNiUu8atgLcX5c2dV1RoHOIekUjcJ7zYFsipBrpwFBw
+
+### 1. Register un nouvel utilisateur
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "asas@example.com",
+  "username": "asasuser",
+  "password": "Test1234!"
+}
+
+### 2. Login (copie le token dans @token)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "coucou@example.com",
+  "password": "Test1234!"
+}
+
+### 3. Login avec mauvais email (devrait échouer ❌)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "email_inexistant@example.com",
+  "password": "Test1234!"
+}
+
+### 4. GET /me AVEC token (devrait fonctionner ✅)
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{token}}
+
+### 5. GET /me SANS token (devrait échouer ❌)
+GET {{baseUrl}}/auth/me
+
+### 6. GET /me avec token invalide (devrait échouer ❌)
+GET {{baseUrl}}/auth/me
+Authorization: Bearer token_bidon_123
+
+### 7. GET /me sans "Bearer" (devrait échouer ❌)
+GET {{baseUrl}}/auth/me
+Authorization: token_sans_bearer
