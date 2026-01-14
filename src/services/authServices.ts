@@ -48,3 +48,17 @@ export const login = async (data: LoginInput) => {
   const { password: _, ...userWithoutPassword } = user;
   return userWithoutPassword;
 };
+
+// Récupérer un utilisateur par son ID
+export const getUserById = async (userId: string) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId }
+  });
+
+  if (!user) {
+    throw new AppError('User not found', 404);
+  }
+
+  const { password: _, ...userWithoutPassword } = user;
+  return userWithoutPassword;
+};

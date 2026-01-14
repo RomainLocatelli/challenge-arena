@@ -45,3 +45,25 @@ export const loginController = async (req: Request, res: Response, next: NextFun
     next(error);
   }
 };
+
+// Retourne les infos de l'utilisateur connecté (route protégée)
+export const meController = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    // Le userId est ajouté par le middleware auth
+    const userId = req.userId;
+
+    if (!userId) {
+      throw new Error('User ID not found in request');
+    }
+
+    // Récupérer l'utilisateur depuis la DB
+    const user = await authService.getUserById(userId);
+
+    res.status(200).json({
+      message: 'User retrieved successfully',
+      user
+    });
+  } catch (error) {
+    next(error);
+  }
+};
