@@ -41,7 +41,7 @@ export default function Leaderboard() {
         return (
           <li
             key={user.id}
-            className="flex justify-between bg-(--leadboard-first) rounded-2xl p-2 mb-2"
+            className="flex justify-between  bg-(--leadboard-first) rounded-2xl p-2 mb-2"
           >
             <p>1st</p>
             <p className="mr-5">{user.pseudo}</p>
@@ -51,7 +51,7 @@ export default function Leaderboard() {
         return (
           <li
             key={user.id}
-            className="flex justify-between bg-(--leadboard-second) rounded-2xl p-2 mb-2"
+            className="flex justify-between  bg-(--leadboard-second) rounded-2xl p-2 mb-2"
           >
             <p>2nd</p>
             <p className="mr-5">{user.pseudo}</p>
@@ -61,7 +61,7 @@ export default function Leaderboard() {
         return (
           <li
             key={user.id}
-            className="flex justify-between bg-(--leadboard-third) rounded-2xl p-2 mb-2"
+            className="flex justify-between  bg-(--leadboard-third) rounded-2xl p-2 mb-2"
           >
             <p>3rd</p>
             <p className="mr-5">{user.pseudo}</p>
@@ -71,7 +71,7 @@ export default function Leaderboard() {
         return (
           <li
             key={user.id}
-            className="flex justify-between bg-(--leadboard-mix-one) rounded-2xl p-2 mb-2"
+            className="flex justify-between  bg-(--leadboard-mix-one) rounded-2xl p-2 mb-2"
           >
             <p>{user.id}st</p>
             <p className="mr-5">{user.pseudo}</p>
@@ -81,7 +81,7 @@ export default function Leaderboard() {
         return (
           <li
             key={user.id}
-            className="flex justify-between bg-(--leadboard-mix-two) rounded-2xl p-2 mb-2"
+            className="flex justify-between  bg-(--leadboard-mix-two) rounded-2xl p-2 mb-2"
           >
             <p>{user.id}st</p>
             <p className="mr-5">{user.pseudo}</p>
@@ -101,30 +101,49 @@ export default function Leaderboard() {
         alt="gamerchallenge logo"
       />
       <section className="flex justify-center flex-col">
-        <div className="flex justify-center w-full">
+        <div className="flex justify-center mr-5">
           <button
             type="button"
             onClick={() => setLeaderboardSelected({ name: 'challenges', userArray: users })}
-            className={`p-2 ml-5 ${leaderboardSelected.name === 'challenges' ? 'bg-(--background-header)' : 'bg-(--button-area)'}  rounded-t-2xl w-full`}
+            className={`lg:hidden p-2 ml-5  ${leaderboardSelected.name === 'challenges' ? 'bg-(--background-header)' : 'bg-(--button-area)'}  rounded-t-2xl w-full`}
           >
             Most challenges done
           </button>
+          <div className="lg:w-full lg:text-center lg:mr-15">
+            <p className="lg:p-2 lg:ml-5 rounded-t-2xl w-full bg-(--button-area) hidden lg:block">
+              Most challenges done
+            </p>
+          </div>
           <button
             type="button"
             value="popular"
             onClick={() => setLeaderboardSelected({ name: 'popular', userArray: newUsers })}
-            className={`p-2  ${leaderboardSelected.name === 'popular' ? 'bg-(--background-header)' : 'bg-(--button-area)'}  rounded-t-2xl w-full`}
+            className={`lg:hidden p-2  ${leaderboardSelected.name === 'popular' ? 'bg-(--background-header)' : 'bg-(--button-area)'}  rounded-t-2xl w-full`}
           >
             Most populars
           </button>
+          <div className="lg:w-full lg:text-center lg:mr-5">
+            <p className="lg:p-2 lg:ml-5 rounded-t-2xl w-full bg-(--button-area) hidden lg:block">
+              Most challenges done
+            </p>
+          </div>
         </div>
-        <ul className="flex justify-center flex-col ml-5 text-black bg-(--button-area) p-3 mb-5 rounded-b-3xl">
-          {leaderboardMobileShown(leaderboardSelected.userArray)}
-          <li className="flex justify-between  bg-(--leadboard-me) rounded-2xl p-2 mb-2 mt-5">
-            <p>My classment</p>
-            <p className="mr-5">Stwompy</p>
-          </li>
-        </ul>
+        <div className="lg:flex ">
+          <ul className="flex justify-center flex-col lg:w-full ml-5 mr-5 lg:mr-0 text-black bg-(--button-area) p-3 mb-5 rounded-b-3xl">
+            {leaderboardMobileShown(leaderboardSelected.userArray)}
+            <li className="flex justify-between  bg-(--leadboard-me) rounded-2xl p-2 mb-2 mt-5">
+              <p>My classment</p>
+              <p className="mr-5">Stwompy</p>
+            </li>
+          </ul>
+          <ul className="lg:flex lg:justify-center hidden lg:w-full lg:visible lg:flex-col lg:mr-5 lg:text-black lg:bg-(--button-area) lg:p-3 lg:mb-5 lg:ml-15 lg:rounded-b-3xl">
+            {leaderboardMobileShown(newUsers)}
+            <li className="lg:flex lg:justify-between  lg:bg-(--leadboard-me) lg:rounded-2xl lg:p-2 lg:mb-2 lg:mt-5">
+              <p>My classment</p>
+              <p className="lg:mr-5">Stwompy</p>
+            </li>
+          </ul>
+        </div>
       </section>
     </div>
   );
