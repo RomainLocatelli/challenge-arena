@@ -1,6 +1,8 @@
 @import 'tailwindcss';
 
 :root {
+  box-sizing: content-box;
+  width: 100%;
   --background: #020617;
   --foreground: #ededed;
   --background-header: #0c1326;
