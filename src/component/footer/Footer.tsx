@@ -4,8 +4,8 @@ import Image from "next/image";
 
 export default function Footer() {
     return (
-        <footer className="bg-slate-900 text-white py-8 px-6">
-            <div className="max-w-6xl mx-auto">
+        <footer className="bg-(--background-header) text-white py-8 px-6">
+            <div className="m-0 w-full">
 
         {/* Logo et titre */}
         <div className="flex items-center gap-2 mb-8">
