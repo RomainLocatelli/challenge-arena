@@ -33,7 +33,7 @@ export const loginController = async (req: Request, res: Response, next: NextFun
     const token = jwt.sign(
       { userId: user.id, email: user.email },
       process.env.JWT_SECRET || 'fallback-secret',
-      { expiresIn: '1h' }
+      { expiresIn: '7d' }
     );
     // Retourner la réponse HTTP 200 OK avec token + user
     res.status(200).json({
