@@ -12,7 +12,7 @@ export default function Header() {
   const pathname = usePathname();
   const pathActive = (path: string) => pathname === path;
   return (
-    <div className="bg-(--background-header) flex justify-between h-24 ">
+    <div className="bg-(--background-header) text-white flex justify-between h-24 ">
       <Image src="/icone-manette.png" width={100} height={100} alt="gamerchallenge logo" />
 
       {/* desktop menu */}
