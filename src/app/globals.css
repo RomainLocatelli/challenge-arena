@@ -7,6 +7,7 @@
   --button-area: #1f283b;
   --button-select: #7c39ed;
   --shadow-color: var(--button-select);
+  --searchbar-color: #6203d721;
 }
 
 @theme inline {
