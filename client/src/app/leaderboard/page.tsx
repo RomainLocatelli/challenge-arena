@@ -98,7 +98,7 @@ export default function Leaderboard() {
         src="/baniere-leaderboard.png"
         width={500}
         height={500}
-        alt="gamerchallenge logo"
+        alt="leaderboard banner"
       />
       <section className="flex justify-center flex-col">
         <div className="flex justify-center mr-5">
