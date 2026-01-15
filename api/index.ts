@@ -8,6 +8,7 @@ import authRoutes from './src/routes/authRoutes.js';
 import gamesRoutes from './src/routes/games.js';
 import challengesRoutes from './src/routes/challenges.js';
 import homeRoutes from './src/routes/home.js'
+import leaderboardRoutes from './src/routes/leaderboard.js'
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -27,6 +28,9 @@ app.use('/challenges', challengesRoutes)
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'API is running' });
 });
+
+//  Route leaderbord
+app.use('/leaderboard', leaderboardRoutes)
 
 // Route Accueil
 app.use('/', homeRoutes)
