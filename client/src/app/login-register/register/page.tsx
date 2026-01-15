@@ -8,7 +8,7 @@ export default function authRegister() {
   const [passwordConfirm, setPasswordConfirm] = useState('');
 
   return (
-    <div className="min-h-screen ">
+    <main className="min-h-screen">
       <form>
         <div className="grid grid-cols-1 lg:grid-cols-2 lg:auto-rows-[80px] auto-rows-fr gap-4 mb-5 mt-30 ml-10 mr-10 lg:mr-60 lg:ml-60 lg:mt-60">
           <div className="flex flex-col p-3 pl-7 pr-7 bg-(--button-area) rounded-3xl focus-within:bg-(--button-select) lg:mr-10">
@@ -65,6 +65,6 @@ export default function authRegister() {
           </button>
         </div>
       </form>
-    </div>
+    </main>
   );
 }

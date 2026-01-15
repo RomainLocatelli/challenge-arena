@@ -134,7 +134,7 @@ export default function Leaderboard() {
   }
 
   return (
-    <div className="flex justify-center flex-col">
+    <main className="flex justify-center flex-col min-h-screen">
       <Image
         className="m-5 flex self-center h-30 w-90 lg:h-40 lg:w-150"
         src="/baniere-leaderboard.png"
@@ -181,6 +181,6 @@ export default function Leaderboard() {
           </ul>
         </div>
       </section>
-    </div>
+    </main>
   );
 }
