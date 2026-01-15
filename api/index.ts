@@ -10,6 +10,7 @@ import challengesRoutes from './src/routes/challenges.js';
 import participationsRoutes from './src/routes/participations.js';
 import homeRoutes from './src/routes/home.js'
 import leaderboardRoutes from './src/routes/leaderboard.js'
+import profileRoutes from './src/routes/profile.js'
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -22,6 +23,7 @@ app.use(logger);
 
 // Routes API
 app.use('/auth', authRoutes);
+app.use('/profile', profileRoutes)
 app.use('/games', gamesRoutes);
 app.use('/challenges', challengesRoutes)
 
