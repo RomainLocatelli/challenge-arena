@@ -11,7 +11,16 @@ export default function Home() {
     { id: 'dark-souls-ii', title: 'Dark Souls II', image: '/real-rat.png' },
     { id: 'dark-souls-iii', title: 'Dark Souls III', image: '/real-rat.png' },
     { id: 'bloodborne', title: 'Bloodborne', image: '/real-rat.png' },
-    { id: 'super-monkey-ball', title: 'Super Monkey Ball', image: '/real-rat.png' }
+    { id: 'super-monkey-ball', title: 'Super Monkey Ball', image: '/real-rat.png' },
+    { id: 'mario-bros', title: 'Mario Bros', image: '/real-rat.png' },
+    { id: 'totalwar-warhammer', title: 'Totalwar Warhammer', image: '/real-rat.png' }
+  ];
+
+  const games2: Game[] = [
+    { id: 'bloodborne', title: 'Bloodborne', image: '/real-rat.png' },
+    { id: 'super-monkey-ball', title: 'Super Monkey Ball', image: '/real-rat.png' },
+    { id: 'mario-bros', title: 'Mario Bros', image: '/real-rat.png' },
+    { id: 'totalwar-warhammer', title: 'Totalwar Warhammer', image: '/real-rat.png' }
   ];
 
   const [currentGameIndex, setCurrentGameIndex] = useState(0);
@@ -19,12 +28,12 @@ export default function Home() {
 
   // Trending game left arrow function
   function handlePreviousGame() {
-    setCurrentGameIndex((prevIndex) => (prevIndex === 0 ? games.length - 1 : prevIndex - 1));
+    setCurrentGameIndex((prevIndex) => (prevIndex === 0 ? games2.length - 1 : prevIndex - 1));
   }
 
   // Trending game right arrow function
   function handleNextGame() {
-    setCurrentGameIndex((prevIndex) => (prevIndex === games.length - 1 ? 0 : prevIndex + 1));
+    setCurrentGameIndex((prevIndex) => (prevIndex === games2.length - 1 ? 0 : prevIndex + 1));
   }
 
   // Trending challenge left arrow function
@@ -42,43 +51,62 @@ export default function Home() {
     const game = games[index];
 
     return (
-      <Link key={game.id} href={`/games/${game.id}`} className="bg-(--button-area) rounded-t-full">
-        <div>
+      <div>
+        <Link
+          key={game.id}
+          href={`/games/${game.id}`}
+          className="bg-(--button-area) rounded-t-full lg:hidden"
+        >
           <Image src={game.image} width={160} height={160} alt={`${game.title} logo`} />
+          <h3 className="text-center lg:hidden">{game.title}</h3>
+        </Link>
+        <div className="hidden lg:grid lg:grid-cols-4 lg:gap-10 lg:grid-rows-1">
+          {games.map((game) => {
+            return (
+              <Link key={game.id} href={`/games/${game.id}`} className="bg-(--button-area)">
+                <Image src={game.image} width={160} height={160} alt="gamerchallenge logo"></Image>
+                <h3 className="text-center">{game.title}</h3>
+              </Link>
+            );
+          })}
         </div>
-        <h3 className="text-center">{game.title}</h3>
-      </Link>
+      </div>
     );
   }
 
-  // Game shown on screen
+  // Challenges shown on screen
   function challengesShownOnPage(games: Game[], index: number) {
     const challenge = games[index];
     const challenge2 = games[index + 1];
 
     return (
       <div className="flex flex-col gap-4 m-3 mb-5">
-        <Link key={challenge.id} href={`/games/${challenge.id}`} className="bg-(--button-area)">
-          <div className="">
+        <div className="lg:hidden">
+          <Link key={challenge.id} href={`/games/${challenge.id}`} className="bg-(--button-area)">
             <Image src={challenge.image} width={160} height={160} alt="gamerchallenge logo"></Image>
-          </div>
-          <div className="">
-            <h3 className="">{challenge.title}</h3>
-          </div>
-        </Link>
-        <Link key={challenge2.id} href={`/games/${challenge2.id}`} className="bg-(--button-area)">
-          <div className="">
+            <h3 className="text-center">{challenge.title}</h3>
+          </Link>
+          <Link key={challenge2.id} href={`/games/${challenge2.id}`} className="bg-(--button-area)">
             <Image
               src={challenge2.image}
               width={160}
               height={160}
               alt="gamerchallenge logo"
             ></Image>
-          </div>
-          <div className="">
-            <h3 className="">{challenge2.title}</h3>
-          </div>
-        </Link>
+            <h3 className="text-center">{challenge2.title}</h3>
+          </Link>
+        </div>
+
+        <div className="hidden lg:grid lg:grid-cols-4 lg:gap-10">
+          {games.map((game) => {
+            return (
+              <Link key={game.id} href={`/games/${game.id}`} className="bg-(--button-area)">
+                <Image src={game.image} width={160} height={160} alt="gamerchallenge logo"></Image>
+                <h3 className="text-center">{game.title}</h3>
+              </Link>
+            );
+          })}
+        </div>
       </div>
     );
   }
@@ -117,8 +145,8 @@ export default function Home() {
         </div>
       </div>
       {/* show trending games */}
-      <section className="flex justify-between mr-5 ml-5 mb-10">
-        <button type="button" onClick={handlePreviousGame}>
+      <section className="flex justify-between mr-5 ml-5 mb-10 lg:justify-center">
+        <button type="button" onClick={handlePreviousGame} className="lg:hidden">
           <Image
             src="/arrow-left.png"
             width={40}
@@ -127,8 +155,8 @@ export default function Home() {
             className="bg-(--button-area) rounded-3xl p-2 hover:bg-(--button-select)"
           ></Image>
         </button>
-        {gamesShownOnPage(games, currentGameIndex)}
-        <button type="button" onClick={handleNextGame}>
+        {gamesShownOnPage(games2, currentGameIndex)}
+        <button type="button" onClick={handleNextGame} className="lg:hidden">
           <Image
             src="/arrow-right.png"
             width={40}
@@ -140,8 +168,8 @@ export default function Home() {
       </section>
 
       {/* show trending challenges */}
-      <section className="">
-        <nav className="flex justify-between align-content m-5 items-center-safe">
+      <section>
+        <nav className="flex justify-between align-content m-5 items-center-safe lg:h-10 lg:flex-wrap">
           <p className="text-center text-xl">
             <strong>Trending challenges</strong>
           </p>
@@ -149,8 +177,8 @@ export default function Home() {
             <button className="bg-(--button-area) p-2 pr-3 pl-3 rounded-3xl">View all</button>
           </Link>
         </nav>
-        <nav className="flex justify-between mr-5 ml-5">
-          <button type="button" onClick={handlePreviousChallenge} className="">
+        <nav className="flex justify-between mr-5 ml-5 lg:justify-center">
+          <button type="button" onClick={handlePreviousChallenge} className="lg:hidden">
             <Image
               src="/arrow-left.png"
               width={40}
@@ -160,25 +188,7 @@ export default function Home() {
             ></Image>
           </button>
           {challengesShownOnPage(games, currentChallengeIndex)}
-          {/* <div className="flex flex-col gap-4 m-3 mb-5">
-            <Link key={game.id} href={`/games/${game.id}`} className="bg-(--button-area)">
-              <div className="">
-                <Image src={game.image} width={160} height={160} alt="gamerchallenge logo"></Image>
-              </div>
-              <div className="">
-                <h3 className="">{game.title}</h3>
-              </div>
-            </Link>
-            <Link key={53} href={`/games/${game.id}`} className="bg-(--button-area)">
-              <div className="">
-                <Image src={game.image} width={160} height={160} alt="gamerchallenge logo"></Image>
-              </div>
-              <div className="">
-                <h3 className="">{game.title}</h3>
-              </div>
-            </Link>
-          </div> */}
-          <button type="button" onClick={handleNextChallenge} className="">
+          <button type="button" onClick={handleNextChallenge} className="lg:hidden">
             <Image
               src="/arrow-right.png"
               width={40}
