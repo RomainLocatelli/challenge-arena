@@ -119,12 +119,18 @@ export default function Home() {
       </div>
       <nav className="flex justify-center mb-8">
         <Link href="/login-register/login">
-          <button type="button" className="bg-(--button-area) p-3 rounded-3xl mr-8 mt-6">
+          <button
+            type="button"
+            className="bg-(--button-area) p-3 rounded-3xl mr-8 mt-6 cursor-pointer"
+          >
             Login
           </button>
         </Link>
         <Link href="/login-register/register">
-          <button type="button" className="bg-(--button-select) p-3 rounded-3xl  mt-6">
+          <button
+            type="button"
+            className="bg-(--button-select) p-3 rounded-3xl  mt-6 cursor-pointer"
+          >
             Register
           </button>
         </Link>
@@ -135,7 +141,9 @@ export default function Home() {
             <strong>Trending games</strong>
           </p>
           <Link href="/games">
-            <button className="bg-(--button-area) p-2 pr-3 pl-3 rounded-3xl">View all</button>
+            <button className="bg-(--button-area) p-2 pr-3 pl-3 rounded-3xl cursor-pointer">
+              View all
+            </button>
           </Link>
         </nav>
         <div>
@@ -174,7 +182,9 @@ export default function Home() {
             <strong>Trending challenges</strong>
           </p>
           <Link href="/games">
-            <button className="bg-(--button-area) p-2 pr-3 pl-3 rounded-3xl">View all</button>
+            <button className="bg-(--button-area) p-2 pr-3 pl-3 rounded-3xl cursor-pointer">
+              View all
+            </button>
           </Link>
         </nav>
         <nav className="flex justify-between mr-5 ml-5 lg:justify-center">
