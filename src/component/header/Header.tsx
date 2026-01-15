@@ -15,13 +15,13 @@ export default function Header() {
     <div className="bg-(--background-header) flex justify-between h-24 ">
       <Link href="/" className="flex">
         <Image
-          className="ml-5"
+          className="p-3"
           src="/icone-manette.png"
           width={100}
           height={100}
           alt="gamerchallenge logo"
         />
-        <h1 className="ml-4 text-xl lg:text-3xl font-extrabold content-center">GamerChallenge</h1>
+        <h1 className=" text-xl lg:text-3xl font-extrabold content-center">GamerChallenge</h1>
       </Link>
 
       {/* desktop menu */}
@@ -53,9 +53,9 @@ export default function Header() {
 
       {/* Burger menu */}
 
-      <nav className="text-right pr-2 pt-2 relative">
-        <button type="button" className="bg-(--button-area) p-4 rounded-xl" onClick={openCloseMenu}>
-          <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <nav className="text-right pr-3 pt-4 relative">
+        <button type="button" className="bg-(--button-area) p-2 rounded-xl" onClick={openCloseMenu}>
+          <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24 ">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
