@@ -1,6 +1,6 @@
 export default function legalNotice() {
   return (
-    <div className="m-5 mt-10">
+    <main className="m-5 mt-10 min-h-screen">
       <h2 className="text-center font-extrabold text-3xl">Legal Notice</h2>
       <ol className="m-8">
         <li className="p-3 pb-8">
@@ -56,6 +56,6 @@ export default function legalNotice() {
           <p>This website is governed by the laws of France.</p>
         </li>
       </ol>
-    </div>
+    </main>
   );
 }
