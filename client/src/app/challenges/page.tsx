@@ -48,7 +48,7 @@ export default function ChallengesPage() {
     const ismd = useMediaQuery("(min-width: 768px)");
     const itemsPerPage = ismd ? 6 : 4;
 
-    // TODO: remplacer par tes jeux réels
+    // TODO: remplacer par les jeux réels
     const games: Game[] = [
     { id: "hollow-knight", title: "Hollow Knight", image: "/real-rat.png" },
     { id: "elden-ring", title: "Elden Ring", image: "/real-rat.png" },
@@ -56,7 +56,7 @@ export default function ChallengesPage() {
     { id: "celeste", title: "Celeste", image: "/real-rat.png" },
     ];
 
-    // TODO: remplacer par tes challenges réels
+    // TODO: remplacer par les challenges réels
 const challenges: Challenge[] = [
     {
     id: "hollow-knight-steel-soul-no-spells",
