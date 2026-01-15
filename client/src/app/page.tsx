@@ -112,7 +112,7 @@ export default function Home() {
   }
 
   return (
-    <div>
+    <div className="min-h-screen">
       {/* GamerChallenge news area */}
       <div className="bg-[url(/baniere-leaderboard.png)] bg-no-repeat bg-cover h-50 text-center">
         <p>This is where the news come in</p>

@@ -1,6 +1,6 @@
 export default function privacyPolicy() {
   return (
-    <div className="m-5 mt-10">
+    <main className="m-5 mt-10 min-h-screen">
       <h2 className="text-center font-extrabold text-3xl">Privacy Policy</h2>
       <ol className="m-8">
         <li className="p-3 pb-8">
@@ -60,6 +60,6 @@ export default function privacyPolicy() {
           </p>
         </li>
       </ol>
-    </div>
+    </main>
   );
 }

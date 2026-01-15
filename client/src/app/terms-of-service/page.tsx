@@ -1,6 +1,6 @@
 export default function termsOfService() {
   return (
-    <div className="m-5 mt-10">
+    <main className="m-5 mt-10 min-h-screen">
       <h2 className="text-center font-extrabold text-3xl">Terms of Service</h2>
       <ol className="m-8">
         <li className="p-3 pb-8">
@@ -54,6 +54,6 @@ export default function termsOfService() {
           </p>
         </li>
       </ol>
-    </div>
+    </main>
   );
 }

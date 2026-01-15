@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export default function error404() {
   return (
-    <div className=" w-screen h-screen flex flex-col items-center justify-center ">
+    <main className="flex flex-col items-center justify-center min-h-screen">
       <div className=" w-2xl h-57 bg-[url(/white-cloud.png)] bg-size-[400px] bg-no-repeat bg-center text-black flex items-center flex-col justify-center text-2xl">
         <p>
           Error <span className="font-extrabold">404</span>
@@ -23,6 +23,6 @@ export default function error404() {
         width={250}
         alt="gamerchallenge mascot"
       ></Image>
-    </div>
+    </main>
   );
 }
