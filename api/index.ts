@@ -7,6 +7,7 @@ import { errorHandler } from './src/middlewares/errorHandler.js';
 import authRoutes from './src/routes/authRoutes.js';
 import gamesRoutes from './src/routes/games.js';
 import challengesRoutes from './src/routes/challenges.js';
+import homeRoutes from './src/routes/home.js'
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,15 +18,18 @@ app.use(cors());
 app.use(express.json());
 app.use(logger);
 
+// Routes API
+app.use('/auth', authRoutes);
+app.use('/games', gamesRoutes);
+app.use('/challenges', challengesRoutes)
+
 // Route de test
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'API is running' });
 });
 
-// Routes API
-app.use('/auth', authRoutes);
-app.use('/games', gamesRoutes);
-app.use('/challenges', challengesRoutes)
+// Route Accueil
+app.use('/', homeRoutes)
 
 // Error handler (toujours en dernier)
 app.use(errorHandler);
