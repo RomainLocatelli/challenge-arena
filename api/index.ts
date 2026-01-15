@@ -25,7 +25,7 @@ app.use(logger);
 app.use('/auth', authRoutes);
 app.use('/games', gamesRoutes);
 app.use('/challenges', challengesRoutes);
-app.use('challengeVote', challengeVoteRoutes);
+app.use('/challengeVote', challengeVoteRoutes);
 
 // Route de test
 app.get('/health', (req, res) => {
