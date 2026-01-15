@@ -32,7 +32,8 @@ type Challenge = {
     gameImage: string;
     title: string;
     description: string;
-    votes: number;
+    likes: number;
+    hasLiked?: boolean;
     tag?: string;
 };
 
@@ -65,7 +66,7 @@ const challenges: Challenge[] = [
     tag: "HOLLOW KNIGHT",
     title: "Steel Soul: No Spells",
     description: "Defeat any major boss in Steel Soul mode without using spells.",
-    votes: 388,
+    likes: 388,
     },
     {
     id: "hollow-knight-pantheon-no-charms",
@@ -75,7 +76,7 @@ const challenges: Challenge[] = [
     tag: "HOLLOW KNIGHT",
     title: "Pantheon: No Charms",
     description: "Clear any Pantheon with no charms equipped.",
-    votes: 512,
+    likes: 512,
     },
     {
     id: "hollow-knight-speedrun-city-of-tears",
@@ -85,7 +86,7 @@ const challenges: Challenge[] = [
     tag: "HOLLOW KNIGHT",
     title: "City of Tears Rush",
     description: "Reach the City of Tears in under 45 minutes on a fresh save.",
-    votes: 274,
+    likes: 274,
     },
     {
     id: "elden-ring-no-hit-boss",
@@ -95,7 +96,7 @@ const challenges: Challenge[] = [
     tag: "ELDEN RING",
     title: "No-Hit Boss",
     description: "Defeat any major boss without taking damage.",
-    votes: 642,
+    likes: 642,
     },
     {
     id: "elden-ring-level-1-rememberance",
@@ -105,7 +106,7 @@ const challenges: Challenge[] = [
     tag: "ELDEN RING",
     title: "RL1 Remembrance",
     description: "Defeat any Remembrance boss at Rune Level 1.",
-    votes: 901,
+    likes: 901,
     },
     {
     id: "elden-ring-no-summons-run",
@@ -115,7 +116,7 @@ const challenges: Challenge[] = [
     tag: "ELDEN RING",
     title: "No Summons Run",
     description: "Beat a major boss without Spirit Ashes or co-op summons.",
-    votes: 733,
+    likes: 733,
     },
     {
     id: "skyrim-ironman-first-dragon",
@@ -125,7 +126,7 @@ const challenges: Challenge[] = [
     tag: "SKYRIM",
     title: "Ironman: First Dragon",
     description: "Defeat Mirmulnir (the first dragon) on Adept+ without dying, followers, or potions.",
-    votes: 620,
+    likes: 620,
     },
     {
     id: "skyrim-stealth-only-dungeon",
@@ -135,7 +136,7 @@ const challenges: Challenge[] = [
     tag: "SKYRIM",
     title: "Ghost in the Dungeon",
     description: "Clear any Nordic Ruin without being detected (no combat alerts).",
-    votes: 455,
+    likes: 455,
     },
     {
     id: "skyrim-no-fast-travel-questline",
@@ -145,7 +146,7 @@ const challenges: Challenge[] = [
     tag: "SKYRIM",
     title: "No Fast Travel",
     description: "Complete any major questline without using fast travel.",
-    votes: 812,
+    likes: 812,
     },
     {
     id: "skyrim-one-life-1000-gold",
@@ -155,7 +156,7 @@ const challenges: Challenge[] = [
     tag: "SKYRIM",
     title: "One Life, Big Purse",
     description: "Earn 10,000 gold without dying on a new character.",
-    votes: 530,
+    likes: 530,
     },
 ];
 
@@ -243,25 +244,6 @@ const challenges: Challenge[] = [
     <div className="min-h-screen bg-slate-950 text-white flex flex-col">
         <main className="px-4 md:px-8 py-6 max-w-7xl mx-auto w-full">
 
-        {/* Image du jeu sélectionné (ou rien si aucun jeu) */}
-        {selectedGame ? (
-            <div className="mb-4 max-w-md md:max-w-2xl mx-auto">
-                <div className="relative w-full h-44 md:h-56 overflow-hidden rounded-2xl bg-slate-900 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.45)]">
-                    <Image
-                src={selectedGame.image}
-                alt={selectedGame.title}
-                fill
-                sizes="(max-width: 768px) 100vw, 768px"
-                className="object-contain p-4"
-                />
-                <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
-                <div className="text-sm text-white/70">Selected game</div>
-                <div className="text-lg font-semibold">{selectedGame.title}</div>
-                </div>
-            </div>
-    </div>
-    ) : null}
-
         {/* Search Bar */}
         <div className="mb-6">
             <div className="relative max-w-md md:max-w-2xl mx-auto">
@@ -290,14 +272,22 @@ const challenges: Challenge[] = [
             </div>
         </div>
         
-        {/* Challenges Section */}
-        <div className="mb-8">
-            <h2 className="text-xl font-bold mb-6 border-l-4 border-purple-600 pl-3">
-                Challenges
-            </h2>
-
+    {/* Challenges Section */}
+    <div className="mb-8">
+        <div className="mx-auto max-w-md md:max-w-4xl">
+            <div className="mb-6 flex items-center justify-between gap-4">
+                <h2 className="text-xl font-bold border-l-4 border-purple-600 pl-3">
+                    Challenges
+                </h2>
+                <button
+                type="button"
+                className="px-4 py-2 rounded-xl bg-amber-600/80 hover:bg-amber-600 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                >
+                    Create a challenge
+                </button>
+            </div>
         {/* Cards de challenges */}
-            <div className="mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 max-w-md md:max-w-4xl">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 {paginatedChallenges.map((c) => (
                 <div
                     key={c.id}
@@ -323,18 +313,26 @@ const challenges: Challenge[] = [
                 {/* votes + bouton */}
                 <div className="mt-auto flex items-center justify-between pt-2">
                     <div className="flex items-center gap-2 text-white/70">
-                        <span className="text-base">👍</span>
-                        <span className="text-sm font-semibold">
-                            {formatVotes(c.votes)}
+                        <span className="relative w-8 h-8 shrink-0">
+                            <Image
+                                src={c.hasLiked ? "/like 1.png" : "/like 0.png"}
+                                alt={c.hasLiked ? "Liked" : "Not liked"}
+                                fill
+                                sizes="32px"
+                                className="object-contain"
+                            />
                         </span>
-                        <span className="text-sm">votes</span>
+                        <span className="text-sm font-semibold">
+                            {formatVotes(c.likes)}
+                        </span>
+                        <span className="text-sm">likes</span>
                     </div>
 
                     <button
                         type="button"
                         className="px-4 py-2 rounded-xl bg-amber-600/80 hover:bg-amber-600 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
                     >
-                        Participate
+                        Details
                     </button>
                     </div>
                 </div>
@@ -342,15 +340,12 @@ const challenges: Challenge[] = [
             ))}
             </div>
         </div>
+    </div>
 
         {filteredChallenges.length === 0 && (
             <p className="mt-6 text-center text-white">
                 {selectedGameId ? "No challenge for this game yet" : "No challenge found."}
             </p>
-        )}
-
-        {filteredChallenges.length === 0 && (
-            <p className="mt-6 text-center text-white/60">No challenge found.</p>
         )}
 
         {/* Pages */}
