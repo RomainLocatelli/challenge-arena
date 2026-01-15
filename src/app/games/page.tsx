@@ -4,26 +4,33 @@ import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import Link from "next/link";
 
+// Petit hook responsive (sans event resize manuel côté composant)
+function useMediaQuery(query: string) {
+    const [matches, setMatches] = useState(false);
+
+    useEffect(() => {
+    const mq = window.matchMedia(query);
+    const onChange = () => setMatches(mq.matches);
+
+    onChange(); // init
+    mq.addEventListener?.("change", onChange);
+    return () => mq.removeEventListener?.("change", onChange);
+    }, [query]);
+
+    return matches;
+}
+
 export default function GamesPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [pageBlockStart, setPageBlockStart] = useState(2);
-    const [itemsPerPage, setItemsPerPage] = useState(6);
 
-    useEffect(() => {
-    const update = () => {
-        setItemsPerPage(window.innerWidth >= 768 ? 9 : 6);
-    };
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
-    }, []);
+    const ismd = useMediaQuery("(min-width: 768px)");
+    const itemsPerPage = ismd ? 9 : 6;
 
 
     // TODO: remplacer par les jeux réels
     const games = [
-{ id: "the-legend-of-zelda-breath-of-the-wild", title: "The Legend of Zelda: Breath of the Wild", image: "/real-rat.png" },
-{ id: "the-legend-of-zelda-tears-of-the-kingdom", title: "The Legend of Zelda: Tears of the Kingdom", image: "/real-rat.png" },
 { id: "elden-ring", title: "Elden Ring", image: "/real-rat.png" },
 { id: "dark-souls", title: "Dark Souls", image: "/real-rat.png" },
 { id: "dark-souls-ii", title: "Dark Souls II", image: "/real-rat.png" },
@@ -36,6 +43,8 @@ export default function GamesPage() {
 { id: "celeste", title: "Celeste", image: "/real-rat.png" },
 { id: "minecraft", title: "Minecraft", image: "/real-rat.png" },
 { id: "fortnite", title: "Fortnite", image: "/real-rat.png" },
+{ id: "the-legend-of-zelda-breath-of-the-wild", title: "The Legend of Zelda: Breath of the Wild", image: "/real-rat.png" },
+{ id: "the-legend-of-zelda-tears-of-the-kingdom", title: "The Legend of Zelda: Tears of the Kingdom", image: "/real-rat.png" },
 { id: "call-of-duty-warzone", title: "Call of Duty: Warzone", image: "/real-rat.png" },
 { id: "counter-strike-2", title: "Counter-Strike 2", image: "/real-rat.png" },
 { id: "valorant", title: "VALORANT", image: "/real-rat.png" },
@@ -82,24 +91,18 @@ export default function GamesPage() {
     }, [searchQuery]);
 
     const totalPages = Math.max(1, Math.ceil(filteredGames.length / itemsPerPage));
+    const adjustedCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
 
-    // Calculer directement les valeurs au lieu d'utiliser useEffect
-    const adjustedCurrentPage = useMemo(() => {
-        return Math.min(Math.max(1, currentPage), totalPages);
-    }, [currentPage, totalPages]);
+    // Onn recale la page si besoin
+    useEffect(() => {
+        if (currentPage !== adjustedCurrentPage) {
+            setCurrentPage(adjustedCurrentPage);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [itemsPerPage, totalPages]);
 
-    // Utiliser les valeurs ajustées pour la pagination
     const startIndex = (adjustedCurrentPage - 1) * itemsPerPage;
     const paginatedGames = filteredGames.slice(startIndex, startIndex + itemsPerPage);
-
-    // Pages affichées (toujours page 1 + bloc de 4 pages)
-    const blockPages = useMemo(() => {
-    const pages: number[] = [];
-    for (let p = pageBlockStart; p <= pageBlockStart + 3; p++) {
-        if (p <= totalPages) { pages.push(p); }
-    }
-    return pages;
-    }, [pageBlockStart, totalPages]);
 
     const goToPage = (page: number) => {
     setCurrentPage(page);
@@ -168,31 +171,32 @@ return (
             <h2 className="text-xl font-bold mb-6 border-l-4 border-purple-600 pl-3">
                 Games
             </h2>
-    
+
+
     {/* Games icons */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+        <div className="mx-auto w-65 grid grid-cols-2 gap-4 md:gap-6 md:w-150 md:grid-cols-3 lg:w-200">
             {paginatedGames.map((game) => (
                 <Link
                 key={game.id}
                 href={`/games/${game.id}`}
-                className="bg-slate-900 rounded-lg overflow-hidden hover:ring-2 hover:ring-purple-600 transition-all cursor-pointer"
+                className="group overflow-hidden rounded-lg bg-slate-900 transition hover:ring-2 hover:ring-purple-600"
                 >
-                <div className="relative aspect-square w-full overflow-hidden bg-slate-700">
+                <div className="relative aspect-square w-full overflow-hidden bg-slate-700 flex-none">
                     <Image
                     src={game.image}
                     alt={game.title}
                     fill
-                    sizes="(max-width: 767px) 50vw, 33vw"
-                    className="object-cover"
+                    sizes="(max-width: 1023px) 50vw, 33vw"
+                    className="object-contain"
                     />
                     </div>
-                <div className="p-3">
-                    <h3 className="font-semibold line-clamp-2 min-h-[3rem]">{game.title}</h3>
+                <div className="p-3 h-14 min-w-0 flex-none">
+                    <h3 className="min-w-0 overflow-hidden break-words line-clamp-2 font-semibold leading-5">{game.title}</h3>
                 </div>
                 </Link>
             ))}
         </div>
-    </div>
+        </div>
 
         {filteredGames.length === 0 && (
             <p className="mt-6 text-center text-white/60">No game found.</p>
