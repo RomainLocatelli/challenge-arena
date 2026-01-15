@@ -3,70 +3,61 @@
 // createChallenge : avec les infos du front, on créer un challenge, on insère le jeu en BDD s'il n'existe pas
 // updateChallenge : modofie un challenge
 
-import { Request, Response, NextFunction } from 'express'
-import { prisma } from '../../lib/prisma.js'
-import { AppError } from '../utils/AppError.js'
+import { Request, Response, NextFunction } from 'express';
+import { prisma } from '../../lib/prisma.js';
+import { AppError } from '../utils/AppError.js';
 
-export const getAllChallenges = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const getAllChallenges = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const challenges = await prisma.challenge.findMany({
       include: {
-        game: true,
+        game: true
       },
-      orderBy: { createdAt: 'desc' },
-    })
+      orderBy: { createdAt: 'desc' }
+    });
 
-    res.json({ challenges })
+    res.json({ challenges });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
-export const getChallengeById = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const getChallengeById = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { id } = req.params
+    const { id } = req.params;
 
     const challenge = await prisma.challenge.findUnique({
       where: { id },
       include: {
         game: true,
-        participations: true,
-      },
-    })
+        participations: {
+          include: { user: true },
+          orderBy: { createdAt: 'desc' }
+        }
+      }
+    });
 
     if (!challenge) {
-      throw new AppError('Challenge not found', 404)
+      throw new AppError('Challenge not found', 404);
     }
 
-    res.json({ challenge })
+    res.json({ challenge });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
-export const createChallenge = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const createChallenge = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { title, scoreFormat, description, gameId, gameTitle, gameImageUrl } = req.body
-    const userId = req.userId
+    const { title, scoreFormat, description, gameId, gameTitle, gameImageUrl } = req.body;
+    const userId = req.userId;
 
     if (!userId) {
-      throw new AppError('User not authenticated', 401)
+      throw new AppError('User not authenticated', 401);
     }
 
     // 1. Vérifier si le jeu existe déjà en base
-    let game = await prisma.game.findUnique({ where: { id: gameId } })
+    let game = await prisma.game.findUnique({ where: { id: gameId } });
 
     // 2. Si non, le créer avec les infos de l'autocomplete (sans description)
     if (!game) {
@@ -75,9 +66,9 @@ export const createChallenge = async (
           id: gameId,
           title: gameTitle,
           imageUrl: gameImageUrl || '',
-          description: '', // Vide pour l'instant
-        },
-      })
+          description: '' // Vide pour l'instant
+        }
+      });
     }
 
     // 3. Créer le challenge
@@ -87,46 +78,42 @@ export const createChallenge = async (
         scoreFormat,
         description,
         gameId: game.id,
-        createdBy: userId,
+        createdBy: userId
       },
       include: {
-        game: true,
-      },
-    })
+        game: true
+      }
+    });
 
-    res.status(201).json({ challenge })
+    res.status(201).json({ challenge });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 // Modifie un challenge. Vérifie que l'user authentifié est le créateur (auth + ownership requis).
-export const updateChallenge = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const updateChallenge = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { id } = req.params
-    const { title, scoreFormat, description } = req.body
-    const userId = req.userId
+    const { id } = req.params;
+    const { title, scoreFormat, description } = req.body;
+    const userId = req.userId;
 
     if (!userId) {
-      throw new AppError('User not authenticated', 401)
+      throw new AppError('User not authenticated', 401);
     }
 
     // 1. Vérifier que le challenge existe
     const existingChallenge = await prisma.challenge.findUnique({
-      where: { id },
-    })
+      where: { id }
+    });
 
     if (!existingChallenge) {
-      throw new AppError('Challenge not found', 404)
+      throw new AppError('Challenge not found', 404);
     }
 
     // 2. Vérifier que l'user est le créateur
     if (existingChallenge.createdBy !== userId) {
-      throw new AppError('Unauthorized: you can only edit your own challenges', 403)
+      throw new AppError('Unauthorized: you can only edit your own challenges', 403);
     }
 
     // 3. Mettre à jour
@@ -135,52 +122,48 @@ export const updateChallenge = async (
       data: {
         ...(title && { title }),
         ...(scoreFormat && { scoreFormat }),
-        ...(description && { description }),
+        ...(description && { description })
       },
-      include: { game: true },
-    })
+      include: { game: true }
+    });
 
-    res.json({ challenge: updatedChallenge })
+    res.json({ challenge: updatedChallenge });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 // Supprime un challenge. Vérifie que l'user authentifié est le créateur (auth + ownership requis).
-export const deleteChallenge = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const deleteChallenge = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { id } = req.params
-    const userId = req.userId
+    const { id } = req.params;
+    const userId = req.userId;
 
     if (!userId) {
-      throw new AppError('User not authenticated', 401)
+      throw new AppError('User not authenticated', 401);
     }
 
     // 1. Vérifier que le challenge existe
     const existingChallenge = await prisma.challenge.findUnique({
-      where: { id },
-    })
+      where: { id }
+    });
 
     if (!existingChallenge) {
-      throw new AppError('Challenge not found', 404)
+      throw new AppError('Challenge not found', 404);
     }
 
     // 2. Vérifier que l'user est le créateur
     if (existingChallenge.createdBy !== userId) {
-      throw new AppError('Unauthorized: you can only delete your own challenges', 403)
+      throw new AppError('Unauthorized: you can only delete your own challenges', 403);
     }
 
     // 3. Supprimer
     await prisma.challenge.delete({
-      where: { id },
-    })
+      where: { id }
+    });
 
-    res.status(204).send()
+    res.status(204).send();
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
