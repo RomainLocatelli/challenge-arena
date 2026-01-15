@@ -53,8 +53,12 @@ export default function Header() {
 
       {/* Burger menu */}
 
-      <nav className="text-right pr-3 pt-4 relative">
-        <button type="button" className="bg-(--button-area) p-2 rounded-xl" onClick={openCloseMenu}>
+      <nav className="text-right pr-3 pt-4 relative ">
+        <button
+          type="button"
+          className="bg-(--button-area) p-2 rounded-xl cursor-pointer"
+          onClick={openCloseMenu}
+        >
           <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24 ">
             <path
               strokeLinecap="round"
