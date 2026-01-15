@@ -7,6 +7,7 @@ import { errorHandler } from './src/middlewares/errorHandler.js';
 import authRoutes from './src/routes/authRoutes.js';
 import gamesRoutes from './src/routes/games.js';
 import challengesRoutes from './src/routes/challenges.js';
+import participationsRoutes from './src/routes/participations.js';
 import homeRoutes from './src/routes/home.js'
 import leaderboardRoutes from './src/routes/leaderboard.js'
 
@@ -29,6 +30,11 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'API is running' });
 });
 
+// Routes API
+app.use('/auth', authRoutes);
+app.use('/games', gamesRoutes);
+app.use('/challenges', challengesRoutes);
+app.use('/participation', participationsRoutes);
 //  Route leaderbord
 app.use('/leaderboard', leaderboardRoutes)
 
