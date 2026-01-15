@@ -28,7 +28,7 @@ export const getHomeFeed = async (
       take: HOME_TOP_CHALLENGES,
     })
 
-    // Games + challenges + participations + votes
+    // On récupère : games + challenges + participations + votes
     const gamesWithVotes = await prisma.game.findMany({
       include: {
         challenges: {
