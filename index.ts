@@ -8,6 +8,8 @@ import authRoutes from './src/routes/authRoutes.js';
 import gamesRoutes from './src/routes/games.js';
 import challengesRoutes from './src/routes/challenges.js';
 import participationsRoutes from './src/routes/participations.js';
+import homeRoutes from './src/routes/home.js'
+import leaderboardRoutes from './src/routes/leaderboard.js'
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,6 +19,11 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 app.use(logger);
+
+// Routes API
+app.use('/auth', authRoutes);
+app.use('/games', gamesRoutes);
+app.use('/challenges', challengesRoutes)
 
 // Route de test
 app.get('/health', (req, res) => {
@@ -28,6 +35,11 @@ app.use('/auth', authRoutes);
 app.use('/games', gamesRoutes);
 app.use('/challenges', challengesRoutes);
 app.use('/participation', participationsRoutes);
+//  Route leaderbord
+app.use('/leaderboard', leaderboardRoutes)
+
+// Route Accueil
+app.use('/', homeRoutes)
 
 // Error handler (toujours en dernier)
 app.use(errorHandler);
