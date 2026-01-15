@@ -11,6 +11,7 @@ import participationsRoutes from './src/routes/participations.js';
 import homeRoutes from './src/routes/home.js';
 import leaderboardRoutes from './src/routes/leaderboard.js';
 import challengeVoteRoutes from './src/routes/challengeVote.js';
+import participationVoteRoutes from './src/routes/participationVote.js';
 import profileRoutes from './src/routes/profile.js';
 
 const app = express();
@@ -29,6 +30,7 @@ app.use('/games', gamesRoutes);
 app.use('/challenges', challengesRoutes);
 app.use('/challengeVote', challengeVoteRoutes);
 app.use('/participation', participationsRoutes);
+app.use('/participationVote', participationVoteRoutes);
 app.use('/leaderboard', leaderboardRoutes);
 
 // Route de test
