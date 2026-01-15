@@ -63,8 +63,7 @@ model Challenge {
 model Participation {
   id            String    @id @default(uuid(7))
   submissionUrl String    @map("submission_url")
-  score         Int
-  description   String
+  description   String?
   userId        String    @map("user_id")
   challengeId   String    @map("challenge_id")
   createdAt     DateTime  @default(now()) @map("created_at")

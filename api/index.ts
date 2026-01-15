@@ -7,6 +7,7 @@ import { errorHandler } from './src/middlewares/errorHandler.js';
 import authRoutes from './src/routes/authRoutes.js';
 import gamesRoutes from './src/routes/games.js';
 import challengesRoutes from './src/routes/challenges.js';
+import participationsRoutes from './src/routes/participations.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -25,7 +26,8 @@ app.get('/health', (req, res) => {
 // Routes API
 app.use('/auth', authRoutes);
 app.use('/games', gamesRoutes);
-app.use('/challenges', challengesRoutes)
+app.use('/challenges', challengesRoutes);
+app.use('/participation', participationsRoutes);
 
 // Error handler (toujours en dernier)
 app.use(errorHandler);
