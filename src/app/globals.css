@@ -8,6 +8,12 @@
   --button-select: #7c39ed;
   --shadow-color: var(--button-select);
   --searchbar-color: #6203d721;
+  --leadboard-first: #ffd700;
+  --leadboard-second: #c0c0c0;
+  --leadboard-third: #cd7f32;
+  --leadboard-mix-one: #ffffff;
+  --leadboard-mix-two: #b386ff;
+  --leadboard-me: #d9d9d9;
 }
 
 @theme inline {
