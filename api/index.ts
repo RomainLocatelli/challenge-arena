@@ -28,19 +28,13 @@ app.use('/profile', profileRoutes);
 app.use('/games', gamesRoutes);
 app.use('/challenges', challengesRoutes);
 app.use('/challengeVote', challengeVoteRoutes);
+app.use('/participation', participationsRoutes);
+app.use('/leaderboard', leaderboardRoutes);
 
 // Route de test
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'API is running' });
 });
-
-// Routes API
-app.use('/auth', authRoutes);
-app.use('/games', gamesRoutes);
-app.use('/challenges', challengesRoutes);
-app.use('/participation', participationsRoutes);
-//  Route leaderbord
-app.use('/leaderboard', leaderboardRoutes);
 
 // Route Accueil
 app.use('/', homeRoutes);
