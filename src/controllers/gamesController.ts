@@ -1,6 +1,6 @@
 // searchGames : qui proxy la recherche de jeux vers l'API RAWG et retourne les résultats formatés (id, slug, name, image) pour l'autocompletion
 // getAllGames : récupère tous les jeux de la BDD
-// getGameById : récupère un jeu avec tous ses challenges associés
+// getGameBySlug : récupère un jeu avec tous ses challenges associés
 
 import { Request, Response, NextFunction } from 'express'
 import { AppError } from '../utils/AppError.js'
@@ -60,16 +60,16 @@ export const getAllGames = async (
   }
 }
 
-export const getGameById = async (
+export const getGameBySlug = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params
+    const { slug } = req.params
 
     const game = await prisma.game.findUnique({
-      where: { id },
+      where: { slug },
       include: {
         challenges: true,
       },

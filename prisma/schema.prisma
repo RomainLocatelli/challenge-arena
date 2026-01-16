@@ -44,6 +44,7 @@ model Game {
 
 model Challenge {
   id          String       @id @default(uuid(7))
+  slug        String       @unique        
   title       String       @unique
   scoreFormat String       @map("score_format")
   description String
