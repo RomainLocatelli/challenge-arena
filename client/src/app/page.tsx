@@ -27,7 +27,7 @@ export default function Home() {
   const [homePageChallenges, setHomePageChallenges] = useState<Challenge[]>([]);
 
   useEffect(() => {
-    async function gamesShownHomePage() {
+    async function getHomePage() {
       const registerUrl = process.env.API_URL || '';
       const response = await fetch(registerUrl);
       const replyDb = await response.json();
@@ -36,7 +36,7 @@ export default function Home() {
       setHomePageChallenges(replyDb.topChallenges);
     }
 
-    gamesShownHomePage();
+    getHomePage();
   }, []);
 
   const formatVotes = (n: number) => {
@@ -92,7 +92,7 @@ export default function Home() {
             alt={`${game.title} logo`}
             className="h-40 object-cover rounded-t-full"
           />
-          <h3 className="text-center mt-2 lg:hidden">{game.title}</h3>
+          <h3 className="text-center mt-2 lg:hidden ">{game.title}</h3>
         </Link>
         <div className="hidden lg:flex lg:gap-10 h-50 ">
           {games.map((game) => {
@@ -100,14 +100,14 @@ export default function Home() {
               <Link
                 key={game.id}
                 href={`/games/${game.id}`}
-                className="bg-(--button-area) rounded-t-full "
+                className="bg-(--button-area) rounded-4xl "
               >
                 <Image
                   src={game.imageUrl}
                   width={200}
                   height={200}
                   alt="gamerchallenge logo"
-                  className="h-40 object-cover rounded-t-full"
+                  className="h-40 object-cover rounded-4xl"
                 ></Image>
                 <h3 className="text-center mt-2">{game.title}</h3>
               </Link>

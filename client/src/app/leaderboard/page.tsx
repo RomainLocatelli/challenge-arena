@@ -1,45 +1,49 @@
 'use client';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Leaderboard() {
-  type Users = { id: number; pseudo: string; score: number };
-  const users: Users[] = [
-    { id: 1, pseudo: 'ShadowNinja77', score: 5 },
-    { id: 2, pseudo: 'ZepHyr_Strike', score: 35 },
-    { id: 3, pseudo: 'LunaGamerX', score: 10 },
-    { id: 4, pseudo: 'DragonSlayer42', score: 877 },
-    { id: 5, pseudo: 'PixelPirate', score: 23 },
-    { id: 11, pseudo: 'Stwompy', score: 10000 },
-    { id: 7, pseudo: 'AstraStorm', score: 654 },
-    { id: 8, pseudo: 'BlazeTitan', score: 4 },
-    { id: 9, pseudo: 'VoidWalker', score: 98 },
-    { id: 10, pseudo: 'FrostByte', score: 0 },
-    { id: 11, pseudo: 'Stwompy', score: 10000 }
-  ];
+  // BDD types
+  type UsersLiked = { username: string; totalLikes: number };
+  type Participation = { username: string; participationCount: number };
 
-  const newUsers: Users[] = [
-    { id: 1, pseudo: 'NebulaRider', score: 2313 },
-    { id: 2, pseudo: 'ThunderClap', score: 54 },
-    { id: 3, pseudo: 'MysticFox', score: 97 },
-    { id: 4, pseudo: 'QuantumLeap', score: 69 },
-    { id: 5, pseudo: 'SilentStorm', score: 32 },
-    { id: 6, pseudo: 'IronPhoenix', score: 654 },
-    { id: 7, pseudo: 'CosmicJoker', score: 22 },
-    { id: 8, pseudo: 'FrostNova', score: 25 },
-    { id: 9, pseudo: 'BlazeHawk', score: 22 },
-    { id: 10, pseudo: 'ShadowMage', score: 321 },
-    { id: 11, pseudo: 'Stwompy', score: 653 }
-  ];
+  // New type which can be used to all the function for the leaderboard
+  type LeaderboardUser = {
+    username: string;
+    score: number;
+    rank?: number;
+  };
 
-  const currentUserId = 11;
+  const currentUsername = 'Stwompy'; // TODO to replace by the connected user
 
-  const [leaderboardSelected, setLeaderboardSelected] = useState({
-    name: 'Most challenges done',
-    userArray: users
-  });
+  const [usersLikedLeaderboard, setUsersLikedLeaderboard] = useState<UsersLiked[]>([]);
+  const [participationLeaderboard, setParticipationLeaderboard] = useState<Participation[]>([]);
+  const [selectedLeaderboard, setSelectedLeaderboard] = useState<'likes' | 'participation'>(
+    'likes'
+  );
 
-  // Getting leaderboard's numbers ready to use for all leaderboards
+  useEffect(() => {
+    async function getLeaderboard() {
+      const registerUrl = `${process.env.API_URL}leaderboard`;
+      const response = await fetch(registerUrl);
+      const replyDb = await response.json();
+
+      setUsersLikedLeaderboard(replyDb.topByLikes);
+      setParticipationLeaderboard(replyDb.topByParticipations);
+    }
+
+    getLeaderboard();
+  }, []);
+
+  // Normalize the leaderboard format to a unique one
+  function normalizeLeaderboardData(data: UsersLiked[] | Participation[]): LeaderboardUser[] {
+    return data.map((user) => ({
+      username: user.username,
+      score: 'totalLikes' in user ? user.totalLikes : user.participationCount
+    }));
+  }
+
+  // Add suffix to rank
   function getOrdinalSuffix(num: number) {
     if (num > 3 && num < 21) {
       return 'th';
@@ -56,13 +60,16 @@ export default function Leaderboard() {
     }
   }
 
-  // Sorting ranks from data sent by the database
-  function getSortedArrayWithRanks(userArray: Users[]) {
-    // Delete the id showing more than one times, in case the user is part of the leaderboard
+  // Sort and add rank to users
+  function getSortedArrayWithRanks(
+    userArray: LeaderboardUser[]
+  ): (LeaderboardUser & { rank: number })[] {
+    // Delete if the connected user is a part of the top 10 leaderboard
     const uniqueUsers = userArray.filter(
-      (user, index, self) => index === self.findIndex((u) => u.id === user.id)
+      (user, index, self) => index === self.findIndex((u) => u.username === user.username)
     );
 
+    // Sort all users
     const sorted = uniqueUsers.sort((a, b) => b.score - a.score);
 
     // Add rank to users
@@ -72,71 +79,110 @@ export default function Leaderboard() {
     }));
   }
 
-  // getting leaderboard's colours ready to use for all leaderboards
-  function renderUserItem(user: Users & { rank: number }, isCurrentUser = false) {
-    const { rank, pseudo, score } = user;
-    let bgClass = '';
-
-    // For the current user
+  // To create the coloring for the leaderboard
+  function getBgClass(rank: number, isCurrentUser: boolean): string {
     if (isCurrentUser) {
       if (rank === 1) {
-        bgClass = 'bg-(--leadboard-first)';
-      } else if (rank === 2) {
-        bgClass = 'bg-(--leadboard-second)';
-      } else if (rank === 3) {
-        bgClass = 'bg-(--leadboard-third)';
-      } else {
-        bgClass = 'bg-(--leadboard-me)';
+        return 'bg-(--leadboard-first)';
       }
-    } else {
-      // For other users leaderbord
-      if (rank === 1) {
-        bgClass = 'bg-(--leadboard-first)';
-      } else if (rank === 2) {
-        bgClass = 'bg-(--leadboard-second)';
-      } else if (rank === 3) {
-        bgClass = 'bg-(--leadboard-third)';
-      } else if (rank % 2) {
-        bgClass = 'bg-(--leadboard-mix-one)';
-      } else {
-        bgClass = 'bg-(--leadboard-mix-two)';
+      if (rank === 2) {
+        return 'bg-(--leadboard-second)';
       }
+      if (rank === 3) {
+        return 'bg-(--leadboard-third)';
+      }
+      return 'bg-(--leadboard-me)';
     }
+    if (rank === 1) {
+      return 'bg-(--leadboard-first)';
+    }
+    if (rank === 2) {
+      return 'bg-(--leadboard-second)';
+    }
+    if (rank === 3) {
+      return 'bg-(--leadboard-third)';
+    }
+    return rank % 2 ? 'bg-(--leadboard-mix-one)' : 'bg-(--leadboard-mix-two)';
+  }
+
+  // To show the users on the leaderboard
+  function renderUserItem(user: LeaderboardUser & { rank: number }, isCurrentUser = false) {
+    const { rank, username, score } = user;
+    const bgClass = getBgClass(rank, isCurrentUser);
     const rankText = `${rank}${getOrdinalSuffix(rank)}`;
 
     return (
       <li
-        key={`${user.id}-${isCurrentUser ? 'me' : 'rank'}`}
+        key={`${username}-${isCurrentUser ? 'me' : 'rank'}`}
         className={`flex justify-between ${bgClass} rounded-2xl p-2 mb-2 ${isCurrentUser ? 'mt-5' : ''}`}
       >
         <p>{rankText}</p>
         <div className="flex">
-          <p className="mr-5">{pseudo}</p>
+          <p className="mr-5">{username}</p>
           <p className="ml-5">{score}</p>
         </div>
       </li>
     );
   }
 
-  // Sorting result taken from bdd and showing them correctly on the leaderboard
-  function leaderboardMobileShown(userArray: Users[]) {
+  // Render the leaderboard
+  function renderLeaderboard(userArray: LeaderboardUser[]) {
     const sortedUsers = getSortedArrayWithRanks(userArray);
-    const top10 = sortedUsers.slice(0, 10);
-    const currentUser = sortedUsers.find((user) => user.id === currentUserId);
+    const currentUser = sortedUsers.find((user) => user.username === currentUsername);
+
+    // Create a 10 slot array, put the actual player from the bdd and keep the empty slot
+    const leaderboardSlots = Array.from({ length: 10 }, (_, index) => {
+      const rank = index + 1;
+      const user = sortedUsers[index];
+
+      if (user) {
+        // actual user
+        return renderUserItem(user);
+      } else {
+        // Empty slot
+        return renderEmptySlot(rank);
+      }
+    });
+
+    function renderEmptySlot(rank: number) {
+      const bgClass = getBgClass(rank, false);
+      const rankText = `${rank}${getOrdinalSuffix(rank)}`;
+
+      return (
+        <li
+          key={`empty-${rank}`}
+          className={`flex justify-between ${bgClass} rounded-2xl p-2 mb-2 opacity-50`}
+        >
+          <p>{rankText}</p>
+          <div className="flex">
+            <p className="mr-5 text-gray-400 italic">-</p>
+            <p className="ml-5 text-gray-400">-</p>
+          </div>
+        </li>
+      );
+    }
+
     return (
       <>
-        {/* Top ten leaderboard showing */}
-        {top10.map((user) => renderUserItem(user))}
+        {/* To always have 10 slot even if empty */}
+        {leaderboardSlots}
 
+        {/* Connected user always shown on the bottom of the leaderboard */}
         {currentUser && renderUserItem(currentUser, true)}
       </>
     );
   }
 
+  // To select which leaderboard to show on mobile
+  const currentLeaderboardData =
+    selectedLeaderboard === 'likes'
+      ? normalizeLeaderboardData(usersLikedLeaderboard)
+      : normalizeLeaderboardData(participationLeaderboard);
+
   return (
-    <main className="flex justify-center flex-col min-h-screen">
+    <main className="min-h-screen">
       <Image
-        className="m-5 flex self-center h-30 w-90 lg:h-40 lg:w-150"
+        className="m-5 flex self-center h-30 w-90 lg:h-40 lg:w-3xl justify-self-center"
         src="/baniere-leaderboard.png"
         width={500}
         height={500}
@@ -144,40 +190,52 @@ export default function Leaderboard() {
       />
       <section className="flex justify-center flex-col">
         <div className="flex justify-center mr-5">
+          {/* Mobile: selection button*/}
           <button
             type="button"
-            onClick={() =>
-              setLeaderboardSelected({ name: 'Most challenges done', userArray: users })
-            }
-            className={`lg:hidden p-2 ml-5  ${leaderboardSelected.name === 'Most challenges done' ? 'bg-(--button-area)' : 'bg-(--background-header)'}  rounded-t-2xl w-full`}
+            onClick={() => setSelectedLeaderboard('likes')}
+            className={`lg:hidden p-2 ml-5 ${selectedLeaderboard === 'likes' ? 'bg-(--button-area)' : 'bg-(--background-header)'} rounded-t-2xl w-full`}
           >
-            Most challenges done
+            Most liked players
           </button>
+
+          {/* Desktop: fix title "Most liked players" */}
           <div className="lg:w-full lg:text-center lg:mr-15">
             <p className="lg:p-2 lg:ml-5 rounded-t-2xl w-full bg-(--button-area) hidden lg:block">
-              Most challenges done
+              Most liked players
             </p>
           </div>
+
+          {/* Mobile: button "Most participation" */}
           <button
             type="button"
-            value="popular"
-            onClick={() => setLeaderboardSelected({ name: 'Most populars', userArray: newUsers })}
-            className={`lg:hidden p-2  ${leaderboardSelected.name === 'Most populars' ? 'bg-(--button-area)' : 'bg-(--background-header)'}  rounded-t-2xl w-full`}
+            onClick={() => setSelectedLeaderboard('participation')}
+            className={`lg:hidden p-2 ${selectedLeaderboard === 'participation' ? 'bg-(--button-area)' : 'bg-(--background-header)'} rounded-t-2xl w-full`}
           >
-            Most populars
+            Most participation
           </button>
+
+          {/* Desktop: fix title  pour "Most participation" */}
           <div className="lg:w-full lg:text-center lg:mr-5">
             <p className="lg:p-2 lg:ml-5 rounded-t-2xl w-full bg-(--button-area) hidden lg:block">
-              Most populars
+              Most participation
             </p>
           </div>
         </div>
-        <div className="lg:flex ">
-          <ul className="flex justify-center flex-col lg:w-full ml-5 mr-5 lg:mr-0 text-black bg-(--button-area) p-3 mb-5 rounded-b-3xl">
-            {leaderboardMobileShown(leaderboardSelected.userArray)}
+
+        <div className="lg:flex">
+          {/* Mobile: show selected leaderboard */}
+          <ul className="flex justify-center flex-col lg:hidden ml-5 mr-5 text-black bg-(--button-area) p-3 mb-5 rounded-b-3xl">
+            {renderLeaderboard(currentLeaderboardData)}
           </ul>
-          <ul className="lg:flex lg:justify-center hidden lg:w-full lg:visible lg:flex-col lg:mr-5 lg:text-black lg:bg-(--button-area) lg:p-3 lg:mb-5 lg:ml-15 lg:rounded-b-3xl">
-            {leaderboardMobileShown(newUsers)}
+
+          {/* Desktop: show all leaderboard */}
+          <ul className="hidden lg:flex lg:justify-center lg:w-full lg:flex-col lg:ml-5 lg:mr-0 lg:text-black lg:bg-(--button-area) lg:p-3 lg:mb-5 lg:rounded-b-3xl">
+            {renderLeaderboard(normalizeLeaderboardData(usersLikedLeaderboard))}
+          </ul>
+
+          <ul className="hidden lg:flex lg:justify-center lg:w-full lg:flex-col lg:mr-5 lg:text-black lg:bg-(--button-area) lg:p-3 lg:mb-5 lg:ml-15 lg:rounded-b-3xl">
+            {renderLeaderboard(normalizeLeaderboardData(participationLeaderboard))}
           </ul>
         </div>
       </section>
