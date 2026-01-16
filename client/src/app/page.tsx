@@ -85,20 +85,31 @@ export default function Home() {
           href={`/games/${game.id}`}
           className="bg-(--button-area) rounded-t-full lg:hidden"
         >
-          <Image src={game.imageUrl} width={160} height={160} alt={`${game.title} logo`} />
-          <h3 className="text-center lg:hidden">{game.title}</h3>
+          <Image
+            src={game.imageUrl}
+            width={160}
+            height={160}
+            alt={`${game.title} logo`}
+            className="h-40 object-cover rounded-t-full"
+          />
+          <h3 className="text-center mt-2 lg:hidden">{game.title}</h3>
         </Link>
-        <div className="hidden lg:grid lg:grid-cols-4 lg:gap-10 lg:grid-rows-1">
+        <div className="hidden lg:flex lg:gap-10 h-50 ">
           {games.map((game) => {
             return (
-              <Link key={game.id} href={`/games/${game.id}`} className="bg-(--button-area)">
+              <Link
+                key={game.id}
+                href={`/games/${game.id}`}
+                className="bg-(--button-area) rounded-t-full "
+              >
                 <Image
                   src={game.imageUrl}
-                  width={160}
-                  height={160}
+                  width={200}
+                  height={200}
                   alt="gamerchallenge logo"
+                  className="h-40 object-cover rounded-t-full"
                 ></Image>
-                <h3 className="text-center">{game.title}</h3>
+                <h3 className="text-center mt-2">{game.title}</h3>
               </Link>
             );
           })}
@@ -294,7 +305,7 @@ export default function Home() {
         </div>
       </div>
       {/* show trending games */}
-      <section className="flex justify-between mr-5 ml-5 mb-10 lg:justify-center">
+      <section className="flex justify-between mr-5 ml-5 mb-10 lg:justify-center ">
         <button type="button" onClick={handlePreviousGame} className="lg:hidden">
           <Image
             src="/arrow-left.png"
@@ -322,7 +333,7 @@ export default function Home() {
           <p className="text-center text-xl">
             <strong>Trending challenges</strong>
           </p>
-          <Link href="/games">
+          <Link href="/challenges">
             <button className="bg-(--button-area) p-2 pr-3 pl-3 rounded-3xl cursor-pointer">
               View all
             </button>
