@@ -33,9 +33,9 @@ model User {
 
 model Game {
   id          String      @id
+  slug        String      @unique
   title       String
   imageUrl    String      @map("image_url")
-  description String
   
   challenges  Challenge[]
 
@@ -44,6 +44,7 @@ model Game {
 
 model Challenge {
   id          String       @id @default(uuid(7))
+  slug        String       @unique        
   title       String       @unique
   scoreFormat String       @map("score_format")
   description String

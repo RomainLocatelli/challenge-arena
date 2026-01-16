@@ -1,32 +1,28 @@
 // topChallenges : par nombre de votes
 // topGames : par somme des votes de leurs participations
 
-import { Request, Response, NextFunction } from 'express'
-import { prisma } from '../../lib/prisma.js'
+import { Request, Response, NextFunction } from 'express';
+import { prisma } from '../../lib/prisma.js';
 
 // VARIABLE A MODIFIER POUR L'AFFICHAGE
-const HOME_TOP_CHALLENGES = 4
-const HOME_TOP_GAMES = 8
+const HOME_TOP_CHALLENGES = 8;
+const HOME_TOP_GAMES = 4;
 
-export const getHomeFeed = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const getHomeFeed = async (req: Request, res: Response, next: NextFunction) => {
   try {
     // Top challenges par nombre de votes
     const topChallenges = await prisma.challenge.findMany({
       include: {
         game: true,
         _count: {
-          select: { votes: true },
-        },
+          select: { votes: true }
+        }
       },
       orderBy: {
-        votes: { _count: 'desc' },
+        votes: { _count: 'desc' }
       },
-      take: HOME_TOP_CHALLENGES,
-    })
+      take: HOME_TOP_CHALLENGES
+    });
 
     // On récupère : games + challenges + participations + votes
     const gamesWithVotes = await prisma.game.findMany({
@@ -36,43 +32,46 @@ export const getHomeFeed = async (
             participations: {
               include: {
                 _count: {
-                  select: { votes: true },
-                },
-              },
-            },
-          },
-        },
-      },
-    })
+                  select: { votes: true }
+                }
+              }
+            }
+          }
+        }
+      }
+    });
 
     // Top games par somme des votes de leurs participations
     const topGames = gamesWithVotes
-      .map(game => {
+      .map((game) => {
         const totalVotes = game.challenges.reduce((sum, challenge) => {
-          return sum + challenge.participations.reduce((pSum, participation) => {
-            return pSum + participation._count.votes
-          }, 0)
-        }, 0)
+          return (
+            sum +
+            challenge.participations.reduce((pSum, participation) => {
+              return pSum + participation._count.votes;
+            }, 0)
+          );
+        }, 0);
 
         return {
           id: game.id,
           title: game.title,
           imageUrl: game.imageUrl,
-          totalVotes,
-        }
+          totalVotes
+        };
       })
       .sort((a, b) => b.totalVotes - a.totalVotes)
-      .slice(0, HOME_TOP_GAMES)
+      .slice(0, HOME_TOP_GAMES);
 
     res.json({
-      topChallenges: topChallenges.map(c => ({
+      topChallenges: topChallenges.map((c) => ({
         ...c,
         voteCount: c._count.votes,
-        _count: undefined,
+        _count: undefined
       })),
-      topGames,
-    })
+      topGames
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
