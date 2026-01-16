@@ -36,7 +36,6 @@ model Game {
   slug        String      @unique
   title       String
   imageUrl    String      @map("image_url")
-  description String
   
   challenges  Challenge[]
 

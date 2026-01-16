@@ -10,5 +10,4 @@ DATABASE_URL=postgresql://gcpgdbadmin:***REMOVED***@my-little-db:5432/gamerchall
 
 # Client
 
-API_URL=http://api:3000/
 NEXT_PUBLIC_API_URL=http://localhost:3000
