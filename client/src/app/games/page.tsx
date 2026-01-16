@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { fetchGames, type Game } from '@/lib/api';
 
 // Petit hook responsive (sans event resize manuel côté composant)
 function useMediaQuery(query: string) {
@@ -24,82 +25,26 @@ export default function GamesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [pageBlockStart, setPageBlockStart] = useState(2);
+  const [games, setGames] = useState<Game[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const ismd = useMediaQuery('(min-width: 768px)');
   const itemsPerPage = ismd ? 9 : 6;
 
-  // TODO: remplacer par les jeux réels
-  const games = [
-    { id: 'elden-ring', title: 'Elden Ring', image: '/real-rat.png' },
-    { id: 'dark-souls', title: 'Dark Souls', image: '/real-rat.png' },
-    { id: 'dark-souls-ii', title: 'Dark Souls II', image: '/real-rat.png' },
-    { id: 'dark-souls-iii', title: 'Dark Souls III', image: '/real-rat.png' },
-    { id: 'bloodborne', title: 'Bloodborne', image: '/real-rat.png' },
-    { id: 'sekiro-shadows-die-twice', title: 'Sekiro: Shadows Die Twice', image: '/real-rat.png' },
-    { id: 'hollow-knight', title: 'Hollow Knight', image: '/real-rat.png' },
-    { id: 'hades', title: 'Hades', image: '/real-rat.png' },
-    { id: 'dead-cells', title: 'Dead Cells', image: '/real-rat.png' },
-    { id: 'celeste', title: 'Celeste', image: '/real-rat.png' },
-    { id: 'minecraft', title: 'Minecraft', image: '/real-rat.png' },
-    { id: 'fortnite', title: 'Fortnite', image: '/real-rat.png' },
-    {
-      id: 'the-legend-of-zelda-breath-of-the-wild',
-      title: 'The Legend of Zelda: Breath of the Wild',
-      image: '/real-rat.png'
-    },
-    {
-      id: 'the-legend-of-zelda-tears-of-the-kingdom',
-      title: 'The Legend of Zelda: Tears of the Kingdom',
-      image: '/real-rat.png'
-    },
-    { id: 'call-of-duty-warzone', title: 'Call of Duty: Warzone', image: '/real-rat.png' },
-    { id: 'counter-strike-2', title: 'Counter-Strike 2', image: '/real-rat.png' },
-    { id: 'valorant', title: 'VALORANT', image: '/real-rat.png' },
-    { id: 'league-of-legends', title: 'League of Legends', image: '/real-rat.png' },
-    { id: 'dota-2', title: 'Dota 2', image: '/real-rat.png' },
-    { id: 'overwatch-2', title: 'Overwatch 2', image: '/real-rat.png' },
-    { id: 'rocket-league', title: 'Rocket League', image: '/real-rat.png' },
-    { id: 'grand-theft-auto-v', title: 'Grand Theft Auto V', image: '/real-rat.png' },
-    { id: 'red-dead-redemption-2', title: 'Red Dead Redemption 2', image: '/real-rat.png' },
-    { id: 'the-witcher-3-wild-hunt', title: 'The Witcher 3: Wild Hunt', image: '/real-rat.png' },
-    { id: 'cyberpunk-2077', title: 'Cyberpunk 2077', image: '/real-rat.png' },
-    { id: 'skyrim', title: 'The Elder Scrolls V: Skyrim', image: '/real-rat.png' },
-    { id: 'fallout-4', title: 'Fallout 4', image: '/real-rat.png' },
-    { id: 'stardew-valley', title: 'Stardew Valley', image: '/real-rat.png' },
-    {
-      id: 'animal-crossing-new-horizons',
-      title: 'Animal Crossing: New Horizons',
-      image: '/real-rat.png'
-    },
-    { id: 'super-mario-odyssey', title: 'Super Mario Odyssey', image: '/real-rat.png' },
-    { id: 'mario-kart-8-deluxe', title: 'Mario Kart 8 Deluxe', image: '/real-rat.png' },
-    {
-      id: 'super-smash-bros-ultimate',
-      title: 'Super Smash Bros. Ultimate',
-      image: '/real-rat.png'
-    },
-    { id: 'god-of-war', title: 'God of War', image: '/real-rat.png' },
-    { id: 'god-of-war-ragnarok', title: 'God of War Ragnarök', image: '/real-rat.png' },
-    { id: 'the-last-of-us-part-i', title: 'The Last of Us Part I', image: '/real-rat.png' },
-    { id: 'the-last-of-us-part-ii', title: 'The Last of Us Part II', image: '/real-rat.png' },
-    { id: 'horizon-zero-dawn', title: 'Horizon Zero Dawn', image: '/real-rat.png' },
-    { id: 'horizon-forbidden-west', title: 'Horizon Forbidden West', image: '/real-rat.png' },
-    { id: 'ghost-of-tsushima', title: 'Ghost of Tsushima', image: '/real-rat.png' },
-    {
-      id: 'spider-man-remastered',
-      title: 'Marvel’s Spider-Man Remastered',
-      image: '/real-rat.png'
-    },
-    { id: 'spider-man-2', title: 'Marvel’s Spider-Man 2', image: '/real-rat.png' },
-    { id: 'resident-evil-4', title: 'Resident Evil 4', image: '/real-rat.png' },
-    { id: 'resident-evil-village', title: 'Resident Evil Village', image: '/real-rat.png' },
-    { id: 'monster-hunter-world', title: 'Monster Hunter: World', image: '/real-rat.png' },
-    { id: 'final-fantasy-vii-remake', title: 'Final Fantasy VII Remake', image: '/real-rat.png' },
-    { id: 'final-fantasy-xvi', title: 'Final Fantasy XVI', image: '/real-rat.png' },
-    { id: 'baldurs-gate-3', title: 'Baldur’s Gate 3', image: '/real-rat.png' },
-    { id: 'persona-5-royal', title: 'Persona 5 Royal', image: '/real-rat.png' },
-    { id: 'metroid-dread', title: 'Metroid Dread', image: '/real-rat.png' }
-  ];
+  // Chargement des jeux depuis l'API
+  useEffect(() => {
+    fetchGames()
+      .then((data) => {
+        setGames(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Failed to load games:', err);
+        setError('Failed to load games. Please try again later.');
+        setLoading(false);
+      });
+  }, []);
 
   const filteredGames = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
@@ -107,7 +52,7 @@ export default function GamesPage() {
       return games;
     }
     return games.filter((g) => g.title.toLowerCase().includes(q));
-  }, [searchQuery]);
+  }, [searchQuery, games]);
 
   const totalPages = Math.max(1, Math.ceil(filteredGames.length / itemsPerPage));
   const adjustedCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
@@ -185,34 +130,50 @@ export default function GamesPage() {
         <div className="mb-8">
           <h2 className="text-xl font-bold mb-6 border-l-4 border-purple-600 pl-3">Games</h2>
 
+          {/* Loading state */}
+          {loading && (
+            <div className="flex justify-center items-center py-12">
+              <div className="text-white/60">Loading games...</div>
+            </div>
+          )}
+
+          {/* Error state */}
+          {error && (
+            <div className="flex justify-center items-center py-12">
+              <div className="text-red-400">{error}</div>
+            </div>
+          )}
+
           {/* Games icons */}
-          <div className="mx-auto w-65 grid grid-cols-2 gap-4 md:gap-6 md:w-150 md:grid-cols-3 lg:w-200">
-            {paginatedGames.map((game) => (
-              <Link
-                key={game.id}
-                href={`/games/${game.id}`}
-                className="group overflow-hidden rounded-lg bg-slate-900 transition hover:ring-2 hover:ring-purple-600"
-              >
-                <div className="relative aspect-square w-full overflow-hidden bg-slate-700 flex-none">
-                  <Image
-                    src={game.image}
-                    alt={game.title}
-                    fill
-                    sizes="(max-width: 1023px) 50vw, 33vw"
-                    className="object-contain"
-                  />
-                </div>
-                <div className="p-3 h-14 min-w-0 flex-none">
-                  <h3 className="min-w-0 overflow-hidden break-words line-clamp-2 font-semibold leading-5">
-                    {game.title}
-                  </h3>
-                </div>
-              </Link>
-            ))}
-          </div>
+          {!loading && !error && (
+            <div className="mx-auto w-65 grid grid-cols-2 gap-4 md:gap-6 md:w-150 md:grid-cols-3 lg:w-200">
+              {paginatedGames.map((game) => (
+                <Link
+                  key={game.id}
+                  href={`/games/${game.id}`}
+                  className="group overflow-hidden rounded-lg bg-slate-900 transition hover:ring-2 hover:ring-purple-600"
+                >
+                  <div className="relative aspect-square w-full overflow-hidden bg-slate-700 flex-none">
+                    <Image
+                      src={game.imageUrl || '/real-rat.png'}
+                      alt={game.title}
+                      fill
+                      sizes="(max-width: 1023px) 50vw, 33vw"
+                      className="object-contain"
+                    />
+                  </div>
+                  <div className="p-3 h-14 min-w-0 flex-none">
+                    <h3 className="min-w-0 overflow-hidden break-words line-clamp-2 font-semibold leading-5">
+                      {game.title}
+                    </h3>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
 
-        {filteredGames.length === 0 && (
+        {!loading && !error && filteredGames.length === 0 && (
           <p className="mt-6 text-center text-white/60">No game found.</p>
         )}
 
