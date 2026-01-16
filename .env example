@@ -12,4 +12,4 @@ NODE_ENV=development
 
 # Client
 
-API_URL=http://api:3000
+NEXT_PUBLIC_API_URL=http://api:3000
