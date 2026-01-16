@@ -1,15 +1,14 @@
-# PostgreSQL
-
-POSTGRES_USER=gamer_user
-POSTGRES_PASSWORD=changeme
-POSTGRES_DB=gamer_challenges
+# PostgreSQL
+POSTGRES_USER=gcpgdbadmin
+POSTGRES_PASSWORD=***REMOVED***
+POSTGRES_DB=gamerchallengedb
 
 # API
 
-DATABASE_URL=postgresql://gamer_user:password@my-little-db:5432/gamer_challenges
-JWT_SECRET=generate_with_crypto
-NODE_ENV=development
+JWT_SECRET=***REMOVED***
+DATABASE_URL=postgresql://gcpgdbadmin:***REMOVED***@my-little-db:5432/gamerchallengedb
 
 # Client
 
-NEXT_PUBLIC_API_URL=http://api:3000
+API_URL=http://api:3000/
+NEXT_PUBLIC_API_URL=http://localhost:3000
