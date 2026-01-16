@@ -80,34 +80,32 @@ export default function Home() {
 
     return (
       <div>
-        <Link
-          key={game.id}
-          href={`/games/${game.id}`}
-          className="bg-(--button-area) rounded-t-full lg:hidden"
-        >
-          <Image
-            src={game.imageUrl}
-            width={160}
-            height={160}
-            alt={`${game.title} logo`}
-            className="h-40 object-cover rounded-t-full"
-          />
-          <h3 className="text-center mt-2 lg:hidden ">{game.title}</h3>
-        </Link>
+        <div className="bg-(--button-area)  rounded-4xl ">
+          <Link key={game.id} href={`/games/${game.id}`} className="lg:hidden">
+            <Image
+              src={game.imageUrl}
+              width={160}
+              height={160}
+              alt={`${game.title} logo`}
+              className="h-40 object-cover rounded-t-4xl"
+            />
+            <h3 className="text-center mt-2 lg:hidden ">{game.title}</h3>
+          </Link>
+        </div>
         <div className="hidden lg:flex lg:gap-10 h-50 ">
           {games.map((game) => {
             return (
               <Link
                 key={game.id}
                 href={`/games/${game.id}`}
-                className="bg-(--button-area) rounded-4xl "
+                className="bg-(--button-area)  rounded-4xl"
               >
                 <Image
                   src={game.imageUrl}
                   width={200}
                   height={200}
                   alt="gamerchallenge logo"
-                  className="h-40 object-cover rounded-4xl"
+                  className="h-40 object-cover rounded-t-4xl"
                 ></Image>
                 <h3 className="text-center mt-2">{game.title}</h3>
               </Link>
