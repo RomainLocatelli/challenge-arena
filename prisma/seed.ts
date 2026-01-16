@@ -67,8 +67,7 @@ async function main() {
         id: '326243',
         slug: 'elden-ring',
         title: 'Elden Ring',
-        imageUrl: 'https://media.rawg.io/media/games/5ec/5ecac5cb026ec26a56efcc546364e348.jpg',
-        description: 'An action RPG set in a dark fantasy world'
+        imageUrl: 'https://media.rawg.io/media/games/5ec/5ecac5cb026ec26a56efcc546364e348.jpg'
       }
     }),
     prisma.game.create({
@@ -76,8 +75,7 @@ async function main() {
         id: '3328',
         slug: 'the-witcher-3-wild-hunt',
         title: 'The Witcher 3',
-        imageUrl: 'https://media.rawg.io/media/games/618/618c2031a07bbff6b4f611f10b6bcdbc.jpg',
-        description: 'A story-driven open world RPG'
+        imageUrl: 'https://media.rawg.io/media/games/618/618c2031a07bbff6b4f611f10b6bcdbc.jpg'
       }
     }),
     prisma.game.create({
@@ -85,8 +83,7 @@ async function main() {
         id: '622492',
         slug: 'god-of-war',
         title: 'God of War',
-        imageUrl: 'https://media.rawg.io/media/games/4be/4be6a6ad0364751a96229c56bf69be59.jpg',
-        description: 'An action-adventure game based on Norse mythology'
+        imageUrl: 'https://media.rawg.io/media/games/4be/4be6a6ad0364751a96229c56bf69be59.jpg'
       }
     })
   ]);
