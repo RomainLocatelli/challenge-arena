@@ -385,7 +385,7 @@ const deleteActiveParticipation = async () => {
                   onClick={() => {
                     setChallengeHasLiked((prev) => {
                       const next = !prev;
-                      setChallengeLikes((likes) => likes + (next ? 1 : -1));
+                      setChallengeLikes((likes) => likes + (next ? -1 : 1));
                       return next;
                     });
                   }}
@@ -594,9 +594,9 @@ const deleteActiveParticipation = async () => {
                       setParticipations((prev) =>
                         prev.map((x) => {
                           if (x.id !== p.id) { return x; }
-                          const next = !x.hasLiked;
-                          const nextLikes = x.likes + (next ? 1 : -1);
-                          return { ...x, hasLiked: next, likes: nextLikes };
+                          const currentlyLiked = Boolean(x.hasLiked);
+                          const nextHasLiked = !currentlyLiked;
+                          return { ...x, hasLiked: nextHasLiked, likes: currentlyLiked ? x.likes + 1 : x.likes - 1 };
                         })
                       );
                     }}
