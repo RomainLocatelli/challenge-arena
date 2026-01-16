@@ -40,7 +40,7 @@ node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 4. Lance Docker
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
 5. Crée la base de données

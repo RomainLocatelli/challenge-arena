@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id                   String               @id @default(uuid(7))
+  email                String               @unique
+  username             String               @unique
+  password             String
+  role                 Role                 @default(USER)
+  isDeleted            Boolean              @default(false) @map("is_deleted")
+  deletedAt            DateTime?            @map("deleted_at")
+  createdAt            DateTime             @default(now()) @map("created_at")
+  updatedAt            DateTime             @updatedAt @map("updated_at")
+  
+  participations       Participation[]
+  challengeVotes       ChallengeVote[]
+  participationVotes   ParticipationVote[]
+  createdChallenges    Challenge[]          @relation("ChallengeCreator")
+
+  @@map("users")
+}
+
+model Game {
+  id          String      @id
+  title       String
+  imageUrl    String      @map("image_url")
+  description String
+  
+  challenges  Challenge[]
+
+  @@map("games")
+}
+
+model Challenge {
+  id          String       @id @default(uuid(7))
+  title       String       @unique
+  scoreFormat String       @map("score_format")
+  description String
+  createdBy   String       @map("created_by")
+  gameId      String       @map("game_id")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  
+  creator         User                @relation("ChallengeCreator", fields: [createdBy], references: [id])
+  game            Game                @relation(fields: [gameId], references: [id])
+  participations  Participation[]
+  votes           ChallengeVote[]
+
+  @@map("challenges")
+}
+
+model Participation {
+  id            String    @id @default(uuid(7))
+  submissionUrl String    @map("submission_url")
+  description   String?
+  userId        String    @map("user_id")
+  challengeId   String    @map("challenge_id")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  
+  user      User                @relation(fields: [userId], references: [id])
+  challenge Challenge           @relation(fields: [challengeId], references: [id])
+  votes     ParticipationVote[]
+
+  @@map("participations")
+}
+
+model ChallengeVote {
+  id          String    @id @default(uuid(7))
+  userId      String    @map("user_id")
+  challengeId String    @map("challenge_id")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  
+  user      User      @relation(fields: [userId], references: [id])
+  challenge Challenge @relation(fields: [challengeId], references: [id])
+
+  @@unique([userId, challengeId])
+  @@map("challenge_votes")
+}
+
+model ParticipationVote {
+  id              String        @id @default(uuid(7))
+  userId          String        @map("user_id")
+  participationId String        @map("participation_id")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  
+  user          User          @relation(fields: [userId], references: [id])
+  participation Participation @relation(fields: [participationId], references: [id])
+
+  @@unique([userId, participationId])
+  @@map("participation_votes")
+}
