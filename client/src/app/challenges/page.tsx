@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
+import Link from "next/link";
+
 
 // hook responsive
 function useMediaQuery(query: string) {
@@ -27,6 +29,7 @@ type Game = {
 
 type Challenge = {
     id: string;
+    slug: string;
     gameId: string;
     gameTitle: string;
     gameImage: string;
@@ -56,10 +59,11 @@ export default function ChallengesPage() {
     { id: "celeste", title: "Celeste", image: "/real-rat.png" },
     ];
 
-    // TODO: remplacer par les challenges réels
+// TODO: remplacer par les challenges réels
 const challenges: Challenge[] = [
     {
     id: "hollow-knight-steel-soul-no-spells",
+    slug: "hollow-knight-steel-soul-no-spells",
     gameId: "hollow-knight",
     gameTitle: "Hollow Knight",
     gameImage: "/real-rat.png",
@@ -70,6 +74,7 @@ const challenges: Challenge[] = [
     },
     {
     id: "hollow-knight-pantheon-no-charms",
+    slug: "hollow-knight-pantheon-no-charms",
     gameId: "hollow-knight",
     gameTitle: "Hollow Knight",
     gameImage: "/real-rat.png",
@@ -80,6 +85,7 @@ const challenges: Challenge[] = [
     },
     {
     id: "hollow-knight-speedrun-city-of-tears",
+    slug: "hollow-knight-speedrun-city-of-tears",
     gameId: "hollow-knight",
     gameTitle: "Hollow Knight",
     gameImage: "/real-rat.png",
@@ -90,6 +96,7 @@ const challenges: Challenge[] = [
     },
     {
     id: "elden-ring-no-hit-boss",
+    slug: "elden-ring-no-hit-boss",
     gameId: "elden-ring",
     gameTitle: "Elden Ring",
     gameImage: "/real-rat.png",
@@ -100,6 +107,7 @@ const challenges: Challenge[] = [
     },
     {
     id: "elden-ring-level-1-rememberance",
+    slug: "elden-ring-level-1-rememberance",
     gameId: "elden-ring",
     gameTitle: "Elden Ring",
     gameImage: "/real-rat.png",
@@ -110,6 +118,7 @@ const challenges: Challenge[] = [
     },
     {
     id: "elden-ring-no-summons-run",
+    slug: "elden-ring-no-summons-run",
     gameId: "elden-ring",
     gameTitle: "Elden Ring",
     gameImage: "/real-rat.png",
@@ -120,6 +129,7 @@ const challenges: Challenge[] = [
     },
     {
     id: "skyrim-ironman-first-dragon",
+    slug: "skyrim-ironman-first-dragon",
     gameId: "skyrim",
     gameTitle: "The Elder Scrolls V: Skyrim",
     gameImage: "/real-rat.png",
@@ -130,6 +140,7 @@ const challenges: Challenge[] = [
     },
     {
     id: "skyrim-stealth-only-dungeon",
+    slug: "skyrim-stealth-only-dungeon",
     gameId: "skyrim",
     gameTitle: "The Elder Scrolls V: Skyrim",
     gameImage: "/real-rat.png",
@@ -140,6 +151,7 @@ const challenges: Challenge[] = [
     },
     {
     id: "skyrim-no-fast-travel-questline",
+    slug: "skyrim-no-fast-travel-questline",
     gameId: "skyrim",
     gameTitle: "The Elder Scrolls V: Skyrim",
     gameImage: "/real-rat.png",
@@ -150,6 +162,7 @@ const challenges: Challenge[] = [
     },
     {
     id: "skyrim-one-life-1000-gold",
+    slug: "skyrim-one-life-1000-gold",
     gameId: "skyrim",
     gameTitle: "The Elder Scrolls V: Skyrim",
     gameImage: "/real-rat.png",
@@ -286,6 +299,7 @@ const challenges: Challenge[] = [
                     Create a challenge
                 </button>
             </div>
+
         {/* Cards de challenges */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 {paginatedChallenges.map((c) => (
@@ -328,12 +342,12 @@ const challenges: Challenge[] = [
                         <span className="text-sm">likes</span>
                     </div>
 
-                    <button
-                        type="button"
+                    <Link
+                        href={`/challenges/${c.slug}`}
                         className="px-4 py-2 rounded-xl bg-amber-600/80 hover:bg-amber-600 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
                     >
                         Details
-                    </button>
+                    </Link>
                     </div>
                 </div>
                 </div>
