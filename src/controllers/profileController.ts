@@ -1,7 +1,7 @@
 // Ici on gère le profil utilisateur
 // getProfile : renvoie les infos utilisateur + ses challenges + ses participations
 // updateProfile : on met à jour les champs modifiés
-// deleteProfile : soft delete => isDeleted: true
+// deleteProfile : soft delete => isDeleted: true + anonymisation (username, email)
 
 import { Request, Response, NextFunction } from 'express'
 import { prisma } from '../../lib/prisma.js'
@@ -93,17 +93,21 @@ export const deleteProfile = async (
 ) => {
   try {
     const userId = req.userId
-
     if (!userId) {
       throw new AppError('User not authenticated', 401)
     }
 
-    // Soft delete
+    const anonymizedEmail = `deleted-${Date.now()}@anonymized.local`
+    const anonymizedUsername = `deleted_user_${userId.slice(0, 8)}`
+
     await prisma.user.update({
       where: { id: userId },
       data: {
         isDeleted: true,
         deletedAt: new Date(),
+        email: anonymizedEmail,
+        username: anonymizedUsername,
+        password: '',
       },
     })
 
