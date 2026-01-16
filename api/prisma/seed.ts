@@ -20,7 +20,7 @@ async function main() {
 
   console.log('✅ Database cleaned');
 
-  // Créer des users
+  // Créer 10 users
   const hashedPassword = await argon2.hash('Test1234!');
 
   const users = await Promise.all([
@@ -44,6 +44,54 @@ async function main() {
       data: {
         email: 'charlie@example.com',
         username: 'charlie',
+        password: hashedPassword,
+        role: 'USER'
+      }
+    }),
+    prisma.user.create({
+      data: {
+        email: 'diana@example.com',
+        username: 'diana',
+        password: hashedPassword,
+        role: 'USER'
+      }
+    }),
+    prisma.user.create({
+      data: {
+        email: 'eve@example.com',
+        username: 'eve',
+        password: hashedPassword,
+        role: 'USER'
+      }
+    }),
+    prisma.user.create({
+      data: {
+        email: 'frank@example.com',
+        username: 'frank',
+        password: hashedPassword,
+        role: 'USER'
+      }
+    }),
+    prisma.user.create({
+      data: {
+        email: 'grace@example.com',
+        username: 'grace',
+        password: hashedPassword,
+        role: 'USER'
+      }
+    }),
+    prisma.user.create({
+      data: {
+        email: 'henry@example.com',
+        username: 'henry',
+        password: hashedPassword,
+        role: 'USER'
+      }
+    }),
+    prisma.user.create({
+      data: {
+        email: 'iris@example.com',
+        username: 'iris',
         password: hashedPassword,
         role: 'USER'
       }
@@ -80,65 +128,33 @@ async function main() {
     }),
     prisma.game.create({
       data: {
-        id: '622492',
-        slug: 'god-of-war',
-        title: 'God of War',
+        id: '12447',
+        slug: 'dark-souls',
+        title: 'Dark Souls',
+        imageUrl: 'https://media.rawg.io/media/games/559/559bc0768f656ad0c63c54b80a82d680.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '58175',
+        slug: 'god-of-war-2018',
+        title: 'God of War (2018)',
         imageUrl: 'https://media.rawg.io/media/games/4be/4be6a6ad0364751a96229c56bf69be59.jpg'
       }
     }),
     prisma.game.create({
       data: {
-        id: '3498',
-        slug: 'grand-theft-auto-v',
-        title: 'Grand Theft Auto V',
-        imageUrl: 'https://media.rawg.io/media/games/20a/20aa03a10cda45239fe22d035c0ebe64.jpg'
-      }
-    }),
-    prisma.game.create({
-      data: {
-        id: '4200',
-        slug: 'portal-2',
-        title: 'Portal 2',
-        imageUrl: 'https://media.rawg.io/media/games/328/3283617cb7d75d67257fc58339188742.jpg'
-      }
-    }),
-    prisma.game.create({
-      data: {
-        id: '5286',
-        slug: 'tomb-raider',
-        title: 'Tomb Raider (2013)',
-        imageUrl: 'https://media.rawg.io/media/games/021/021c4e21a1824d2526f925eff6324653.jpg'
-      }
-    }),
-    prisma.game.create({
-      data: {
-        id: '13536',
-        slug: 'portal',
-        title: 'Portal',
-        imageUrl: 'https://media.rawg.io/media/games/7fa/7fa0b586293c5861ee32490e953a4996.jpg'
-      }
-    }),
-    prisma.game.create({
-      data: {
-        id: '12020',
-        slug: 'left-4-dead-2',
-        title: 'Left 4 Dead 2',
-        imageUrl: 'https://media.rawg.io/media/games/d58/d588947d4286e7b5e0e12e1bea7d9844.jpg'
-      }
-    }),
-    prisma.game.create({
-      data: {
-        id: '4291',
-        slug: 'counter-strike-global-offensive',
-        title: 'Counter-Strike: Global Offensive',
-        imageUrl: 'https://media.rawg.io/media/games/736/73619bd336c894d6941d926bfd563946.jpg'
+        id: '22509',
+        slug: 'minecraft',
+        title: 'Minecraft',
+        imageUrl: 'https://media.rawg.io/media/games/b4e/b4e4c73d5aa4ec66bbf75375c4847a2b.jpg'
       }
     })
   ]);
 
   console.log(`✅ Created ${games.length} games`);
 
-  // Créer des challenges
+  // Créer 8 challenges
   const challenges = await Promise.all([
     prisma.challenge.create({
       data: {
@@ -167,7 +183,7 @@ async function main() {
         scoreFormat: 'score',
         description: 'Complete on hardest difficulty',
         gameId: games[1].id,
-        createdBy: users[0].id
+        createdBy: users[2].id
       }
     }),
     prisma.challenge.create({
@@ -177,37 +193,67 @@ async function main() {
         scoreFormat: 'score',
         description: 'Unlock all achievements',
         gameId: games[1].id,
-        createdBy: users[2].id
+        createdBy: users[3].id
       }
     }),
     prisma.challenge.create({
       data: {
-        title: 'God Mode',
-        slug: 'god-mode',
+        title: 'SL1 Run',
+        slug: 'sl1-run',
+        scoreFormat: 'boolean',
+        description: 'Complete Dark Souls at Soul Level 1',
+        gameId: games[2].id,
+        createdBy: users[4].id
+      }
+    }),
+    prisma.challenge.create({
+      data: {
+        title: 'God Mode Difficulty',
+        slug: 'god-mode-difficulty',
         scoreFormat: 'time',
         description: 'Complete on God difficulty',
+        gameId: games[3].id,
+        createdBy: users[5].id
+      }
+    }),
+    prisma.challenge.create({
+      data: {
+        title: 'Hardcore Survival',
+        slug: 'hardcore-survival',
+        scoreFormat: 'score',
+        description: 'Survive 100 days in Hardcore mode',
+        gameId: games[4].id,
+        createdBy: users[6].id
+      }
+    }),
+    prisma.challenge.create({
+      data: {
+        title: 'Boss Rush No Damage',
+        slug: 'boss-rush-no-damage',
+        scoreFormat: 'boolean',
+        description: 'Defeat all bosses without taking damage',
         gameId: games[2].id,
-        createdBy: users[1].id
+        createdBy: users[7].id
       }
     })
   ]);
 
   console.log(`✅ Created ${challenges.length} challenges`);
 
-  // Créer des participations
+  // Créer 25 participations (pour avoir de la variété)
   const participations = await Promise.all([
-    // Challenge 1 : 4 participations
+    // Challenge 0 : 5 participations
     prisma.participation.create({
       data: {
-        submissionUrl: 'https://youtube.com/watch?v=123',
-        description: 'My first speedrun attempt',
+        submissionUrl: 'https://youtube.com/watch?v=1',
+        description: 'My first speedrun',
         userId: users[0].id,
         challengeId: challenges[0].id
       }
     }),
     prisma.participation.create({
       data: {
-        submissionUrl: 'https://youtube.com/watch?v=456',
+        submissionUrl: 'https://youtube.com/watch?v=2',
         description: 'Better time!',
         userId: users[1].id,
         challengeId: challenges[0].id
@@ -215,24 +261,32 @@ async function main() {
     }),
     prisma.participation.create({
       data: {
-        submissionUrl: 'https://youtube.com/watch?v=789',
-        description: 'Casual run',
+        submissionUrl: 'https://youtube.com/watch?v=3',
+        description: 'Personal best',
         userId: users[2].id,
         challengeId: challenges[0].id
       }
     }),
     prisma.participation.create({
       data: {
-        submissionUrl: 'https://youtube.com/watch?v=101',
+        submissionUrl: 'https://youtube.com/watch?v=4',
         description: 'World record attempt',
         userId: users[3].id,
         challengeId: challenges[0].id
       }
     }),
-    // Challenge 2 : 2 participations
     prisma.participation.create({
       data: {
-        submissionUrl: 'https://youtube.com/watch?v=202',
+        submissionUrl: 'https://youtube.com/watch?v=5',
+        description: 'Casual run',
+        userId: users[4].id,
+        challengeId: challenges[0].id
+      }
+    }),
+    // Challenge 1 : 3 participations
+    prisma.participation.create({
+      data: {
+        submissionUrl: 'https://youtube.com/watch?v=6',
         description: 'Did it!',
         userId: users[0].id,
         challengeId: challenges[1].id
@@ -240,40 +294,279 @@ async function main() {
     }),
     prisma.participation.create({
       data: {
-        submissionUrl: 'https://youtube.com/watch?v=303',
+        submissionUrl: 'https://youtube.com/watch?v=7',
         description: 'Flawless victory',
-        userId: users[2].id,
+        userId: users[5].id,
         challengeId: challenges[1].id
       }
     }),
-    // Challenge 3 : 3 participations
     prisma.participation.create({
       data: {
-        submissionUrl: 'https://youtube.com/watch?v=404',
-        description: 'Almost perfect score',
+        submissionUrl: 'https://youtube.com/watch?v=8',
+        description: 'After 50 attempts',
+        userId: users[6].id,
+        challengeId: challenges[1].id
+      }
+    }),
+    // Challenge 2 : 4 participations
+    prisma.participation.create({
+      data: {
+        submissionUrl: 'https://youtube.com/watch?v=9',
+        description: 'Perfect score',
         userId: users[1].id,
         challengeId: challenges[2].id
       }
     }),
     prisma.participation.create({
       data: {
-        submissionUrl: 'https://youtube.com/watch?v=505',
+        submissionUrl: 'https://youtube.com/watch?v=10',
         description: 'Good run',
-        userId: users[2].id,
+        userId: users[7].id,
         challengeId: challenges[2].id
       }
     }),
     prisma.participation.create({
       data: {
-        submissionUrl: 'https://youtube.com/watch?v=606',
+        submissionUrl: 'https://youtube.com/watch?v=11',
         description: 'Solid attempt',
-        userId: users[3].id,
+        userId: users[8].id,
         challengeId: challenges[2].id
+      }
+    }),
+    prisma.participation.create({
+      data: {
+        submissionUrl: 'https://youtube.com/watch?v=12',
+        description: 'Nearly there',
+        userId: users[0].id,
+        challengeId: challenges[2].id
+      }
+    }),
+    // Challenge 3 : 3 participations
+    prisma.participation.create({
+      data: {
+        submissionUrl: 'https://youtube.com/watch?v=13',
+        description: '100% completion',
+        userId: users[2].id,
+        challengeId: challenges[3].id
+      }
+    }),
+    prisma.participation.create({
+      data: {
+        submissionUrl: 'https://youtube.com/watch?v=14',
+        description: 'All achievements unlocked',
+        userId: users[3].id,
+        challengeId: challenges[3].id
+      }
+    }),
+    prisma.participation.create({
+      data: {
+        submissionUrl: 'https://youtube.com/watch?v=15',
+        description: 'Grinding complete',
+        userId: users[4].id,
+        challengeId: challenges[3].id
+      }
+    }),
+    // Challenge 4 : 2 participations
+    prisma.participation.create({
+      data: {
+        submissionUrl: 'https://youtube.com/watch?v=16',
+        description: 'SL1 complete!',
+        userId: users[5].id,
+        challengeId: challenges[4].id
+      }
+    }),
+    prisma.participation.create({
+      data: {
+        submissionUrl: 'https://youtube.com/watch?v=17',
+        description: 'Hardest challenge ever',
+        userId: users[0].id,
+        challengeId: challenges[4].id
+      }
+    }),
+    // Challenge 5 : 3 participations
+    prisma.participation.create({
+      data: {
+        submissionUrl: 'https://youtube.com/watch?v=18',
+        description: 'God mode beaten',
+        userId: users[6].id,
+        challengeId: challenges[5].id
+      }
+    }),
+    prisma.participation.create({
+      data: {
+        submissionUrl: 'https://youtube.com/watch?v=19',
+        description: 'Finally done',
+        userId: users[7].id,
+        challengeId: challenges[5].id
+      }
+    }),
+    prisma.participation.create({
+      data: {
+        submissionUrl: 'https://youtube.com/watch?v=20',
+        description: 'Epic run',
+        userId: users[1].id,
+        challengeId: challenges[5].id
+      }
+    }),
+    // Challenge 6 : 3 participations
+    prisma.participation.create({
+      data: {
+        submissionUrl: 'https://youtube.com/watch?v=21',
+        description: '100 days survived',
+        userId: users[8].id,
+        challengeId: challenges[6].id
+      }
+    }),
+    prisma.participation.create({
+      data: {
+        submissionUrl: 'https://youtube.com/watch?v=22',
+        description: 'Made it to day 150',
+        userId: users[2].id,
+        challengeId: challenges[6].id
+      }
+    }),
+    prisma.participation.create({
+      data: {
+        submissionUrl: 'https://youtube.com/watch?v=23',
+        description: 'Hardcore legend',
+        userId: users[0].id,
+        challengeId: challenges[6].id
+      }
+    }),
+    // Challenge 7 : 2 participations
+    prisma.participation.create({
+      data: {
+        submissionUrl: 'https://youtube.com/watch?v=24',
+        description: 'All bosses no damage',
+        userId: users[3].id,
+        challengeId: challenges[7].id
+      }
+    }),
+    prisma.participation.create({
+      data: {
+        submissionUrl: 'https://youtube.com/watch?v=25',
+        description: 'Insane run',
+        userId: users[0].id,
+        challengeId: challenges[7].id
       }
     })
   ]);
 
   console.log(`✅ Created ${participations.length} participations`);
+
+  // Créer des votes sur participations (pour le leaderboard "topByLikes")
+  // On va créer beaucoup de votes pour différencier les users
+  await Promise.all([
+    // Alice (users[0]) a beaucoup de likes (elle a 5 participations)
+    prisma.participationVote.create({
+      data: { userId: users[1].id, participationId: participations[0].id }
+    }),
+    prisma.participationVote.create({
+      data: { userId: users[2].id, participationId: participations[0].id }
+    }),
+    prisma.participationVote.create({
+      data: { userId: users[3].id, participationId: participations[0].id }
+    }),
+    prisma.participationVote.create({
+      data: { userId: users[4].id, participationId: participations[5].id }
+    }),
+    prisma.participationVote.create({
+      data: { userId: users[5].id, participationId: participations[5].id }
+    }),
+    prisma.participationVote.create({
+      data: { userId: users[6].id, participationId: participations[11].id }
+    }),
+    prisma.participationVote.create({
+      data: { userId: users[7].id, participationId: participations[11].id }
+    }),
+    prisma.participationVote.create({
+      data: { userId: users[8].id, participationId: participations[16].id }
+    }),
+    prisma.participationVote.create({
+      data: { userId: users[1].id, participationId: participations[22].id }
+    }),
+    prisma.participationVote.create({
+      data: { userId: users[2].id, participationId: participations[24].id }
+    }),
+
+    // Bob (users[1]) a des likes
+    prisma.participationVote.create({
+      data: { userId: users[0].id, participationId: participations[1].id }
+    }),
+    prisma.participationVote.create({
+      data: { userId: users[3].id, participationId: participations[1].id }
+    }),
+    prisma.participationVote.create({
+      data: { userId: users[4].id, participationId: participations[8].id }
+    }),
+    prisma.participationVote.create({
+      data: { userId: users[5].id, participationId: participations[18].id }
+    }),
+
+    // Charlie (users[2])
+    prisma.participationVote.create({
+      data: { userId: users[1].id, participationId: participations[2].id }
+    }),
+    prisma.participationVote.create({
+      data: { userId: users[4].id, participationId: participations[12].id }
+    }),
+    prisma.participationVote.create({
+      data: { userId: users[5].id, participationId: participations[21].id }
+    }),
+
+    // Diana (users[3])
+    prisma.participationVote.create({
+      data: { userId: users[0].id, participationId: participations[3].id }
+    }),
+    prisma.participationVote.create({
+      data: { userId: users[1].id, participationId: participations[13].id }
+    }),
+    prisma.participationVote.create({
+      data: { userId: users[2].id, participationId: participations[23].id }
+    }),
+
+    // Eve (users[4])
+    prisma.participationVote.create({
+      data: { userId: users[0].id, participationId: participations[4].id }
+    }),
+    prisma.participationVote.create({
+      data: { userId: users[1].id, participationId: participations[14].id }
+    }),
+
+    // Frank (users[5])
+    prisma.participationVote.create({
+      data: { userId: users[0].id, participationId: participations[6].id }
+    }),
+    prisma.participationVote.create({
+      data: { userId: users[1].id, participationId: participations[15].id }
+    }),
+
+    // Grace (users[6])
+    prisma.participationVote.create({
+      data: { userId: users[0].id, participationId: participations[7].id }
+    }),
+    prisma.participationVote.create({
+      data: { userId: users[1].id, participationId: participations[17].id }
+    }),
+
+    // Henry (users[7])
+    prisma.participationVote.create({
+      data: { userId: users[0].id, participationId: participations[9].id }
+    }),
+    prisma.participationVote.create({
+      data: { userId: users[2].id, participationId: participations[19].id }
+    }),
+
+    // Iris (users[8])
+    prisma.participationVote.create({
+      data: { userId: users[0].id, participationId: participations[10].id }
+    }),
+    prisma.participationVote.create({
+      data: { userId: users[1].id, participationId: participations[20].id }
+    })
+  ]);
+
+  console.log('✅ Created participation votes');
 
   // Créer des votes sur challenges
   await Promise.all([
@@ -284,63 +577,17 @@ async function main() {
       data: { userId: users[2].id, challengeId: challenges[0].id }
     }),
     prisma.challengeVote.create({
-      data: { userId: users[3].id, challengeId: challenges[0].id }
+      data: { userId: users[3].id, challengeId: challenges[1].id }
     }),
     prisma.challengeVote.create({
-      data: { userId: users[0].id, challengeId: challenges[1].id }
+      data: { userId: users[4].id, challengeId: challenges[2].id }
     }),
     prisma.challengeVote.create({
-      data: { userId: users[2].id, challengeId: challenges[2].id }
+      data: { userId: users[5].id, challengeId: challenges[3].id }
     })
   ]);
 
   console.log('✅ Created challenge votes');
-
-  // Créer des votes sur participations
-  await Promise.all([
-    // Participation 1 : 3 votes
-    prisma.participationVote.create({
-      data: { userId: users[1].id, participationId: participations[0].id }
-    }),
-    prisma.participationVote.create({
-      data: { userId: users[2].id, participationId: participations[0].id }
-    }),
-    prisma.participationVote.create({
-      data: { userId: users[3].id, participationId: participations[0].id }
-    }),
-    // Participation 2 : 5 votes
-    prisma.participationVote.create({
-      data: { userId: users[0].id, participationId: participations[1].id }
-    }),
-    prisma.participationVote.create({
-      data: { userId: users[2].id, participationId: participations[1].id }
-    }),
-    prisma.participationVote.create({
-      data: { userId: users[3].id, participationId: participations[1].id }
-    }),
-    // Participation 3 : 2 votes
-    prisma.participationVote.create({
-      data: { userId: users[0].id, participationId: participations[2].id }
-    }),
-    prisma.participationVote.create({
-      data: { userId: users[1].id, participationId: participations[2].id }
-    }),
-    // Participation 7 : 4 votes
-    prisma.participationVote.create({
-      data: { userId: users[0].id, participationId: participations[6].id }
-    }),
-    prisma.participationVote.create({
-      data: { userId: users[1].id, participationId: participations[6].id }
-    }),
-    prisma.participationVote.create({
-      data: { userId: users[2].id, participationId: participations[6].id }
-    }),
-    prisma.participationVote.create({
-      data: { userId: users[3].id, participationId: participations[6].id }
-    })
-  ]);
-
-  console.log('✅ Created participation votes');
 
   console.log('🎉 Seed completed!');
 }
