@@ -36,6 +36,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 
-# nodemodules
-echo "node_modules/" >> .gitignore
+
+/generated/prisma
+
+/generated/prisma
 

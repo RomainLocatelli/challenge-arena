@@ -14,7 +14,6 @@ services:
       - ./api:/app
       - /app/node_modules
     command: npm run dev
-
     networks:
       - gamer-network
 
