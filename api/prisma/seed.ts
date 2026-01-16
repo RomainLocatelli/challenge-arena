@@ -143,6 +143,7 @@ async function main() {
     prisma.challenge.create({
       data: {
         title: 'Speedrun Any%',
+        slug: 'speedrun-any-percent',
         scoreFormat: 'time',
         description: 'Complete the game as fast as possible',
         gameId: games[0].id,
@@ -152,6 +153,7 @@ async function main() {
     prisma.challenge.create({
       data: {
         title: 'No Hit Challenge',
+        slug: 'no-hit-challenge',
         scoreFormat: 'boolean',
         description: 'Complete without taking damage',
         gameId: games[0].id,
@@ -161,6 +163,7 @@ async function main() {
     prisma.challenge.create({
       data: {
         title: 'Death March Difficulty',
+        slug: 'death-march-difficulty',
         scoreFormat: 'score',
         description: 'Complete on hardest difficulty',
         gameId: games[1].id,
@@ -170,6 +173,7 @@ async function main() {
     prisma.challenge.create({
       data: {
         title: 'All Achievements',
+        slug: 'all-achievements',
         scoreFormat: 'score',
         description: 'Unlock all achievements',
         gameId: games[1].id,
@@ -179,6 +183,7 @@ async function main() {
     prisma.challenge.create({
       data: {
         title: 'God Mode',
+        slug: 'god-mode',
         scoreFormat: 'time',
         description: 'Complete on God difficulty',
         gameId: games[2].id,
