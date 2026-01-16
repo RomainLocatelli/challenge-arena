@@ -45,7 +45,7 @@ services:
     ports:
       - "8008:8008"
     environment:
-      API_URL: ${NEXT_PUBLIC_API_URL}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
       PORT: 8008
     depends_on:
       - api
