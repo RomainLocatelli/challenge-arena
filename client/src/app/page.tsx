@@ -108,16 +108,16 @@ export default function Home() {
   }
 
   // Challenges shown on screen
-  function challengesShownOnPage(games: Challenge[], index: number) {
-    const challenge = games[index];
-    const challenge2 = games[index + 1];
+  function challengesShownOnPage(challenges: Challenge[], index: number) {
+    const challenge = challenges[index];
+    const challenge2 = challenges[index + 1];
 
     return (
       <div className="flex flex-col gap-4 m-3 mb-5">
         <div className="lg:hidden">
           <div
             key={challenge.id}
-            className="rounded-2xl bg-slate-900/70 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden"
+            className="rounded-2xl mb-6 bg-slate-900/70 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden"
           >
             <div className="p-5 flex flex-col h-full">
               {/* Tag / jeu */}
@@ -156,20 +156,95 @@ export default function Home() {
               </div>
             </div>
           </div>
+          <div
+            key={challenge2.id}
+            className="rounded-2xl bg-slate-900/70 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden"
+          >
+            <div className="p-5 flex flex-col h-full">
+              {/* Tag / jeu */}
+              <div className="text-xs font-semibold tracking-widest text-purple-300/90 mb-2">
+                {(challenge2.game.title ?? challenge2.title).toUpperCase()}
+              </div>
+
+              {/* Titre */}
+              <div className="text-2xl font-semibold leading-tight mb-2">{challenge2.title}</div>
+
+              {/* Description */}
+              <div className="text-white/70 leading-relaxed mb-4">{challenge2.description}</div>
+
+              {/* votes + bouton */}
+              <div className="mt-auto flex items-center justify-between pt-2">
+                <div className="flex items-center gap-2 text-white/70">
+                  <span className="relative w-8 h-8 shrink-0">
+                    {/* <Image
+                      src={challenge2.hasLiked ? '/like 1.png' : '/like 0.png'}
+                      alt={challenge2.hasLiked ? 'Liked' : 'Not liked'}
+                      fill
+                      sizes="32px"
+                      className="object-contain"
+                    /> */}
+                  </span>
+                  <span className="text-sm font-semibold">{formatVotes(challenge2.voteCount)}</span>
+                  <span className="text-sm">likes</span>
+                </div>
+
+                <button
+                  type="button"
+                  className="px-4 py-2 rounded-xl bg-amber-600/80 hover:bg-amber-600 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                >
+                  Details
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="hidden lg:grid lg:grid-cols-4 lg:gap-10">
-          {games.map((game) => {
+          {challenges.map((challenge) => {
             return (
-              <Link key={game.id} href={`/games/${game.id}`} className="bg-(--button-area)">
-                {/* <Image
-                  src={game.imageUrl}
-                  width={160}
-                  height={160}
-                  alt="gamerchallenge logo"
-                ></Image> */}
-                <h3 className="text-center">{game.title}</h3>
-              </Link>
+              <div
+                key={challenge.id}
+                className="rounded-2xl bg-slate-900/70 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden"
+              >
+                <div className="p-5 flex flex-col h-full">
+                  {/* Tag / jeu */}
+                  <div className="text-xs font-semibold tracking-widest text-purple-300/90 mb-2">
+                    {(challenge.game.title ?? challenge.title).toUpperCase()}
+                  </div>
+
+                  {/* Titre */}
+                  <div className="text-2xl font-semibold leading-tight mb-2">{challenge.title}</div>
+
+                  {/* Description */}
+                  <div className="text-white/70 leading-relaxed mb-4">{challenge.description}</div>
+
+                  {/* votes + bouton */}
+                  <div className="mt-auto flex items-center justify-between pt-2">
+                    <div className="flex items-center gap-2 text-white/70">
+                      <span className="relative w-8 h-8 shrink-0">
+                        {/* <Image
+                      src={challenge.hasLiked ? '/like 1.png' : '/like 0.png'}
+                      alt={challenge.hasLiked ? 'Liked' : 'Not liked'}
+                      fill
+                      sizes="32px"
+                      className="object-contain"
+                    /> */}
+                      </span>
+                      <span className="text-sm font-semibold">
+                        {formatVotes(challenge.voteCount)}
+                      </span>
+                      <span className="text-sm">likes</span>
+                    </div>
+
+                    <button
+                      type="button"
+                      className="px-4 py-2 rounded-xl bg-amber-600/80 hover:bg-amber-600 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                    >
+                      Details
+                    </button>
+                  </div>
+                </div>
+              </div>
             );
           })}
         </div>
@@ -264,7 +339,7 @@ export default function Home() {
             ></Image>
           </button>
           {homePageChallenges.length > 0 &&
-            challengesShownOnPage(homePageChallenges, currentGameIndex)}
+            challengesShownOnPage(homePageChallenges, currentChallengeIndex)}
           <button type="button" onClick={handleNextChallenge} className="lg:hidden">
             <Image
               src="/arrow-right.png"
