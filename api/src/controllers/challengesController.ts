@@ -1,5 +1,6 @@
 // getAllChallenges : liste tous les challenges avec leurs jeux associés, triés par date de création (plus récent en premier).
 // getChallengeById : récupère un challenge avec son jeu et ses participations
+// getChallengeBySlug : récupère un challenge avec son jeu et ses participations
 // createChallenge : avec les infos du front, on créer un challenge, on insère le jeu en BDD s'il n'existe pas
 // updateChallenge : modofie un challenge
 
@@ -47,26 +48,64 @@ export const getChallengeById = async (req: Request, res: Response, next: NextFu
   }
 };
 
+export const getChallengeBySlug = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { slug } = req.params
+
+    const challenge = await prisma.challenge.findUnique({
+      where: { slug },
+      include: {
+        game: true,
+        participations: {
+          include: { user: true },
+          orderBy: { createdAt: 'desc' }
+        }
+      }
+    })
+
+    if (!challenge) {
+      throw new AppError('Challenge not found', 404)
+    }
+
+    res.json({ challenge })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const createChallenge = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { title, scoreFormat, description, gameId, gameTitle, gameImageUrl } = req.body;
+    const { title, scoreFormat, description, gameId, gameTitle, gameSlug, gameImageUrl } = req.body;
     const userId = req.userId;
 
     if (!userId) {
       throw new AppError('User not authenticated', 401);
     }
 
-    // 1. Vérifier si le jeu existe déjà en base
-    let game = await prisma.game.findUnique({ where: { id: gameId } });
+    // Générer le slug du challenge depuis le titre
+    const challengeSlug = title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')  // Remplace caractères spéciaux par -
+      .replace(/^-+|-+$/g, '');      // Enlève les - au début/fin
 
-    // 2. Si non, le créer avec les infos de l'autocomplete (sans description)
+    // Convertir gameId en string (car RAWG renvoie un Number)
+    const gameIdString = String(gameId);
+
+    // 1. Vérifier si le jeu existe déjà en base
+    let game = await prisma.game.findUnique({ where: { id: gameIdString } });
+
+    // 2. Si non, le créer avec les infos de l'autocomplete
     if (!game) {
       game = await prisma.game.create({
         data: {
-          id: gameId,
+          id: gameIdString,
+          slug: gameSlug,
           title: gameTitle,
           imageUrl: gameImageUrl || '',
-          description: '' // Vide pour l'instant
         }
       });
     }
@@ -75,6 +114,7 @@ export const createChallenge = async (req: Request, res: Response, next: NextFun
     const challenge = await prisma.challenge.create({
       data: {
         title,
+        slug: challengeSlug,
         scoreFormat,
         description,
         gameId: game.id,

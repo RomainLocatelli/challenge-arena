@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { 
   getAllChallenges, 
-  getChallengeById,
+  getChallengeBySlug,
   createChallenge,
   updateChallenge,
   deleteChallenge
@@ -10,7 +10,7 @@ import { authMiddleware } from '../middlewares/auth.js'
 
 const router = Router()
 
-router.get('/:id', getChallengeById)
+router.get('/:slug', getChallengeBySlug)
 router.get('/', getAllChallenges)
 router.post('/', authMiddleware, createChallenge)
 router.patch('/:id', authMiddleware, updateChallenge)
