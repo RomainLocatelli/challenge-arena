@@ -85,6 +85,54 @@ async function main() {
         title: 'God of War',
         imageUrl: 'https://media.rawg.io/media/games/4be/4be6a6ad0364751a96229c56bf69be59.jpg'
       }
+    }),
+    prisma.game.create({
+      data: {
+        id: '3498',
+        slug: 'grand-theft-auto-v',
+        title: 'Grand Theft Auto V',
+        imageUrl: 'https://media.rawg.io/media/games/20a/20aa03a10cda45239fe22d035c0ebe64.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '4200',
+        slug: 'portal-2',
+        title: 'Portal 2',
+        imageUrl: 'https://media.rawg.io/media/games/328/3283617cb7d75d67257fc58339188742.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '5286',
+        slug: 'tomb-raider',
+        title: 'Tomb Raider (2013)',
+        imageUrl: 'https://media.rawg.io/media/games/021/021c4e21a1824d2526f925eff6324653.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '13536',
+        slug: 'portal',
+        title: 'Portal',
+        imageUrl: 'https://media.rawg.io/media/games/7fa/7fa0b586293c5861ee32490e953a4996.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '12020',
+        slug: 'left-4-dead-2',
+        title: 'Left 4 Dead 2',
+        imageUrl: 'https://media.rawg.io/media/games/d58/d588947d4286e7b5e0e12e1bea7d9844.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '4291',
+        slug: 'counter-strike-global-offensive',
+        title: 'Counter-Strike: Global Offensive',
+        imageUrl: 'https://media.rawg.io/media/games/736/73619bd336c894d6941d926bfd563946.jpg'
+      }
     })
   ]);
 
