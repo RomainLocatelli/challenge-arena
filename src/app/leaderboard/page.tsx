@@ -1,6 +1,7 @@
 'use client';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import PodiumStars from './component/starry-background';
 
 export default function Leaderboard() {
   // BDD types
@@ -83,7 +84,7 @@ export default function Leaderboard() {
   function getBgClass(rank: number, isCurrentUser: boolean): string {
     if (isCurrentUser) {
       if (rank === 1) {
-        return 'bg-(--leadboard-first)';
+        return 'bg-(--leadboard-first) ';
       }
       if (rank === 2) {
         return 'bg-(--leadboard-second)';
@@ -94,13 +95,13 @@ export default function Leaderboard() {
       return 'bg-(--leadboard-me)';
     }
     if (rank === 1) {
-      return 'bg-(--leadboard-first)';
+      return 'bg-(--leadboard-first) mb-5 p-4';
     }
     if (rank === 2) {
-      return 'bg-(--leadboard-second)';
+      return 'bg-(--leadboard-second) mb-3 p-3';
     }
     if (rank === 3) {
-      return 'bg-(--leadboard-third)';
+      return 'bg-(--leadboard-third) mb-2.5 p-2.5';
     }
     return rank % 2 ? 'bg-(--leadboard-mix-one)' : 'bg-(--leadboard-mix-two)';
   }
@@ -110,17 +111,22 @@ export default function Leaderboard() {
     const { rank, username, score } = user;
     const bgClass = getBgClass(rank, isCurrentUser);
     const rankText = `${rank}${getOrdinalSuffix(rank)}`;
+    const isPodium = rank <= 3 && !isCurrentUser;
 
     return (
       <li
         key={`${username}-${isCurrentUser ? 'me' : 'rank'}`}
-        className={`flex justify-between ${bgClass} rounded-2xl p-2 mb-2 ${isCurrentUser ? 'mt-5' : ''}`}
+        className={`flex justify-between ${bgClass} rounded-2xl p-2 mb-2 ${isCurrentUser ? 'mt-5' : ''} relative overflow-hidden`}
       >
-        <div className="flex">
+        {/* Étoiles en arrière-plan pour le podium */}
+        {isPodium && <PodiumStars />}
+
+        {/* Contenu principal (au-dessus des étoiles) */}
+        <div className="flex relative z-10">
           <p className="ml-2">{rankText}</p>
           <p className="ml-5">{username}</p>
         </div>
-        <p className="mr-5">{score}</p>
+        <p className="mr-5 relative z-10">{score}</p>
       </li>
     );
   }
@@ -130,20 +136,7 @@ export default function Leaderboard() {
     const sortedUsers = getSortedArrayWithRanks(userArray);
     const currentUser = sortedUsers.find((user) => user.username === currentUsername);
 
-    // Create a 10 slot array, put the actual player from the bdd and keep the empty slot
-    const leaderboardSlots = Array.from({ length: 10 }, (_, index) => {
-      const rank = index + 1;
-      const user = sortedUsers[index];
-
-      if (user) {
-        // actual user
-        return renderUserItem(user);
-      } else {
-        // Empty slot
-        return renderEmptySlot(rank);
-      }
-    });
-
+    // Fonction pour afficher un emplacement vide
     function renderEmptySlot(rank: number) {
       const bgClass = getBgClass(rank, false);
       const rankText = `${rank}${getOrdinalSuffix(rank)}`;
@@ -161,6 +154,20 @@ export default function Leaderboard() {
         </li>
       );
     }
+
+    // Create a 10 slot array, put the actual player from the bdd and keep the empty slot
+    const leaderboardSlots = Array.from({ length: 10 }, (_, index) => {
+      const rank = index + 1;
+      const user = sortedUsers[index];
+
+      if (user) {
+        // actual user
+        return renderUserItem(user);
+      } else {
+        // Empty slot
+        return renderEmptySlot(rank);
+      }
+    });
 
     return (
       <>
