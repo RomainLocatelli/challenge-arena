@@ -116,11 +116,11 @@ export default function Leaderboard() {
         key={`${username}-${isCurrentUser ? 'me' : 'rank'}`}
         className={`flex justify-between ${bgClass} rounded-2xl p-2 mb-2 ${isCurrentUser ? 'mt-5' : ''}`}
       >
-        <p>{rankText}</p>
         <div className="flex">
-          <p className="mr-5">{username}</p>
-          <p className="ml-5">{score}</p>
+          <p className="ml-2">{rankText}</p>
+          <p className="ml-5">{username}</p>
         </div>
+        <p className="mr-5">{score}</p>
       </li>
     );
   }
