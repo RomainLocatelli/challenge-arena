@@ -13,10 +13,9 @@ const animations = [
 export default function PodiumStars() {
   const [stars] = useState(() => {
     const opacities = [
-      'bg-white/40',
-      'bg-[url(/real-rat.png)] bg-cover',
-      'bg-white/60',
-      'bg-white/70'
+      'bg-[url(/star-blue.png)] bg-cover',
+      'bg-[url(/star-purple.png)] bg-cover',
+      'bg-[url(/star-red.png)] bg-cover'
     ];
 
     return Array.from({ length: 35 }, (_, i) => ({
