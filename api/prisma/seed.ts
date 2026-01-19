@@ -108,49 +108,116 @@ async function main() {
 
   console.log(`✅ Created ${users.length} users`);
 
-  // Créer des games
-  const games = await Promise.all([
-    prisma.game.create({
-      data: {
-        id: '326243',
-        slug: 'elden-ring',
-        title: 'Elden Ring',
-        imageUrl: 'https://media.rawg.io/media/games/5ec/5ecac5cb026ec26a56efcc546364e348.jpg'
-      }
-    }),
-    prisma.game.create({
-      data: {
-        id: '3328',
-        slug: 'the-witcher-3-wild-hunt',
-        title: 'The Witcher 3',
-        imageUrl: 'https://media.rawg.io/media/games/618/618c2031a07bbff6b4f611f10b6bcdbc.jpg'
-      }
-    }),
-    prisma.game.create({
-      data: {
-        id: '12447',
-        slug: 'dark-souls',
-        title: 'Dark Souls',
-        imageUrl: 'https://media.rawg.io/media/games/559/559bc0768f656ad0c63c54b80a82d680.jpg'
-      }
-    }),
-    prisma.game.create({
-      data: {
-        id: '58175',
-        slug: 'god-of-war-2018',
-        title: 'God of War (2018)',
-        imageUrl: 'https://media.rawg.io/media/games/4be/4be6a6ad0364751a96229c56bf69be59.jpg'
-      }
-    }),
-    prisma.game.create({
-      data: {
-        id: '22509',
-        slug: 'minecraft',
-        title: 'Minecraft',
-        imageUrl: 'https://media.rawg.io/media/games/b4e/b4e4c73d5aa4ec66bbf75375c4847a2b.jpg'
-      }
-    })
-  ]);
+// Créer des games
+const games = await Promise.all([
+  prisma.game.create({
+    data: {
+      id: '326243',
+      slug: 'elden-ring',
+      title: 'Elden Ring',
+      imageUrl: 'https://media.rawg.io/media/games/5ec/5ecac5cb026ec26a56efcc546364e348.jpg'
+    }
+  }),
+  prisma.game.create({
+    data: {
+      id: '3328',
+      slug: 'the-witcher-3-wild-hunt',
+      title: 'The Witcher 3',
+      imageUrl: 'https://media.rawg.io/media/games/618/618c2031a07bbff6b4f611f10b6bcdbc.jpg'
+    }
+  }),
+  prisma.game.create({
+    data: {
+      id: '12447',
+      slug: 'dark-souls',
+      title: 'Dark Souls',
+      imageUrl: 'https://media.rawg.io/media/games/559/559bc0768f656ad0c63c54b80a82d680.jpg'
+    }
+  }),
+  prisma.game.create({
+    data: {
+      id: '58175',
+      slug: 'god-of-war-2018',
+      title: 'God of War (2018)',
+      imageUrl: 'https://media.rawg.io/media/games/4be/4be6a6ad0364751a96229c56bf69be59.jpg'
+    }
+  }),
+  prisma.game.create({
+    data: {
+      id: '22509',
+      slug: 'minecraft',
+      title: 'Minecraft',
+      imageUrl: 'https://media.rawg.io/media/games/b4e/b4e4c73d5aa4ec66bbf75375c4847a2b.jpg'
+    }
+  }),
+
+  // Autres jeux à supprimer plus tard
+  prisma.game.create({
+    data: {
+      id: "5679",
+      slug: "the-elder-scrolls-v-skyrim",
+      title: "The Elder Scrolls V: Skyrim",
+      imageUrl: "https://media.rawg.io/media/games/7a6/7a6e6c8ab1c0f1b2e24b2a2b1b7fdbd8.jpg",
+    },
+  }),
+  prisma.game.create({
+    data: {
+      id: "3498",
+      slug: "grand-theft-auto-v",
+      title: "Grand Theft Auto V",
+      imageUrl: "https://media.rawg.io/media/games/456/456dea5e1c7e3cd07060c14e96612001.jpg",
+    },
+  }),
+  prisma.game.create({
+    data: {
+      id: "4200",
+      slug: "portal-2",
+      title: "Portal 2",
+      imageUrl: "https://media.rawg.io/media/games/328/3283617cb7d75d67257fc58339188742.jpg",
+    },
+  }),
+  prisma.game.create({
+    data: {
+      id: "28",
+      slug: "red-dead-redemption-2",
+      title: "Red Dead Redemption 2",
+      imageUrl: "https://media.rawg.io/media/games/511/5117f9f9b8a5b2b3fbd6a3c8d7f7c6a1.jpg",
+    },
+  }),
+  prisma.game.create({
+    data: {
+      id: "1030",
+      slug: "limbo",
+      title: "LIMBO",
+      imageUrl: "https://media.rawg.io/media/games/2d4/2d4b8b13c7d2f1736d9877c3c9b1e6fe.jpg",
+    },
+  }),
+  prisma.game.create({
+    data: {
+      id: "22511",
+      slug: "the-legend-of-zelda-breath-of-the-wild",
+      title: "The Legend of Zelda: Breath of the Wild",
+      imageUrl: "https://media.rawg.io/media/games/cc1/cc1f996a9c0d2d1c2f9f2d46b3bb55d0.jpg",
+    },
+  }),
+  prisma.game.create({
+    data: {
+      id: "13536",
+      slug: "hollow-knight",
+      title: "Hollow Knight",
+      imageUrl: "https://media.rawg.io/media/games/1f5/1f5dfb8d5b0c9b62b9a7a1c8a6b7e9f0.jpg",
+    },
+  }),
+  prisma.game.create({
+    data: {
+      id: "58175",
+      slug: "hades",
+      title: "Hades",
+      imageUrl: "https://media.rawg.io/media/games/9f1/9f1c4a9a2b9b8a2a4a7d8d6b5a1b2c3d.jpg",
+    },
+  }),
+  // Fin des autres jeux
+]);
 
   console.log(`✅ Created ${games.length} games`);
 
