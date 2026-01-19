@@ -40,6 +40,12 @@ type Challenge = {
   game: Game;
 };
 
+type Game = {
+  id: string;
+  slug: string;
+  title: string;
+  imageUrl: string;
+};
 export default function ChallengesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);

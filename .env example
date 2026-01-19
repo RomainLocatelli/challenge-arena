@@ -4,10 +4,7 @@ POSTGRES_PASSWORD=***REMOVED***
 POSTGRES_DB=gamerchallengedb
 
 # API
-
 JWT_SECRET=***REMOVED***
 DATABASE_URL=postgresql://gcpgdbadmin:***REMOVED***@my-little-db:5432/gamerchallengedb
-
 # Client
-
-NEXT_PUBLIC_API_URL=http://localhost:3000
+NEXT_PUBLIC_API_URL=http://localhost:3000/
