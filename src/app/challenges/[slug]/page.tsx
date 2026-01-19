@@ -781,12 +781,11 @@ const deleteActiveParticipation = async () => {
                       Submit
                     </button>
                   </>
-               )}
+                )}
               </div>
             </div>
           </div>
         ) : null}
-
       </main>
     </div>
   );
