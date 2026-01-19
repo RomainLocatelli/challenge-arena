@@ -80,6 +80,7 @@ export default function Home() {
 
     return (
       <div>
+        {/* Mobile game shown */}
         <div className="bg-(--button-area)  rounded-4xl ">
           <Link key={game.id} href={`/games/${game.id}`} className="lg:hidden">
             <Image
@@ -92,13 +93,14 @@ export default function Home() {
             <h3 className="text-center mt-2 lg:hidden ">{game.title}</h3>
           </Link>
         </div>
+        {/* Desktop games shown */}
         <div className="hidden lg:flex lg:gap-10 h-50 ">
           {games.map((game) => {
             return (
               <Link
                 key={game.id}
                 href={`/games/${game.id}`}
-                className="bg-(--button-area)  rounded-4xl"
+                className="bg-(--button-area) hover:outline-double  outline-(--button-select) rounded-4xl transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110"
               >
                 <Image
                   src={game.imageUrl}
@@ -123,10 +125,11 @@ export default function Home() {
 
     return (
       <div className="flex flex-col gap-4 m-3 mb-5">
+        {/* Mobile version */}
         <div className="lg:hidden">
           <div
             key={challenge.id}
-            className="rounded-2xl mb-6 bg-slate-900/70 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden"
+            className="rounded-2xl mb-6 bg-slate-900/70 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] h-60 w-50 overflow-hidden"
           >
             <div className="p-5 flex flex-col h-full">
               {/* Tag / jeu */}
@@ -142,7 +145,7 @@ export default function Home() {
 
               {/* votes + bouton */}
               <div className="mt-auto flex items-center justify-between pt-2">
-                <div className="flex items-center gap-2 text-white/70">
+                <div className=" items-center gap-2 text-white/70">
                   <span className="relative w-8 h-8 shrink-0">
                     {/* <Image
                       src={challenge.hasLiked ? '/like 1.png' : '/like 0.png'}
@@ -153,7 +156,7 @@ export default function Home() {
                     /> */}
                   </span>
                   <span className="text-sm font-semibold">{formatVotes(challenge.voteCount)}</span>
-                  <span className="text-sm">likes</span>
+                  <span className="text-sm"> likes</span>
                 </div>
 
                 <button
@@ -167,7 +170,7 @@ export default function Home() {
           </div>
           <div
             key={challenge2.id}
-            className="rounded-2xl bg-slate-900/70 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden"
+            className="rounded-2xl bg-slate-900/70 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] h-60  w-50 overflow-hidden"
           >
             <div className="p-5 flex flex-col h-full">
               {/* Tag / jeu */}
@@ -183,7 +186,7 @@ export default function Home() {
 
               {/* votes + bouton */}
               <div className="mt-auto flex items-center justify-between pt-2">
-                <div className="flex items-center gap-2 text-white/70">
+                <div className="items-center gap-2 text-white/70">
                   <span className="relative w-8 h-8 shrink-0">
                     {/* <Image
                       src={challenge2.hasLiked ? '/like 1.png' : '/like 0.png'}
@@ -194,7 +197,7 @@ export default function Home() {
                     /> */}
                   </span>
                   <span className="text-sm font-semibold">{formatVotes(challenge2.voteCount)}</span>
-                  <span className="text-sm">likes</span>
+                  <span className="text-sm"> likes</span>
                 </div>
 
                 <button
@@ -208,12 +211,13 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Desktop version */}
         <div className="hidden lg:grid lg:grid-cols-4 lg:gap-10">
           {challenges.map((challenge) => {
             return (
               <div
                 key={challenge.id}
-                className="rounded-2xl bg-slate-900/70 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden"
+                className="rounded-2xl bg-slate-900/70 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] h-60 hover:outline-double  outline-(--button-select) transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 overflow-hidden"
               >
                 <div className="p-5 flex flex-col h-full">
                   {/* Tag / jeu */}
@@ -229,7 +233,7 @@ export default function Home() {
 
                   {/* votes + bouton */}
                   <div className="mt-auto flex items-center justify-between pt-2">
-                    <div className="flex items-center gap-2 text-white/70">
+                    <div className="items-center gap-2 text-white/70">
                       <span className="relative w-8 h-8 shrink-0">
                         {/* <Image
                       src={challenge.hasLiked ? '/like 1.png' : '/like 0.png'}
@@ -242,7 +246,7 @@ export default function Home() {
                       <span className="text-sm font-semibold">
                         {formatVotes(challenge.voteCount)}
                       </span>
-                      <span className="text-sm">likes</span>
+                      <span className="text-sm"> likes</span>
                     </div>
 
                     <button
@@ -264,7 +268,7 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* GamerChallenge news area */}
-      <div className="bg-[url(/baniere-leaderboard.png)] bg-no-repeat bg-cover h-50 text-center">
+      <div className="bg-[url(/baniere-leaderboard.png)] bg-no-repeat bg-cover h-50 text-center m-5 rounded-4xl">
         <p>This is where the news come in</p>
       </div>
       <nav className="flex justify-center mb-8">
@@ -291,7 +295,7 @@ export default function Home() {
             <strong>Trending games</strong>
           </p>
           <Link href="/games">
-            <button className="bg-(--button-area) p-2 pr-3 pl-3 rounded-3xl cursor-pointer">
+            <button className="bg-(--button-area) hover:bg-(--button-select) p-2 pr-3 pl-3 rounded-3xl cursor-pointer">
               View all
             </button>
           </Link>
@@ -332,7 +336,7 @@ export default function Home() {
             <strong>Trending challenges</strong>
           </p>
           <Link href="/challenges">
-            <button className="bg-(--button-area) p-2 pr-3 pl-3 rounded-3xl cursor-pointer">
+            <button className="bg-(--button-area) hover:bg-(--button-select) p-2 pr-3 pl-3 rounded-3xl cursor-pointer">
               View all
             </button>
           </Link>
