@@ -46,13 +46,13 @@ export default function Home() {
   // Game shown on screen
   function gamesShownOnPage(games: Game[]) {
     return (
-      <div className="flex scroll-smooth overflow-x-auto overflow-scroll min-w-40 gap-10 h-53  lg:snap-none lg:overflow-auto pb-4 snap-x">
+      <div className="flex scroll-smooth overflow-x-auto overflow-scroll min-w-40  h-63  lg:snap-none lg:overflow-y-visible pb-5 snap-x ml-3 mr-3 ">
         {games.map((game) => {
           return (
             <Link
               key={game.id}
               href={`/games/${game.id}`}
-              className="bg-(--button-area) shrink-0 rounded-4xl snap-center"
+              className="bg-(--button-area) hover:outline-double  outline-(--button-select) shrink-0 rounded-4xl snap-centertransition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 mt-5 ml-5 mr-5"
             >
               <Image
                 src={game.imageUrl}
@@ -72,13 +72,13 @@ export default function Home() {
   // Challenges shown on screen
   function challengesShownOnPage(challenges: Challenge[]) {
     return (
-      <div className="flex gap-10 scroll-smooth overflow-x-auto overflow-y-hidden snap-x snap-mandatory m-3 mb-5 pb-4 lg:block">
-        <div className="grid grid-rows-2 grid-flow-col lg:grid-cols-4 gap-10 w-max">
+      <div className="flex gap-10 scroll-smooth overflow-x-auto overflow-y-hidden snap-x snap-mandatory m-3 mb-5 pb-4 lg:block lg:overflow-y-visible">
+        <div className="grid grid-rows-2 grid-flow-col gap-10 w-max m-5">
           {challenges.map((challenge) => {
             return (
               <div
                 key={challenge.id}
-                className="rounded-2xl shrink-0 snap-center bg-slate-900/70 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] w-70"
+                className="rounded-2xl shrink-0 snap-center bg-slate-900/70 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] w-60 lg:w-70 hover:outline-double  outline-(--button-select) delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 "
               >
                 <div className="p-5 flex flex-col h-full">
                   {/* Tag / jeu */}
@@ -164,7 +164,7 @@ export default function Home() {
         </div>
       </div>
       {/* show trending games */}
-      <section className="flex justify-between mr-5 ml-5 mb-10 lg:justify-center ">
+      <section className="flex justify-between mr-5 ml-5 mb-10  lg:justify-center ">
         {gamesShownOnPage(homePageGames)}
       </section>
 
