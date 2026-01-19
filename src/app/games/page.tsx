@@ -34,7 +34,7 @@ export default function GamesPage() {
   useEffect(() => {
     async function getAllGames() {
       const registerUrl = process.env.API_URL || '';
-      const response = await fetch(registerUrl);
+      const response = await fetch(`${registerUrl}games`);
       const replyDb = await response.json();
 
       setGames(replyDb.topGames);
