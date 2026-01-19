@@ -1,0 +1,386 @@
+"use client";
+
+import { useState, useEffect, useMemo } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+
+// hook responsive
+function useMediaQuery(query: string) {
+    const [matches, setMatches] = useState(false);
+
+    useEffect(() => {
+        const mq = window.matchMedia(query);
+        const onChange = () => setMatches(mq.matches);
+
+    onChange();
+    mq.addEventListener?.("change", onChange);
+    return () => mq.removeEventListener?.("change", onChange);
+    }, [query]);
+
+    return matches;
+}
+
+type Game = {
+    id: string;
+    title: string;
+    image: string;
+};
+
+type Challenge = {
+    id: string;
+    gameId: string;
+    gameTitle: string;
+    gameImage: string;
+    title: string;
+    description: string;
+    likes: number;
+    hasLiked?: boolean;
+    tag?: string;
+};
+
+export default function GameChallengesPage() {
+    const params = useParams() as { slug?: string } | undefined;
+    const slug = params?.slug;
+
+    const [searchQuery, setSearchQuery] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageBlockStart, setPageBlockStart] = useState(2);
+
+    const ismd = useMediaQuery("(min-width: 768px)");
+    const itemsPerPage = ismd ? 6 : 4;
+
+    // TODO: remplacer par tes jeux réels
+    const games: Game[] = [
+        { id: "hollow-knight", title: "Hollow Knight", image: "/real-rat.png" },
+        { id: "elden-ring", title: "Elden Ring", image: "/real-rat.png" },
+        { id: "skyrim", title: "Skyrim", image: "/real-rat.png" },
+        { id: "celeste", title: "Celeste", image: "/real-rat.png" },
+    ];
+
+    // TODO: remplacer par tes challenges réels
+    const challenges: Challenge[] = [
+    {
+        id: "hollow-knight-steel-soul-no-spells",
+        gameId: "hollow-knight",
+        gameTitle: "Hollow Knight",
+        gameImage: "/real-rat.png",
+        tag: "HOLLOW KNIGHT",
+        title: "Steel Soul: No Spells",
+        description: "Defeat any major boss in Steel Soul mode without using spells.",
+        likes: 388,
+    },
+    {
+        id: "hollow-knight-pantheon-no-charms",
+        gameId: "hollow-knight",
+        gameTitle: "Hollow Knight",
+        gameImage: "/real-rat.png",
+        tag: "HOLLOW KNIGHT",
+        title: "Pantheon: No Charms",
+        description: "Clear any Pantheon with no charms equipped.",
+        likes: 512,
+    },
+    {
+        id: "hollow-knight-speedrun-city-of-tears",
+        gameId: "hollow-knight",
+        gameTitle: "Hollow Knight",
+        gameImage: "/real-rat.png",
+        tag: "HOLLOW KNIGHT",
+        title: "City of Tears Rush",
+        description: "Reach the City of Tears in under 45 minutes on a fresh save.",
+        likes: 274,
+    },
+    {
+        id: "elden-ring-no-hit-boss",
+        gameId: "elden-ring",
+        gameTitle: "Elden Ring",
+        gameImage: "/real-rat.png",
+        tag: "ELDEN RING",
+        title: "No-Hit Boss",
+        description: "Defeat any major boss without taking damage.",
+        likes: 642,
+    },
+    {
+        id: "elden-ring-level-1-rememberance",
+        gameId: "elden-ring",
+        gameTitle: "Elden Ring",
+        gameImage: "/real-rat.png",
+        tag: "ELDEN RING",
+        title: "RL1 Remembrance",
+        description: "Defeat any Remembrance boss at Rune Level 1.",
+        likes: 901,
+    },
+    {
+        id: "elden-ring-no-summons-run",
+        gameId: "elden-ring",
+        gameTitle: "Elden Ring",
+        gameImage: "/real-rat.png",
+        tag: "ELDEN RING",
+        title: "No Summons Run",
+        description: "Beat a major boss without Spirit Ashes or co-op summons.",
+        likes: 733,
+    },
+    {
+        id: "skyrim-ironman-first-dragon",
+        gameId: "skyrim",
+        gameTitle: "The Elder Scrolls V: Skyrim",
+        gameImage: "/real-rat.png",
+        tag: "SKYRIM",
+        title: "Ironman: First Dragon",
+        description:
+        "Defeat Mirmulnir (the first dragon) on Adept+ without dying, followers, or potions.",
+        likes: 620,
+    },
+    {
+        id: "skyrim-stealth-only-dungeon",
+        gameId: "skyrim",
+        gameTitle: "The Elder Scrolls V: Skyrim",
+        gameImage: "/real-rat.png",
+        tag: "SKYRIM",
+        title: "Ghost in the Dungeon",
+        description: "Clear any Nordic Ruin without being detected (no combat alerts).",
+        likes: 455,
+    },
+    {
+        id: "skyrim-no-fast-travel-questline",
+        gameId: "skyrim",
+        gameTitle: "The Elder Scrolls V: Skyrim",
+        gameImage: "/real-rat.png",
+        tag: "SKYRIM",
+        title: "No Fast Travel",
+        description: "Complete any major questline without using fast travel.",
+        likes: 812,
+    },
+    {
+        id: "skyrim-one-life-1000-gold",
+        gameId: "skyrim",
+        gameTitle: "The Elder Scrolls V: Skyrim",
+        gameImage: "/real-rat.png",
+        tag: "SKYRIM",
+        title: "One Life, Big Purse",
+        description: "Earn 10,000 gold without dying on a new character.",
+        likes: 530,
+    },
+    ];
+
+    // jeu sélectionné
+        const selectedGame = useMemo(() => {
+            if (!slug) {
+                return null;
+            }
+            return games.find((g) => g.id === slug) ?? null;
+        }, [slug]);
+
+    const filteredChallenges = useMemo(() => {
+        const q = searchQuery.trim().toLowerCase();
+        if (!slug) {
+            return [];
+        }
+
+    return challenges.filter((c) => {
+        if (c.gameId !== slug) { return false; }
+
+        if (!q) { return true; }
+
+        return (
+            c.title.toLowerCase().includes(q) ||
+            c.description.toLowerCase().includes(q) ||
+            c.gameTitle.toLowerCase().includes(q)
+        );
+        });
+    }, [searchQuery, slug]);
+
+    const totalPages = Math.max(1, Math.ceil(filteredChallenges.length / itemsPerPage));
+    const adjustedCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
+
+    useEffect(() => {
+        if (currentPage !== adjustedCurrentPage) {
+            setCurrentPage(adjustedCurrentPage);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [itemsPerPage, totalPages]);
+
+    // reset page quand on change de jeu (à voir si nécessaire)
+    useEffect(() => {
+        setCurrentPage(1);
+        setPageBlockStart(2);
+        setSearchQuery("");
+    }, [slug]);
+
+    const startIndex = (adjustedCurrentPage - 1) * itemsPerPage;
+    const paginatedChallenges = filteredChallenges.slice(startIndex, startIndex + itemsPerPage);
+
+    const goToPage = (page: number) => {
+        setCurrentPage(page);
+        if (page === 1) {
+            setPageBlockStart(2);
+            return;
+        }
+        if (page < pageBlockStart) {
+            setPageBlockStart(page);
+        }
+        if (page > pageBlockStart + 3) {
+            setPageBlockStart(page - 3);
+        }
+    };
+
+    const nextBlock = () => {
+        const maxStart = Math.max(2, totalPages - 3);
+        setPageBlockStart((s) => Math.min(s + 4, maxStart));
+        setCurrentPage((p) => {
+            const candidate = Math.min(pageBlockStart + 4, totalPages);
+            return p === 1 ? candidate : p;
+        });
+    };
+
+    const formatVotes = (n: number) => `${n}`;
+
+    return (
+        <div className="min-h-screen bg-slate-950 text-white flex flex-col">
+            <main className="px-4 md:px-8 py-6 max-w-7xl mx-auto w-full">
+        {/* Image du jeu */}
+        {selectedGame ? (
+            <div className="mb-4 max-w-md md:max-w-2xl mx-auto">
+                <div className="relative w-full h-44 md:h-56 overflow-hidden rounded-2xl bg-slate-900 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.45)]">
+                    <Image
+                        src={selectedGame.image}
+                        alt={selectedGame.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 768px"
+                        className="object-contain p-4"
+                    />
+                <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
+                <div className="text-sm text-white/70">Selected game</div>
+                <div className="text-lg font-semibold">{selectedGame.title}</div>
+                </div>
+            </div>
+            </div>
+        ) : null}
+
+        {/* Search Bar */}
+        <div className="mb-6">
+            <div className="relative max-w-md md:max-w-2xl mx-auto">
+                <div className="absolute inset-0 rounded-full bg-(--searchbar-color) ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.45)]" />
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 z-10 h-12 w-12 flex items-center justify-center shadow">
+                    <Image src="/loupe.png" width={100} height={100} alt="Search Icon" className="opacity-80" />
+            </div>
+
+            <input
+                type="text"
+                placeholder="Search a challenge..."
+                value={searchQuery}
+                onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+                setPageBlockStart(2);
+                }}
+                className="relative w-full rounded-full bg-transparent py-3 pl-14 pr-4 text-white text-center text-xl placeholder:text-white/50 focus:outline-none"
+            />
+            </div>
+        </div>
+
+        {/* Challenges Section */}
+        <div className="mb-8">
+            <div className="mx-auto max-w-md md:max-w-4xl">
+                <div className="mb-6 flex items-center justify-between gap-4">
+                    <h2 className="text-xl font-bold border-l-4 border-purple-600 pl-3">Challenges</h2>
+
+                    <button
+                        type="button"
+                        className="px-4 py-2 rounded-xl bg-amber-600/80 hover:bg-amber-600 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                    >
+                        Create a challenge
+                </button>
+                </div>
+
+            {/* Cards des challenges */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                {paginatedChallenges.map((c) => (
+                    <div
+                        key={c.id}
+                        className="rounded-2xl bg-slate-900/70 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden"
+                    >
+                    <div className="p-5 flex flex-col h-full">
+                    <div className="text-xs font-semibold tracking-widest text-purple-300/90 mb-2">
+                        {(c.tag ?? c.gameTitle).toUpperCase()}
+                    </div>
+
+                    <div className="text-2xl font-semibold leading-tight mb-2">{c.title}</div>
+
+                    <div className="text-white/70 leading-relaxed mb-4">{c.description}</div>
+
+                    <div className="mt-auto flex items-center justify-between pt-2">
+                        <div className="flex items-center gap-2 text-white/70">
+                            <span className="relative w-8 h-8 shrink-0">
+                                <Image
+                                    src={c.hasLiked ? "/like 1.png" : "/like 0.png"}
+                                    alt={c.hasLiked ? "Liked" : "Not liked"}
+                                    fill
+                                    sizes="32px"
+                                    className="object-contain"
+                                />
+                            </span>
+
+                            <span className="text-sm font-semibold">{formatVotes(c.likes)}</span>
+                            <span className="text-sm">likes</span>
+                        </div>
+
+                        <Link
+                        href={`/challenges/${c.id}`}
+                        className="px-4 py-2 rounded-xl bg-amber-600/80 hover:bg-amber-600 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                    >
+                        Details
+                    </Link>
+                    </div>
+                    </div>
+                </div>
+                ))}
+            </div>
+            </div>
+        </div>
+
+        {/* Pas de challenge */}
+        {filteredChallenges.length === 0 && (
+            <p className="mt-6 text-center text-white">No challenge for this game yet</p>
+        )}
+
+        {/* Pages */}
+        <div className="flex justify-center gap-2 mb-12">
+            <button
+                className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    currentPage === 1 ? "bg-purple-600" : "bg-slate-800 hover:bg-slate-700"
+                }`}
+                onClick={() => goToPage(1)}
+            >
+                1
+            </button>
+
+            {Array.from({ length: 4 }, (_, i) => pageBlockStart + i)
+                .filter((p) => p <= totalPages)
+                .map((page) => (
+                    <button
+                        key={page}
+                        className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                        currentPage === page ? "bg-purple-600" : "bg-slate-800 hover:bg-slate-700"
+                        }`}
+                        onClick={() => goToPage(page)}
+                    >
+                    {page}
+                    </button>
+                ))}
+
+                {totalPages > pageBlockStart + 3 ? (
+                    <button
+                        type="button"
+                        className="w-8 h-8 bg-slate-800 hover:bg-slate-700 rounded-full flex items-center justify-center"
+                        onClick={nextBlock}
+                        aria-label="Afficher les pages suivantes"
+                    >
+                        ...
+                    </button>
+                ) : null}
+            </div>
+        </main>
+    </div>
+    );
+}
