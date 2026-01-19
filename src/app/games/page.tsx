@@ -33,17 +33,30 @@ export default function GamesPage() {
   const itemsPerPage = ismd ? 9 : 6;
 
   // Chargement des jeux depuis l'API
+  // useEffect(() => {
+  //   fetchGames()
+  //     .then((data) => {
+  //       setGames(data);
+  //       setLoading(false);
+  //     })
+  //     .catch((err) => {
+  //       console.error('Failed to load games:', err);
+  //       setError('Failed to load games. Please try again later.');
+  //       setLoading(false);
+  //     });
+  // }, []);
+
   useEffect(() => {
-    fetchGames()
-      .then((data) => {
-        setGames(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Failed to load games:', err);
-        setError('Failed to load games. Please try again later.');
-        setLoading(false);
-      });
+    async function getAllGames() {
+      const registerUrl = process.env.API_URL || '';
+      const response = await fetch(registerUrl);
+      const replyDb = await response.json();
+
+      setGames(replyDb.topGames);
+      setLoading(false);
+    }
+
+    getAllGames();
   }, []);
 
   const filteredGames = useMemo(() => {
@@ -146,24 +159,24 @@ export default function GamesPage() {
 
           {/* Games icons */}
           {!loading && !error && (
-            <div className="mx-auto w-65 grid grid-cols-2 gap-4 md:gap-6 md:w-150 md:grid-cols-3 lg:w-200">
+            <div className="mx-auto w-65 grid grid-cols-2 gap-4 md:gap-6 md:w-150 md:grid-cols-3 lg:w-200 ">
               {paginatedGames.map((game) => (
                 <Link
                   key={game.id}
                   href={`/games/${game.id}`}
-                  className="group overflow-hidden rounded-lg bg-slate-900 transition hover:ring-2 hover:ring-purple-600"
+                  className="group overflow-hidden rounded-4xl bg-slate-900 transition hover:ring-2 hover:ring-purple-600 delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 "
                 >
-                  <div className="relative aspect-square w-full overflow-hidden bg-slate-700 flex-none">
+                  <div className="relative aspect-square w-full overflow-hidden bg-slate-700 flex-none ">
                     <Image
                       src={game.imageUrl || '/real-rat.png'}
                       alt={game.title}
                       fill
                       sizes="(max-width: 1023px) 50vw, 33vw"
-                      className="object-contain"
+                      className=" object-cover"
                     />
                   </div>
-                  <div className="p-3 h-14 min-w-0 flex-none">
-                    <h3 className="min-w-0 overflow-hidden break-words line-clamp-2 font-semibold leading-5">
+                  <div className="p-3 h-14 min-w-0 flex-none content-center">
+                    <h3 className="min-w-0 overflow-hidden line-clamp-2 font-semibold leading-5 text-center ">
                       {game.title}
                     </h3>
                   </div>
