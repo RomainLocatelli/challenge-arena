@@ -184,8 +184,7 @@ export default function GameChallengesPage() {
 
         return (
             c.title.toLowerCase().includes(q) ||
-            c.description.toLowerCase().includes(q) ||
-            c.gameTitle.toLowerCase().includes(q)
+            (c.tag ?? c.gameTitle ?? "").toLowerCase().includes(q)
         );
         });
     }, [searchQuery, slug]);
@@ -346,41 +345,44 @@ export default function GameChallengesPage() {
 
         {/* Pages */}
         <div className="flex justify-center gap-2 mb-12">
+          {/* Page 1 toujours visible */}
+          <button
+            className={`w-8 h-8 rounded-full flex items-center justify-center ${
+              currentPage === 1 ? 'bg-purple-600' : 'bg-slate-800 hover:bg-slate-700'
+            }`}
+            onClick={() => goToPage(1)}
+          >
+            1
+          </button>
+
+          {/* Les 4 pages du bloc */}
+          {Array.from({ length: 4 }, (_, i) => pageBlockStart + i)
+            .filter((p) => p <= totalPages)
+            .map((page) => (
             <button
-                className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                    currentPage === 1 ? "bg-purple-600" : "bg-slate-800 hover:bg-slate-700"
-                }`}
-                onClick={() => goToPage(1)}
+              key={page}
+              className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                currentPage === page ? 'bg-purple-600' : 'bg-slate-800 hover:bg-slate-700'
+              }`}
+              onClick={() => goToPage(page)}
             >
-                1
+              {page}
             </button>
+          ))}
 
-            {Array.from({ length: 4 }, (_, i) => pageBlockStart + i)
-                .filter((p) => p <= totalPages)
-                .map((page) => (
-                    <button
-                        key={page}
-                        className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                        currentPage === page ? "bg-purple-600" : "bg-slate-800 hover:bg-slate-700"
-                        }`}
-                        onClick={() => goToPage(page)}
-                    >
-                    {page}
-                    </button>
-                ))}
-
-                {totalPages > pageBlockStart + 3 ? (
-                    <button
-                        type="button"
-                        className="w-8 h-8 bg-slate-800 hover:bg-slate-700 rounded-full flex items-center justify-center"
-                        onClick={nextBlock}
-                        aria-label="Afficher les pages suivantes"
-                    >
-                        ...
-                    </button>
-                ) : null}
-            </div>
-        </main>
+          {/* Bouton ... : passe au bloc suivant */}
+          {totalPages > pageBlockStart + 3 && (
+          <button
+            type="button"
+            className="w-8 h-8 bg-slate-800 hover:bg-slate-700 rounded-full flex items-center justify-center"
+            onClick={nextBlock}
+            aria-label="Afficher les pages suivantes"
+          >
+            ...
+          </button>
+          )}
+        </div>
+      </main>
     </div>
-    );
+  );
 }
