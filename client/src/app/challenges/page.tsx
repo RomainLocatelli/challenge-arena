@@ -40,12 +40,6 @@ type Challenge = {
   game: Game;
 };
 
-type Game = {
-  id: string;
-  slug: string;
-  title: string;
-  imageUrl: string;
-};
 export default function ChallengesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -94,7 +88,9 @@ export default function ChallengesPage() {
     return challenges.filter((c) => {
       const matchesGame = !selectedGameId || c.gameId === selectedGameId;
 
-      if (!q) return matchesGame;
+      if (!q) {
+        return matchesGame;
+      }
 
       const matchesQuery =
         c.title.toLowerCase().includes(q) ||

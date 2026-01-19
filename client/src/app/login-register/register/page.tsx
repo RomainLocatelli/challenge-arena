@@ -7,7 +7,7 @@ type Register = {
   password: string;
 };
 
-export default function authRegister() {
+export default function AuthRegister() {
   const [userNickname, setNickname] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setPassword] = useState('');
@@ -34,7 +34,6 @@ export default function authRegister() {
         return setErrorMessage('Email or username is already registered');
       }
       if (response.status >= 300) {
-        console.log(response);
         setErrorMessage('An error happened, thank you to try later');
       } else {
         setSuccessMessage('Resgistration successful, time to challenge yourself');
