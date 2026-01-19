@@ -20,21 +20,21 @@ export interface GameSearchResult {
 /**
  * Récupère tous les jeux depuis la base de données
  */
-// export async function fetchGames(): Promise<Game[]> {
-//   try {
-//     const res = await fetch(`${API_URL}games`);
+export async function fetchGames(): Promise<Game[]> {
+  try {
+    const res = await fetch(`${API_URL}/games`);
 
-//     if (!res.ok) {
-//       throw new Error(`Failed to fetch games: ${res.status}`);
-//     }
+    if (!res.ok) {
+      throw new Error(`Failed to fetch games: ${res.status}`);
+    }
 
-//     const data = await res.json();
-//     return data.games;
-//   } catch (error) {
-//     console.error('Error fetching games:', error);
-//     throw error;
-//   }
-// }
+    const data = await res.json();
+    return data.games;
+  } catch (error) {
+    console.error('Error fetching games:', error);
+    throw error;
+  }
+}
 
 /**
  * Recherche des jeux via l'API RAWG (pour l'autocompletion)
