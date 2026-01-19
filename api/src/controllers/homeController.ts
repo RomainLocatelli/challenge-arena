@@ -5,8 +5,8 @@ import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../../lib/prisma.js';
 
 // VARIABLE A MODIFIER POUR L'AFFICHAGE
-const HOME_TOP_CHALLENGES = 8;
-const HOME_TOP_GAMES = 4;
+const HOME_TOP_CHALLENGES = 16;
+const HOME_TOP_GAMES = 8;
 
 export const getHomeFeed = async (req: Request, res: Response, next: NextFunction) => {
   try {
