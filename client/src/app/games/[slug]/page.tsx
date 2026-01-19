@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 
 // hook responsive
@@ -324,12 +325,12 @@ export default function GameChallengesPage() {
                             <span className="text-sm">likes</span>
                         </div>
 
-                        <button
-                            type="button"
-                            className="px-4 py-2 rounded-xl bg-amber-600/80 hover:bg-amber-600 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
-                        >
+                        <Link
+                        href={`/challenges/${c.id}`}
+                        className="px-4 py-2 rounded-xl bg-amber-600/80 hover:bg-amber-600 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                    >
                         Details
-                        </button>
+                    </Link>
                     </div>
                     </div>
                 </div>
