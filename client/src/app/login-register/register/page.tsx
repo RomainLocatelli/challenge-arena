@@ -2,7 +2,7 @@
 import { useState } from 'react';
 
 type Register = {
-  nickname: string;
+  username: string;
   email: string;
   password: string;
 };
@@ -17,13 +17,24 @@ export default function authRegister() {
 
   const registerUrl = process.env.API_URL || '';
 
+  // Azertyui0&
+  // Stwompy
+  // stwompyproutprout@gmail.com
+
   async function postForm(url: string, values: Register) {
     try {
-      const response = await fetch(url, {
+      const response = await fetch(`${url}auth/register`, {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(values)
       });
+      if (response.status === 409) {
+        return setErrorMessage('Email or username is already registered');
+      }
       if (response.status >= 300) {
+        console.log(response);
         setErrorMessage('An error happened, thank you to try later');
       } else {
         setSuccessMessage('Resgistration successful, time to challenge yourself');
@@ -34,9 +45,12 @@ export default function authRegister() {
   }
 
   function handleAction() {
+    if (userPassword !== passwordConfirm) {
+      return setErrorMessage('Password does not match');
+    }
     const formValues = {
-      nickname: userNickname,
       email: userEmail,
+      username: userNickname,
       password: userPassword
     };
     postForm(registerUrl, formValues);
