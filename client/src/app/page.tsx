@@ -91,7 +91,7 @@ export default function Home() {
                   <div className="text-white/70 leading-relaxed mb-4">{challenge.description}</div>
                   {/* votes + bouton */}
                   <div className="mt-auto flex items-center justify-between pt-2">
-                    <div className="flex items-center gap-2 text-white/70">
+                    <div className="items-center gap-2 text-white/70">
                       <span className="relative w-8 h-8 shrink-0">
                         {/* <Image
                     src={challenge.hasLiked ? '/like 1.png' : '/like 0.png'}
@@ -104,7 +104,7 @@ export default function Home() {
                       <span className="text-sm font-semibold">
                         {formatVotes(challenge.voteCount)}
                       </span>
-                      <span className="text-sm">likes</span>
+                      <span className="text-sm"> likes</span>
                     </div>
                     <button
                       type="button"
@@ -125,7 +125,7 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* GamerChallenge news area */}
-      <div className="bg-[url(/baniere-leaderboard.png)] bg-no-repeat bg-cover h-50 text-center">
+      <div className="bg-[url(/baniere-leaderboard.png)] bg-no-repeat bg-cover h-50 text-center m-5 rounded-4xl">
         <p>This is where the news come in</p>
       </div>
       <nav className="flex justify-center mb-8">
@@ -152,7 +152,7 @@ export default function Home() {
             <strong>Trending games</strong>
           </p>
           <Link href="/games">
-            <button className="bg-(--button-area) p-2 pr-3 pl-3 rounded-3xl cursor-pointer">
+            <button className="bg-(--button-area) hover:bg-(--button-select) p-2 pr-3 pl-3 rounded-3xl cursor-pointer">
               View all
             </button>
           </Link>
@@ -175,7 +175,7 @@ export default function Home() {
             <strong>Trending challenges</strong>
           </p>
           <Link href="/challenges">
-            <button className="bg-(--button-area) p-2 pr-3 pl-3 rounded-3xl cursor-pointer">
+            <button className="bg-(--button-area) hover:bg-(--button-select) p-2 pr-3 pl-3 rounded-3xl cursor-pointer">
               View all
             </button>
           </Link>
