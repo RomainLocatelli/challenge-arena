@@ -60,7 +60,7 @@ export default function ChallengesPage() {
     ];
 
 // TODO: remplacer par les challenges réels
-const challenges: Challenge[] = [
+const challenges = useMemo<Challenge[]>(() => [
     {
     id: "hollow-knight-steel-soul-no-spells",
     slug: "hollow-knight-steel-soul-no-spells",
@@ -171,7 +171,7 @@ const challenges: Challenge[] = [
     description: "Earn 10,000 gold without dying on a new character.",
     likes: 530,
     },
-];
+], []);
 
 
 
@@ -195,12 +195,11 @@ const challenges: Challenge[] = [
 
     const matchesQuery =
         c.title.toLowerCase().includes(q) ||
-        c.description.toLowerCase().includes(q) ||
         c.gameTitle.toLowerCase().includes(q);
 
     return matchesGame && matchesQuery;
     });
-    }, [searchQuery, selectedGameId]);
+    }, [searchQuery, selectedGameId, challenges]);
 
     const totalPages = Math.max(1, Math.ceil(filteredChallenges.length / itemsPerPage));
     const adjustedCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
@@ -292,12 +291,12 @@ const challenges: Challenge[] = [
                 <h2 className="text-xl font-bold border-l-4 border-purple-600 pl-3">
                     Challenges
                 </h2>
-                <button
-                type="button"
-                className="px-4 py-2 rounded-xl bg-amber-600/80 hover:bg-amber-600 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                <Link
+                    href="/challenges/create"
+                    className="px-4 py-2 rounded-xl bg-amber-600/80 hover:bg-amber-600 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
                 >
-                    Create a challenge
-                </button>
+                  Create a challenge
+                </Link>
             </div>
 
         {/* Cards de challenges */}
@@ -364,49 +363,44 @@ const challenges: Challenge[] = [
 
         {/* Pages */}
         <div className="flex justify-center gap-2 mb-12">
-            
-            {/* Page 1 toujours visible */}
-            <button
+          {/* Page 1 toujours visible */}
+          <button
             className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                currentPage === 1
-                ? "bg-purple-600"
-                : "bg-slate-800 hover:bg-slate-700"
+              currentPage === 1 ? 'bg-purple-600' : 'bg-slate-800 hover:bg-slate-700'
             }`}
             onClick={() => goToPage(1)}
-            >
-                1
-            </button>
+          >
+            1
+          </button>
 
-            {/* Les 4 pages du bloc */}
-            {Array.from({ length: 4 }, (_, i) => pageBlockStart + i)
+          {/* Les 4 pages du bloc */}
+          {Array.from({ length: 4 }, (_, i) => pageBlockStart + i)
             .filter((p) => p <= totalPages)
             .map((page) => (
-                <button
-                key={page}
-                className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                    currentPage === page
-                    ? "bg-purple-600"
-                    : "bg-slate-800 hover:bg-slate-700"
-                }`}
-                onClick={() => goToPage(page)}
-                >
-                {page}
-                </button>
-            ))}
-
-            {/* Bouton ... : passe au bloc suivant */}
-            {totalPages > pageBlockStart + 3 ? (
             <button
-                type="button"
-                className="w-8 h-8 bg-slate-800 hover:bg-slate-700 rounded-full flex items-center justify-center"
-                onClick={nextBlock}
-                aria-label="Afficher les pages suivantes"
+              key={page}
+              className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                currentPage === page ? 'bg-purple-600' : 'bg-slate-800 hover:bg-slate-700'
+              }`}
+              onClick={() => goToPage(page)}
             >
-                ...
+              {page}
             </button>
-            ) : null}
+          ))}
+
+          {/* Bouton ... : passe au bloc suivant */}
+          {totalPages > pageBlockStart + 3 && (
+          <button
+            type="button"
+            className="w-8 h-8 bg-slate-800 hover:bg-slate-700 rounded-full flex items-center justify-center"
+            onClick={nextBlock}
+            aria-label="Afficher les pages suivantes"
+          >
+            ...
+          </button>
+          )}
         </div>
-        </main>
+      </main>
     </div>
-    );
+  );
 }
