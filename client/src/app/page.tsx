@@ -108,7 +108,7 @@ export default function Home() {
                     </div>
                     <button
                       type="button"
-                      className="px-4 py-2 rounded-xl bg-amber-600/80 hover:bg-amber-600 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                      className="px-4 py-2 rounded-xl bg-amber-600/80  text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)] hover:bg-(--button-select)"
                     >
                       Details
                     </button>
