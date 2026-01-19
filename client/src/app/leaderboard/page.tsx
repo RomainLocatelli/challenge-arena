@@ -116,7 +116,7 @@ export default function Leaderboard() {
     return (
       <li
         key={`${username}-${isCurrentUser ? 'me' : 'rank'}`}
-        className={`flex justify-between ${bgClass} rounded-2xl p-2 mb-2 ${isCurrentUser ? 'mt-5' : ''} relative overflow-hidden`}
+        className={`flex justify-between ${bgClass}  rounded-2xl p-2 mb-2 ${isCurrentUser ? 'mt-5' : ''} relative overflow-hidden`}
       >
         {/* Étoiles en arrière-plan pour le podium */}
         {isPodium && <PodiumStars />}

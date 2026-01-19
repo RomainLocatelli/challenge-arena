@@ -72,7 +72,7 @@ export default function Home() {
   // Challenges shown on screen
   function challengesShownOnPage(challenges: Challenge[]) {
     return (
-      <div className="flex gap-10 scroll-smooth overflow-x-auto overflow-y-hidden snap-x snap-mandatory m-3 mb-5 pb-4 lg:block lg:overflow-y-visible">
+      <div className="flex gap-10 scroll-smooth overflow-x-auto overflow-y-hidden snap-x snap-mandatory m-3 mb-5 pb-4 lg:block lg:overflow-y-visible ">
         <div className="grid grid-rows-2 grid-flow-col gap-10 w-max m-5">
           {challenges.map((challenge) => {
             return (
@@ -125,7 +125,7 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* GamerChallenge news area */}
-      <div className="bg-[url(/baniere-leaderboard.png)] bg-no-repeat bg-cover h-50 text-center m-5 rounded-4xl">
+      <div className="bg-[url(/baniere-leaderboard.png)] bg-no-repeat bg-cover h-50 text-center m-5 ml-10 mr-10 rounded-4xl">
         <p>This is where the news come in</p>
       </div>
       <nav className="flex justify-center mb-8">
