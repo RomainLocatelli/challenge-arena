@@ -3,7 +3,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { fetchGames, type Game } from '@/lib/api';
 
 // Petit hook responsive (sans event resize manuel côté composant)
 function useMediaQuery(query: string) {
@@ -31,20 +30,6 @@ export default function GamesPage() {
 
   const ismd = useMediaQuery('(min-width: 768px)');
   const itemsPerPage = ismd ? 9 : 6;
-
-  // Chargement des jeux depuis l'API
-  // useEffect(() => {
-  //   fetchGames()
-  //     .then((data) => {
-  //       setGames(data);
-  //       setLoading(false);
-  //     })
-  //     .catch((err) => {
-  //       console.error('Failed to load games:', err);
-  //       setError('Failed to load games. Please try again later.');
-  //       setLoading(false);
-  //     });
-  // }, []);
 
   useEffect(() => {
     async function getAllGames() {
