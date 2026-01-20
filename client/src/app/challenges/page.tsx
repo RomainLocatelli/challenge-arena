@@ -20,35 +20,32 @@ function useMediaQuery(query: string) {
   return matches;
 }
 
-type Game = {
-  id: string;
-  slug: string;
-  title: string;
-  imageUrl: string;
-};
+type Game = { id: string; title: string; imageUrl: string };
+  type Challenge = {
+    createdAt: string;
+    createdBy: string;
+    description: string;
+    game: {
+      id: string;
+      title: string;
+      imageUrl: string;
+      description: string;
+    };
+    gameId: string;
+    id: string;
+    // optional slug used for links
+    slug?: string;
+    scoreFormat: string;
+    title: string;
+    updatedAt: string;
+    voteCount: number;
+    // optional flag indicating whether the current user has liked the challenge
+    hasLiked?: boolean;
+  };
 
-type Challenge = {
-  id: string;
-  slug: string;
-  title: string;
-  scoreFormat: boolean;
-  description: string;
-  createdBy: string;
-  gameId: string;
-  createdAt: string;
-  updatedAt: string;
-  game: Game;
-  likes: number;
-  hasLiked?: boolean;
-};
-
-
-function formatVotes(n: number) {
-  if (n >= 1000) {
-    return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
-  }
-  return String(n);
-}
+  const formatVotes = (n: number) => {
+    return `${n}`;
+  };
 
 export default function ChallengesPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -66,27 +63,34 @@ export default function ChallengesPage() {
      API CALLS
   ====================== */
 
-  useEffect(() => {
-    async function fetchGames() {
-      const baseUrl = process.env.API_URL || '';
-      const res = await fetch(`${baseUrl}games`);
-      const data = await res.json();
-      setGames(data.games || []);
-    }
+useEffect(() => {
+  async function fetchGames() {
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+    const res = await fetch(`${baseUrl}games`);
+    const data = await res.json();
+    setGames(data.games || []);
+  }
 
-    fetchGames();
-  }, []);
+  fetchGames();
+}, []);
 
-  useEffect(() => {
-    async function fetchChallenges() {
-      const baseUrl = process.env.API_URL || '';
-      const res = await fetch(`${baseUrl}challenges`);
-      const data = await res.json();
-      setChallenges(data.challenges || data || []);
-    }
+useEffect(() => {
+  async function fetchChallenges() {
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+    const res = await fetch(`${baseUrl}challenges`);
+    const data = await res.json();
 
-    fetchChallenges();
-  }, []);
+    // on s'assure que voteCount existe
+    const list = (data.challenges || data || []).map((c: Partial<Challenge>) => ({
+      ...c,
+      voteCount: c.voteCount ?? 0,
+    })) as Challenge[];
+
+    setChallenges(list);
+  }
+
+  fetchChallenges();
+}, []);
 
   /* ======================
      FILTERING
@@ -194,56 +198,61 @@ export default function ChallengesPage() {
 
         {/* Cards de challenges */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                {paginatedChallenges.map((c) => (
+                {paginatedChallenges.map((c) => {
+                return (
                 <div
                     key={c.id}
                     className="rounded-2xl bg-slate-900/70 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden"
                 >
-                <div className="p-5 flex flex-col h-full">
+                    <div className="p-5 flex flex-col h-full">
 
-                {/* Tag / jeu */}
-                <div className="text-xs font-semibold tracking-widest text-purple-300/90 mb-2">
-                    {(c.game?.title ?? '').toUpperCase()}
-                </div>
-
-                {/* Titre */}
-                <div className="text-2xl font-semibold leading-tight mb-2">
-                    {c.title}
-                </div>
-
-                {/* Description */}
-                <div className="text-white/70 leading-relaxed mb-4">
-                    {c.description}
-                </div>
-
-                {/* votes + bouton */}
-                <div className="mt-auto flex items-center justify-between pt-2">
-                    <div className="flex items-center gap-2 text-white/70">
-                        <span className="relative w-8 h-8 shrink-0">
-                            <Image
-                                src={c.hasLiked ? "/like 1.png" : "/like 0.png"}
-                                alt={c.hasLiked ? "Liked" : "Not liked"}
-                                fill
-                                sizes="32px"
-                                className="object-contain"
-                            />
-                        </span>
-                        <span className="text-sm font-semibold">
-                            {formatVotes(c.likes)}
-                        </span>
-                        <span className="text-sm">likes</span>
+                    {/* Tag / jeu */}
+                    <div className="text-xs font-semibold tracking-widest text-purple-300/90 mb-2">
+                        {(c.game?.title ?? '').toUpperCase()}
                     </div>
 
-                    <Link
-                        href={`/challenges/${c.slug}`}
-                        className="px-4 py-2 rounded-xl bg-amber-600/80 hover:bg-amber-600 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
-                    >
-                        Details
-                    </Link>
+                    {/* Titre */}
+                    <div className="text-2xl font-semibold leading-tight mb-2">
+                        {c.title}
+                    </div>
+
+                    {/* Description */}
+                    <div className="text-white/70 leading-relaxed mb-4">
+                        {c.description}
+                    </div>
+
+                    {/* votes + bouton */}
+                    <div className="mt-auto flex items-center justify-between pt-2">
+                        <div className="flex items-center gap-3 text-white/70">
+                            <span className="relative w-8 h-8 shrink-0">
+                                <Image
+                                    src={c.hasLiked ? "/like 1.png" : "/like 0.png"}
+                                    alt={c.hasLiked ? "Liked" : "Not liked"}
+                                    fill
+                                    sizes="32px"
+                                    style={{ objectFit: 'contain' }}
+                                />
+                            </span>
+                            <div className="flex items-baseline gap-1">
+                                <span className="text-sm font-semibold">
+                                    {formatVotes(c.voteCount)}
+                                </span>
+                                <span className="text-sm">likes</span>
+                            </div>
+                        </div>
+
+                        <Link
+                            href={`/challenges/${c.slug ?? c.id}`}
+                            className="px-4 py-2 rounded-xl bg-amber-600/80 hover:bg-amber-600 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                        >
+                            Details
+                        </Link>
+                    </div>
                     </div>
                 </div>
-                </div>
-            ))}
+                );
+                })}
+
             </div>
         </div>
     </div>
