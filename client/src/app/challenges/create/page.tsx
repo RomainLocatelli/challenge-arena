@@ -5,6 +5,13 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
+type RawgGame = {
+  id: number;
+  slug: string;
+  name: string;
+  background_image: string | null;
+};
+
 // hook responsive
 function useMediaQuery(query: string) {
   const [matches, setMatches] = useState(false);
@@ -27,11 +34,12 @@ const clamp100 = (s: string) => {
   return `${t.slice(0, 97)}...`;
 };
 
-type GameOption = {
-  id: string;
-  title: string;
-  imageUrl?: string;
-};
+// OBSOLETE - Code remplacé par l'autocomplete RAWG
+// type GameOption = {
+//   id: string;
+//   title: string;
+//   imageUrl?: string;
+// };
 
 export default function CreateChallengePage() {
   const router = useRouter();
@@ -54,20 +62,77 @@ export default function CreateChallengePage() {
   // Etat du formulaire (mode "edit" uniquement)
   const [title, setTitle] = useState("");
   const [createdBy, setCreatedBy] = useState("NailMaster"); // TODO: session user
-  const [gameId, setGameId] = useState(games[0]?.id ?? "");
+  // OBSOLETE: Remplacé par selectedGame (RawgGame)
+  // const [gameId, setGameId] = useState(games[0]?.id ?? "");
   const [imageUrl, setImageUrl] = useState<string>("");
   const [description, setDescription] = useState("");
   const [detailsPoints, setDetailsPoints] = useState<string[]>([
   ]);
+  // Autocomplete states
+  const [selectedGame, setSelectedGame] = useState<RawgGame | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<RawgGame[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
 
-  const selectedGame = useMemo(
-    () => games.find((g) => g.id === gameId) ?? null,
-    [games, gameId]
-  );
+  // Score format
+  const [scoreFormat, setScoreFormat] = useState("");
+
+  // OBSOLETE: Remplacé par selectedGame state
+  // const selectedGame = useMemo(
+  //   () => games.find((g) => g.id === gameId) ?? null,
+  //   [games, gameId]
+  // );
+
+  // Fonction de recherche
+  const searchGames = async (query: string) => {
+    if (query.trim().length < 2) {
+      setSearchResults([]);
+      return;
+    }
+
+    setIsSearching(true);
+    
+    try {
+      const response = await fetch(
+        `http://localhost:3000/games/search?q=${encodeURIComponent(query)}`
+      );
+      
+      if (!response.ok) throw new Error('Search failed');
+      
+      const data = await response.json();
+      setSearchResults(data.results || []);
+      setShowDropdown(true);
+    } catch (error) {
+      console.error('Search error:', error);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  // Debounce manuel
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchQuery.trim().length >= 2) {
+        searchGames(searchQuery);
+      } else {
+        setSearchResults([]);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // OBSOLETE: imageUrl remplacé par background_image
+  // const headerImage = imageUrl.trim()
+  //\ ? imageUrl.trim()
+  //   : selectedGame?.imageUrl || "/real-rat.png";
 
   const headerImage = imageUrl.trim()
     ? imageUrl.trim()
-    : selectedGame?.imageUrl || "/real-rat.png";
+    : selectedGame?.background_image || "/real-rat.png";
+
 
   // Gestion des lignes à puces (details)
   const addBullet = () => setDetailsPoints((p) => [...p, ""]);
@@ -76,34 +141,64 @@ export default function CreateChallengePage() {
   const removeBullet = (idx: number) =>
     setDetailsPoints((p) => p.filter((_, i) => i !== idx));
 
+  // const canCreate = useMemo(() => {
+  //   const t = title.trim();
+  //   const d = description.trim();
+  //   return Boolean(gameId) && t.length > 0 && d.length > 0;
+  // }, [gameId, title, description]);
+
   const canCreate = useMemo(() => {
     const t = title.trim();
     const d = description.trim();
-    return Boolean(gameId) && t.length > 0 && d.length > 0;
-  }, [gameId, title, description]);
+    const sf = scoreFormat.trim();
+    return Boolean(selectedGame) && t.length > 0 && d.length > 0 && sf.length > 0;
+  }, [selectedGame, title, description, scoreFormat]);
 
   const createChallenge = async () => {
-    // TODO BDD: POST /challenges
-    // Exemple payload:
-    // {
-    //   title,
-    //   createdBy,
-    //   gameId,
-    //   imageUrl: imageUrl.trim() || undefined,
-    //   descriptionPoints: [clamp100(description)],
-    //   detailsPoints: detailsPoints.map((x) => x.trim()).filter(Boolean),
-    // }
-    //
-    // Ici on simule:
-    const fakeSlug =
-      title
-        .trim()
-        .toLowerCase()
-        .replace(/[^\p{L}\p{N}]+/gu, "-")
-        .replace(/^-+|-+$/g, "") || `challenge-${Date.now()}`;
+    if (!selectedGame) return;
 
-    // redirige vers la page détail (adapte "challenge" vs "challenges" selon ton routing)
-    router.push(`/challenge/${fakeSlug}`);
+    // Construire la description complète : description + details
+    const fullDescription = [
+      description.trim(),
+      ...detailsPoints.map((point) => point.trim()).filter(Boolean)
+    ]
+      .filter(Boolean)
+      .join('\n');
+
+    const payload = {
+      title: title.trim(),
+      scoreFormat: scoreFormat.trim(),
+      description: fullDescription,
+      gameId: selectedGame.id,
+      gameTitle: selectedGame.name,
+      gameSlug: selectedGame.slug,
+      gameImageUrl: selectedGame.background_image || "",
+    };
+
+    try {
+      const response = await fetch('http://localhost:3000/challenges', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // TODO: Ajouter le token JWT ici quand l'auth sera en place
+          // 'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create challenge');
+      }
+
+      const data = await response.json();
+      
+      // Redirige vers le challenge créé
+      router.push(`/challenge/${data.challenge.slug}`);
+    } catch (error) {
+      console.error('Error creating challenge:', error);
+      alert('Erreur lors de la création du challenge. Vérifie la console.');
+    }
   };
 
   return (
@@ -140,17 +235,53 @@ export default function CreateChallengePage() {
               <div className="text-white/80 space-y-2">
                 <div className="text-sm">
                   <span className="text-white/60">Game :</span>{" "}
-                  <select
-                    value={gameId}
-                    onChange={(e) => setGameId(e.target.value)}
-                    className="ml-2 bg-slate-950/40 ring-1 ring-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none"
-                  >
-                    {games.map((g) => (
-                      <option key={g.id} value={g.id} className="bg-slate-950">
-                        {g.title}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="relative ml-2">
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onFocus={() => setShowDropdown(true)}
+                      className="bg-slate-950/40 ring-1 ring-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none w-64"
+                      placeholder="Search for a game..."
+                    />
+                    
+                    {isSearching && (
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                        <div className="animate-spin h-4 w-4 border-2 border-white/20 border-t-white rounded-full" />
+                      </div>
+                    )}
+
+                    {showDropdown && searchResults.length > 0 && (
+                      <div className="absolute z-10 mt-1 w-full bg-slate-900 ring-1 ring-white/10 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                        {searchResults.map((game) => (
+                          <button
+                            key={game.id}
+                            type="button"
+                            onClick={() => {
+                              setSelectedGame(game);
+                              setSearchQuery(game.name);
+                              setShowDropdown(false);
+                            }}
+                            className="w-full px-3 py-2 text-left hover:bg-slate-800 flex items-center gap-3 text-sm"
+                          >
+                            {game.background_image && (
+                              <img 
+                                src={game.background_image} 
+                                alt={game.name}
+                                className="w-10 h-10 object-cover rounded"
+                              />
+                            )}
+                            <span>{game.name}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  {selectedGame && (
+                    <div className="mt-2 text-xs text-white/70">
+                      Selected: <span className="font-semibold">{selectedGame.name}</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="text-sm">
@@ -171,6 +302,20 @@ export default function CreateChallengePage() {
               />
               <div className="text-xs text-white/50 mt-2">
                 Laisse vide pour afficher l’image du jeu par défaut.
+              </div>
+            </div>
+
+            {/* Score Format */}
+            <div className="mt-4">
+              <div className="text-sm font-semibold text-white/80 mb-2">Score Format</div>
+              <input
+                value={scoreFormat}
+                onChange={(e) => setScoreFormat(e.target.value)}
+                className="w-full bg-slate-950/40 ring-1 ring-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none"
+                placeholder="e.g., SCORE, TIME, KILLS, etc."
+              />
+              <div className="text-xs text-white/50 mt-2">
+                Comment sera mesuré le succès du challenge (ex: SCORE, TIME, DISTANCE...)
               </div>
             </div>
 

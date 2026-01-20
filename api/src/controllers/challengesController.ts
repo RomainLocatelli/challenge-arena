@@ -12,12 +12,21 @@ export const getAllChallenges = async (req: Request, res: Response, next: NextFu
   try {
     const challenges = await prisma.challenge.findMany({
       include: {
-        game: true
+        game: true,
+        _count: {
+          select: { votes: true }
+        }
       },
       orderBy: { createdAt: 'desc' }
     });
 
-    res.json({ challenges });
+    res.json({
+      challenges: challenges.map((c) => ({
+        ...c,
+        voteCount: c._count.votes,
+        _count: undefined
+      }))
+    });
   } catch (error) {
     next(error);
   }
@@ -63,6 +72,9 @@ export const getChallengeBySlug = async (
         participations: {
           include: { user: true },
           orderBy: { createdAt: 'desc' }
+        },
+        _count: {
+          select: { votes: true }
         }
       }
     })
@@ -71,7 +83,13 @@ export const getChallengeBySlug = async (
       throw new AppError('Challenge not found', 404)
     }
 
-    res.json({ challenge })
+    res.json({
+      challenge: {
+        ...challenge,
+        voteCount: challenge._count.votes,
+        _count: undefined
+      }
+    })
   } catch (error) {
     next(error)
   }
@@ -82,8 +100,19 @@ export const createChallenge = async (req: Request, res: Response, next: NextFun
     const { title, scoreFormat, description, gameId, gameTitle, gameSlug, gameImageUrl } = req.body;
     const userId = req.userId;
 
+    // 🔍 DEBUG : Affiche ce qui est reçu
+    // console.log('📥 Body:', req.body);
+    // console.log('🎮 gameId:', gameId, 'type:', typeof gameId);
+    // console.log('🎮 gameTitle:', gameTitle);
+    // console.log('🎮 gameSlug:', gameSlug);
+
     if (!userId) {
       throw new AppError('User not authenticated', 401);
+    }
+
+    // Vérifie que les champs essentiels sont présents
+    if (!title || !scoreFormat || !description || !gameId || !gameTitle || !gameSlug) {
+      throw new AppError('Missing required fields', 400);
     }
 
     // Générer le slug du challenge depuis le titre
