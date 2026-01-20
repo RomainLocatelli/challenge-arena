@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@/app/context/AuthContext';
 
 export default function BurgerMenu() {
   const [isClose, setIsClose] = useState(false);
@@ -11,6 +12,7 @@ export default function BurgerMenu() {
   }
   const pathname = usePathname();
   const pathActive = (path: string) => pathname === path;
+  const { user } = useAuth();
   return (
     <nav className="text-right pr-3 pt-4 relative ">
       <button
@@ -49,18 +51,35 @@ export default function BurgerMenu() {
           >
             <Link href="/leaderboard">Leaderboard</Link>
           </li>
-          <li
-            className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/profile') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
-          >
-            <Link href="/profile">Profile</Link>
-          </li>
-          {/* TODO change from profile to log/register when not loggin*/}
-          <li
-            className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/challenges/create') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
-          >
-            <Link href="/challenges/create">Create challenge</Link>
-          </li>
-          {/* TODO does not appear when not loggin*/}
+          {user ? (
+            <>
+              <li
+                className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/profile') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
+              >
+                <Link href="/profile">Profile</Link>
+              </li>
+
+              <li
+                className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/challenges/create') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
+              >
+                <Link href="/challenges/create">Create challenge</Link>
+              </li>
+            </>
+          ) : (
+            <>
+              <li
+                className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/login-register/register') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
+              >
+                <Link href="/profile">Register</Link>
+              </li>
+
+              <li
+                className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/login-register/login') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
+              >
+                <Link href="/challenges/create">Login</Link>
+              </li>
+            </>
+          )}
           <li
             className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/support') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
           >
