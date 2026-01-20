@@ -52,7 +52,6 @@ services:
     volumes:
       - ./client:/app
       - /app/.next
-      - /app/node_modules
     command: npm run dev
     networks:
       - gamer-network
