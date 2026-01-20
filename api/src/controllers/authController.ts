@@ -31,14 +31,22 @@ export const loginController = async (req: Request, res: Response, next: NextFun
 
     // Générer le JWT token
     const token = jwt.sign(
-      { userId: user.id, email: user.email },
+      { userId: user.id, username: user.username, role: user.role },
       process.env.JWT_SECRET || 'fallback-secret',
       { expiresIn: '7d' }
     );
-    // Retourner la réponse HTTP 200 OK avec token + user
+
+    // Définir le cookie avec le token
+    res.cookie('accessToken', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+
+    // Retourner la réponse HTTP 200 OK avec user
     res.status(200).json({
       message: 'Login successful',
-      token,
       user
     });
   } catch (error) {

@@ -15,15 +15,22 @@ import participationVoteRoutes from './src/routes/participationVote.js';
 import profileRoutes from './src/routes/profile.js';
 import reportRoutes from './src/routes/reports.js';
 import moderationRoutes from './src/routes/moderation.js';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middlewares globaux
 app.use(helmet());
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:8008',
+    credentials: true
+  })
+);
 app.use(express.json());
 app.use(logger);
+app.use(cookieParser());
 
 // Routes API
 app.use('/auth', authRoutes);

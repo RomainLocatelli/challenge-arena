@@ -32,6 +32,7 @@ export default function AuthLogin() {
         headers: {
           'Content-Type': 'application/json'
         },
+        credentials: 'include', // CRUCIAL : pour recevoir et envoyer les cookies
         body: JSON.stringify(loginData)
       });
 
@@ -44,8 +45,8 @@ export default function AuthLogin() {
         return;
       }
 
-      // Login réussi : stocker le token
-      localStorage.setItem('token', data.token);
+      // Login réussi : le token est dans le cookie httpOnly
+      // On peut stocker l'user en localStorage si nécessaire
       localStorage.setItem('user', JSON.stringify(data.user));
 
       // Rediriger vers la page d'accueil (ou dashboard)
