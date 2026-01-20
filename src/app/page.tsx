@@ -2,7 +2,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { useAuth } from './context/AuthContext';
 
 export default function Home() {
   type Game = { id: string; title: string; imageUrl: string };
@@ -24,7 +23,6 @@ export default function Home() {
     voteCount: number;
   };
 
-  const { user } = useAuth();
   const [homePageGames, setHomePageGames] = useState<Game[]>([]);
   const [homePageChallenges, setHomePageChallenges] = useState<Challenge[]>([]);
 
@@ -127,32 +125,28 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* GamerChallenge news area */}
-      <div className="bg-[url(/ratbanner.png)] bg-no-repeat bg-cover h-50 text-center m-5 ml-10 mr-10 rounded-4xl">
-        <p>This is where the news come in</p>
+      <div className="relative bg-[url(/ratbanner.png)] bg-no-repeat bg-cover bg-top h-40 text-center m-5 ml-10 mr-10 rounded-4xl overflow-hidden">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <p className="text-white text-xl font-bold drop-shadow-lg">WELCOME TO GAMERCHALLENGE</p>
+        </div>
       </div>
       <nav className="flex justify-center mb-8">
-        {user ? (
-          <p></p>
-        ) : (
-          <div>
-            <Link href="/login-register/login">
-              <button
-                type="button"
-                className="bg-(--button-area) p-3 rounded-3xl mr-8 mt-6 cursor-pointer"
-              >
-                Login
-              </button>
-            </Link>
-            <Link href="/login-register/register">
-              <button
-                type="button"
-                className="bg-(--button-select) p-3 rounded-3xl  mt-6 cursor-pointer"
-              >
-                Register
-              </button>
-            </Link>
-          </div>
-        )}
+        <Link href="/login-register/login">
+          <button
+            type="button"
+            className="bg-(--button-area) p-3 rounded-3xl mr-8 mt-6 cursor-pointer"
+          >
+            Login
+          </button>
+        </Link>
+        <Link href="/login-register/register">
+          <button
+            type="button"
+            className="bg-(--button-select) p-3 rounded-3xl  mt-6 cursor-pointer"
+          >
+            Register
+          </button>
+        </Link>
       </nav>
       <div className="">
         <nav className="flex justify-between align-content m-5 items-center-safe">
