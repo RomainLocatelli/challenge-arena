@@ -2,7 +2,8 @@ import { Router } from 'express';
 import {
   registerController,
   loginController,
-  meController
+  meController,
+  logOutontroller
 } from '../controllers/authController.js';
 import { validate } from '../middlewares/validate.js';
 import { registerSchema, loginSchema } from '../schemas/authSchemas.js';
@@ -30,5 +31,8 @@ router.get(
   authMiddleware, // Vérifie le token JWT
   meController // Retourne les infos de l'utilisateur
 );
+
+// POST /auth/logout - Route protégée
+router.post('/logout', logOutontroller);
 
 export default router;
