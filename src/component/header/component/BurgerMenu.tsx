@@ -14,7 +14,7 @@ export default function BurgerMenu() {
   const pathActive = (path: string) => pathname === path;
   const { user } = useAuth();
   return (
-    <nav className="text-right pr-3 pt-4 relative ">
+    <nav className="text-right pr-3 pt-4 relative z-50">
       <button
         type="button"
         className="bg-(--button-area) p-2 rounded-xl cursor-pointer"
@@ -52,33 +52,30 @@ export default function BurgerMenu() {
             <Link href="/leaderboard">Leaderboard</Link>
           </li>
           {user ? (
-            <div>
-              <li
-                className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/profile') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
-              >
-                <Link href="/profile">Profile</Link>
-              </li>
-
-              <li
-                className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/challenges/create') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
-              >
-                <Link href="/challenges/create">Create challenge</Link>
-              </li>
-            </div>
+            <li
+              className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/profile') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
+            >
+              <Link href="/profile">Profile</Link>
+            </li>
           ) : (
-            <div>
-              <li
-                className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/login-register/register') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
-              >
-                <Link href="/profile">Register</Link>
-              </li>
-
-              <li
-                className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/login-register/login') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
-              >
-                <Link href="/challenges/create">Login</Link>
-              </li>
-            </div>
+            <li
+              className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/login-register/register') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
+            >
+              <Link href="/login-register/register">Register</Link>
+            </li>
+          )}
+          {user ? (
+            <li
+              className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/challenges/create') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
+            >
+              <Link href="/challenges/create">Create challenge</Link>
+            </li>
+          ) : (
+            <li
+              className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/login-register/login') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
+            >
+              <Link href="/login-register/login">Login</Link>
+            </li>
           )}
           <li
             className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/support') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
