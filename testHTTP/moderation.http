@@ -1,7 +1,7 @@
 ### Variables (à remplir après les premières requêtes)
 @baseUrl = http://localhost:3000
 @adminToken = 
-@aliceToken = 
+@aliceToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMTliZGFmOC02M2IzLTcwMGQtOTU3OC0wNWY4ZTViYTYzM2IiLCJ1c2VybmFtZSI6ImFsaWNlIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3Njg5MTY0ODgsImV4cCI6MTc2OTUyMTI4OH0.q26L-7lRtODalmfqf7NNSuc92JyNd3VZyn8Fqmvvt6M
 @challengeId = 
 @participationId = 
 
@@ -44,7 +44,7 @@ GET {{baseUrl}}/challenges/slug/SLUG_DU_CHALLENGE_ICI
 ### 3.1 Signaler un challenge (avec Alice)
 POST {{baseUrl}}/reports
 Content-Type: application/json
-Authorization: Bearer {{aliceToken}}
+Cookie: Bearer {{aliceToken}}
 
 {
   "targetType": "CHALLENGE",
