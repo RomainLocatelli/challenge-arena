@@ -43,7 +43,8 @@ export default async function RootLayout({
       cache: 'no-store'
     });
 
-    user = await res.json();
+    const data = await res.json();
+    user = data.user;
   } catch (err) {
     //  silent
   }
