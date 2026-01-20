@@ -74,7 +74,7 @@ export default function BurgerMenu() {
             <li
               className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/login-register/login') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
             >
-              <Link href="/challenges/create">Login</Link>
+              <Link href="/login-register/login'">Login</Link>
             </li>
           )}
           {user ? (
@@ -87,7 +87,7 @@ export default function BurgerMenu() {
             <li
               className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/login-register/register') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
             >
-              <Link href="/profile">Register</Link>
+              <Link href="/login-register/register">Register</Link>
             </li>
           )}
           <li
