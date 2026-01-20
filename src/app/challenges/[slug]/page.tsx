@@ -36,10 +36,12 @@ type Challenge = {
   gameId: string;
   gameTitle: string;
   createdBy: string;
+  createdAt: string;
+  updatedAt: string;
   image?: string;
   gameImage: string;
-  descriptionPoints: string[];
-  detailsPoints: string[];
+  description: string[];
+  details: string[];
   hasLiked?: boolean;
   likes: number;
   participations: Participation[];
@@ -78,12 +80,12 @@ const challengeFromDb: Challenge = useMemo(
     createdBy: "NailMaster",
     image: undefined,
     gameImage: "/real-rat.png",
-    descriptionPoints: [
+    description: [
       "Vaincre un boss majeur en mode Steel Soul.",
       "Aucun sort autorisé (Vengeful Spirit, Desolate Dive, Howling Wraiths...).",
       "Le run doit être en solo, sans mods.",
     ],
-    detailsPoints: [
+    details: [
       "Lancer une nouvelle partie en Steel Soul.",
       "Choisir un boss majeur (Hornet, Soul Master, Mantis Lords, etc.).",
       "Interdiction d’utiliser tout sort pendant le combat.",
@@ -162,10 +164,10 @@ const challengeFromDb: Challenge = useMemo(
   const [title, setTitle] = useState(challengeFromDb.title);
   const [imageUrl, setImageUrl] = useState<string | undefined>(challengeFromDb.image);
   const [descriptionPoints, setDescriptionPoints] = useState<string[]>(
-    challengeFromDb.descriptionPoints
+    challengeFromDb.description
   );
   const [detailsPoints, setDetailsPoints] = useState<string[]>(
-    challengeFromDb.detailsPoints
+    challengeFromDb.details
   );
   const [participations, setParticipations] = useState<Participation[]>(
     challengeFromDb.participations
@@ -194,8 +196,8 @@ const challengeFromDb: Challenge = useMemo(
   const cancelEdits = () => {
     setTitle(challengeFromDb.title);
     setImageUrl(challengeFromDb.image);
-    setDescriptionPoints(challengeFromDb.descriptionPoints);
-    setDetailsPoints(challengeFromDb.detailsPoints);
+    setDescriptionPoints(challengeFromDb.description);
+    setDetailsPoints(challengeFromDb.details);
     setIsEditing(false);
   };
 
