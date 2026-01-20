@@ -8,6 +8,10 @@ export default function Leaderboard() {
   // BDD types
   type UsersLiked = { username: string; totalLikes: number };
   type Participation = { username: string; participationCount: number };
+  type UserRank = {
+    byLikes: { rank: number; totalLikes: number };
+    byParticipations: { rank: number; participationCount: number };
+  };
 
   // New type which can be used to all the function for the leaderboard
   type LeaderboardUser = {
@@ -16,11 +20,12 @@ export default function Leaderboard() {
     rank?: number;
   };
 
-  const { user } = useAuth(); // TODO to replace by the connected user
+  const { user } = useAuth();
   const currentUsername = user?.username;
 
   const [usersLikedLeaderboard, setUsersLikedLeaderboard] = useState<UsersLiked[]>([]);
   const [participationLeaderboard, setParticipationLeaderboard] = useState<Participation[]>([]);
+  const [userConnected, setUserConnected] = useState<UserRank>();
   const [selectedLeaderboard, setSelectedLeaderboard] = useState<'likes' | 'participation'>(
     'likes'
   );
@@ -35,6 +40,7 @@ export default function Leaderboard() {
 
       setUsersLikedLeaderboard(replyDb.topByLikes);
       setParticipationLeaderboard(replyDb.topByParticipations);
+      setUserConnected(replyDb.currentUserRank);
     }
 
     getLeaderboard();
@@ -136,12 +142,31 @@ export default function Leaderboard() {
   }
 
   // Render the leaderboard
-  function renderLeaderboard(userArray: LeaderboardUser[]) {
-    console.log(currentUsername);
+  function renderLeaderboard(
+    userArray: LeaderboardUser[],
+    leaderboardType: 'likes' | 'participation'
+  ) {
     const sortedUsers = getSortedArrayWithRanks(userArray);
     const currentUser = sortedUsers.find((user) => user.username === currentUsername);
 
-    // Fonction pour afficher un emplacement vide
+    let connectedUserData: (LeaderboardUser & { rank: number }) | null = null;
+    if (userConnected && currentUsername && !currentUser) {
+      if (leaderboardType === 'likes') {
+        connectedUserData = {
+          username: currentUsername,
+          score: userConnected.byLikes.totalLikes,
+          rank: userConnected.byLikes.rank
+        };
+      } else {
+        connectedUserData = {
+          username: currentUsername,
+          score: userConnected.byParticipations.participationCount,
+          rank: userConnected.byParticipations.rank
+        };
+      }
+    }
+
+    // Function to show an empty place instead of showing deleting it
     function renderEmptySlot(rank: number) {
       const bgClass = getBgClass(rank, false);
       const rankText = `${rank}${getOrdinalSuffix(rank)}`;
@@ -180,7 +205,9 @@ export default function Leaderboard() {
         {leaderboardSlots}
 
         {/* Connected user always shown on the bottom of the leaderboard */}
+
         {currentUser && renderUserItem(currentUser, true)}
+        {connectedUserData && renderUserItem(connectedUserData, true)}
       </>
     );
   }

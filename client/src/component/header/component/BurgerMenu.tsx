@@ -52,7 +52,7 @@ export default function BurgerMenu() {
             <Link href="/leaderboard">Leaderboard</Link>
           </li>
           {user ? (
-            <>
+            <div>
               <li
                 className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/profile') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
               >
@@ -64,9 +64,9 @@ export default function BurgerMenu() {
               >
                 <Link href="/challenges/create">Create challenge</Link>
               </li>
-            </>
+            </div>
           ) : (
-            <>
+            <div>
               <li
                 className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/login-register/register') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
               >
@@ -78,7 +78,7 @@ export default function BurgerMenu() {
               >
                 <Link href="/challenges/create">Login</Link>
               </li>
-            </>
+            </div>
           )}
           <li
             className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/support') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
