@@ -2,6 +2,7 @@
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import PodiumStars from './component/starry-background';
+import { useAuth } from '../context/AuthContext';
 
 export default function Leaderboard() {
   // BDD types
@@ -15,7 +16,8 @@ export default function Leaderboard() {
     rank?: number;
   };
 
-  const currentUsername = 'Stwompy'; // TODO to replace by the connected user
+  const { user } = useAuth(); // TODO to replace by the connected user
+  const currentUsername = user?.username;
 
   const [usersLikedLeaderboard, setUsersLikedLeaderboard] = useState<UsersLiked[]>([]);
   const [participationLeaderboard, setParticipationLeaderboard] = useState<Participation[]>([]);
@@ -26,7 +28,9 @@ export default function Leaderboard() {
   useEffect(() => {
     async function getLeaderboard() {
       const registerUrl = `${process.env.API_URL}leaderboard`;
-      const response = await fetch(registerUrl);
+      const response = await fetch(registerUrl, {
+        credentials: 'include'
+      });
       const replyDb = await response.json();
 
       setUsersLikedLeaderboard(replyDb.topByLikes);
@@ -133,6 +137,7 @@ export default function Leaderboard() {
 
   // Render the leaderboard
   function renderLeaderboard(userArray: LeaderboardUser[]) {
+    console.log(currentUsername);
     const sortedUsers = getSortedArrayWithRanks(userArray);
     const currentUser = sortedUsers.find((user) => user.username === currentUsername);
 

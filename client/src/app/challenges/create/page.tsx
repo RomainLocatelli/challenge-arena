@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 type RawgGame = {
   id: number;
@@ -19,15 +19,15 @@ function useMediaQuery(query: string) {
     const mq = window.matchMedia(query);
     const onChange = () => setMatches(mq.matches);
     onChange();
-    mq.addEventListener?.("change", onChange);
-    return () => mq.removeEventListener?.("change", onChange);
+    mq.addEventListener?.('change', onChange);
+    return () => mq.removeEventListener?.('change', onChange);
   }, [query]);
   return matches;
 }
 
 // Description avec max 100 chars
 const clamp100 = (s: string) => {
-  const t = (s ?? "").trim();
+  const t = (s ?? '').trim();
   if (t.length <= 100) {
     return t;
   }
@@ -44,39 +44,38 @@ const clamp100 = (s: string) => {
 export default function CreateChallengePage() {
   const router = useRouter();
 
-  const isMd = useMediaQuery("(min-width: 768px)");
+  const isMd = useMediaQuery('(min-width: 768px)');
 
   // TODO: remplacer par session user
-  const currentUserName = "NailMaster";
+  const currentUserName = 'NailMaster';
 
   // TODO: remplacer par fetch / BDD (liste de jeux)
   const games: GameOption[] = useMemo(
     () => [
-      { id: "hollow-knight", title: "Hollow Knight", imageUrl: "/real-rat.png" },
-      { id: "elden-ring", title: "Elden Ring", imageUrl: "/real-rat.png" },
-      { id: "skyrim", title: "The Elder Scrolls V: Skyrim", imageUrl: "/real-rat.png" },
+      { id: 'hollow-knight', title: 'Hollow Knight', imageUrl: '/real-rat.png' },
+      { id: 'elden-ring', title: 'Elden Ring', imageUrl: '/real-rat.png' },
+      { id: 'skyrim', title: 'The Elder Scrolls V: Skyrim', imageUrl: '/real-rat.png' }
     ],
     []
   );
 
   // Etat du formulaire (mode "edit" uniquement)
-  const [title, setTitle] = useState("");
-  const [createdBy, setCreatedBy] = useState("NailMaster"); // TODO: session user
+  const [title, setTitle] = useState('');
+  const [createdBy, setCreatedBy] = useState('NailMaster'); // TODO: session user
   // OBSOLETE: Remplacé par selectedGame (RawgGame)
   // const [gameId, setGameId] = useState(games[0]?.id ?? "");
-  const [imageUrl, setImageUrl] = useState<string>("");
-  const [description, setDescription] = useState("");
-  const [detailsPoints, setDetailsPoints] = useState<string[]>([
-  ]);
+  const [imageUrl, setImageUrl] = useState<string>('');
+  const [description, setDescription] = useState('');
+  const [detailsPoints, setDetailsPoints] = useState<string[]>([]);
   // Autocomplete states
   const [selectedGame, setSelectedGame] = useState<RawgGame | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<RawgGame[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
   // Score format
-  const [scoreFormat, setScoreFormat] = useState("");
+  const [scoreFormat, setScoreFormat] = useState('');
 
   // OBSOLETE: Remplacé par selectedGame state
   // const selectedGame = useMemo(
@@ -92,14 +91,14 @@ export default function CreateChallengePage() {
     }
 
     setIsSearching(true);
-    
+
     try {
       const response = await fetch(
         `http://localhost:3000/games/search?q=${encodeURIComponent(query)}`
       );
-      
+
       if (!response.ok) throw new Error('Search failed');
-      
+
       const data = await response.json();
       setSearchResults(data.results || []);
       setShowDropdown(true);
@@ -131,15 +130,13 @@ export default function CreateChallengePage() {
 
   const headerImage = imageUrl.trim()
     ? imageUrl.trim()
-    : selectedGame?.background_image || "/real-rat.png";
-
+    : selectedGame?.background_image || '/real-rat.png';
 
   // Gestion des lignes à puces (details)
-  const addBullet = () => setDetailsPoints((p) => [...p, ""]);
+  const addBullet = () => setDetailsPoints((p) => [...p, '']);
   const updateBullet = (idx: number, val: string) =>
     setDetailsPoints((p) => p.map((x, i) => (i === idx ? val : x)));
-  const removeBullet = (idx: number) =>
-    setDetailsPoints((p) => p.filter((_, i) => i !== idx));
+  const removeBullet = (idx: number) => setDetailsPoints((p) => p.filter((_, i) => i !== idx));
 
   // const canCreate = useMemo(() => {
   //   const t = title.trim();
@@ -172,14 +169,14 @@ export default function CreateChallengePage() {
       gameId: selectedGame.id,
       gameTitle: selectedGame.name,
       gameSlug: selectedGame.slug,
-      gameImageUrl: selectedGame.background_image || "",
+      gameImageUrl: selectedGame.background_image || ''
     };
 
     try {
       const response = await fetch('http://localhost:3000/challenges', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
           // TODO: Ajouter le token JWT ici quand l'auth sera en place
           // 'Authorization': `Bearer ${token}`
         },
@@ -192,7 +189,7 @@ export default function CreateChallengePage() {
       }
 
       const data = await response.json();
-      
+
       // Redirige vers le challenge créé
       router.push(`/challenge/${data.challenge.slug}`);
     } catch (error) {
@@ -210,7 +207,7 @@ export default function CreateChallengePage() {
           <div className="relative h-32 md:h-48 lg:h-64 w-full bg-slate-800">
             <Image
               src={headerImage}
-              alt={title || "New challenge"}
+              alt={title || 'New challenge'}
               fill
               sizes="(max-width: 767px) 430px, 1024px"
               className="object-cover"
@@ -234,7 +231,7 @@ export default function CreateChallengePage() {
             <div className="mt-3 flex items-start justify-between gap-3">
               <div className="text-white/80 space-y-2">
                 <div className="text-sm">
-                  <span className="text-white/60">Game :</span>{" "}
+                  <span className="text-white/60">Game :</span>{' '}
                   <div className="relative ml-2">
                     <input
                       type="text"
@@ -244,7 +241,7 @@ export default function CreateChallengePage() {
                       className="bg-slate-950/40 ring-1 ring-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none w-64"
                       placeholder="Search for a game..."
                     />
-                    
+
                     {isSearching && (
                       <div className="absolute right-3 top-1/2 -translate-y-1/2">
                         <div className="animate-spin h-4 w-4 border-2 border-white/20 border-t-white rounded-full" />
@@ -265,8 +262,8 @@ export default function CreateChallengePage() {
                             className="w-full px-3 py-2 text-left hover:bg-slate-800 flex items-center gap-3 text-sm"
                           >
                             {game.background_image && (
-                              <img 
-                                src={game.background_image} 
+                              <img
+                                src={game.background_image}
                                 alt={game.name}
                                 className="w-10 h-10 object-cover rounded"
                               />
@@ -285,7 +282,7 @@ export default function CreateChallengePage() {
                 </div>
 
                 <div className="text-sm">
-                  <span className="text-white/60">Created by</span>{" "}
+                  <span className="text-white/60">Created by</span>{' '}
                   <span className="font-semibold">{currentUserName}</span>
                 </div>
               </div>
@@ -399,8 +396,8 @@ export default function CreateChallengePage() {
                 onClick={createChallenge}
                 className={`px-10 py-3 rounded-full font-semibold shadow-[0_10px_25px_rgba(0,0,0,0.45)] ${
                   canCreate
-                    ? "bg-amber-600/80 hover:bg-amber-600"
-                    : "bg-slate-700 text-white/50 cursor-not-allowed"
+                    ? 'bg-amber-600/80 hover:bg-amber-600'
+                    : 'bg-slate-700 text-white/50 cursor-not-allowed'
                 }`}
               >
                 Create
