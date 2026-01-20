@@ -38,7 +38,17 @@ type Challenge = {
   createdAt: string;
   updatedAt: string;
   game: Game;
+  likes: number;
+  hasLiked?: boolean;
 };
+
+
+function formatVotes(n: number) {
+  if (n >= 1000) {
+    return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+  }
+  return String(n);
+}
 
 export default function ChallengesPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -94,7 +104,6 @@ export default function ChallengesPage() {
 
       const matchesQuery =
         c.title.toLowerCase().includes(q) ||
-        c.description.toLowerCase().includes(q) ||
         c.game.title.toLowerCase().includes(q);
 
       return matchesGame && matchesQuery;
@@ -106,15 +115,9 @@ export default function ChallengesPage() {
   ====================== */
 
   const totalPages = Math.max(1, Math.ceil(filteredChallenges.length / itemsPerPage));
-  const adjustedCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
+  const effectivePage = Math.min(Math.max(1, currentPage), totalPages);
 
-  useEffect(() => {
-    if (currentPage !== adjustedCurrentPage) {
-      setCurrentPage(adjustedCurrentPage);
-    }
-  }, [adjustedCurrentPage, currentPage]);
-
-  const startIndex = (adjustedCurrentPage - 1) * itemsPerPage;
+  const startIndex = (effectivePage - 1) * itemsPerPage;
   const paginatedChallenges = filteredChallenges.slice(startIndex, startIndex + itemsPerPage);
 
   const goToPage = (page: number) => {
@@ -142,79 +145,153 @@ export default function ChallengesPage() {
      RENDER
   ====================== */
 
-  return (
+    return (
     <div className="min-h-screen bg-slate-950 text-white flex flex-col">
-      <main className="px-4 md:px-8 py-6 max-w-7xl mx-auto w-full flex flex-col flex-1">
-        {/* Search */}
-        <div className="mb-6">
-          <input
-            type="text"
-            placeholder="Search a challenge..."
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setCurrentPage(1);
-              setPageBlockStart(2);
-            }}
-            className="w-full max-w-2xl mx-auto block rounded-full bg-slate-900 py-3 px-6 text-center"
-          />
-        </div>
+        <main className="px-4 md:px-8 py-6 max-w-7xl mx-auto w-full">
 
-        <div className="flex flex-col">
-          {/* Challenges */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {paginatedChallenges.map((c) => (
-              <div
-                key={c.id}
-                className="rounded-2xl bg-slate-900/70 ring-1 ring-white/10 p-5 flex flex-col"
-              >
-                <div className="text-xs font-semibold tracking-widest text-purple-300 mb-2">
-                  {c.game.title.toUpperCase()}
+        {/* Search Bar */}
+        <div className="mb-6">
+            <div className="relative max-w-md md:max-w-2xl mx-auto">
+                <div className="absolute inset-0 rounded-full bg-(--searchbar-color) ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.45)]" />
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 z-10 h-12 w-12 flex items-center justify-center shadow">
+                    <Image
+                src="/loupe.png"
+                width={100}
+                height={100}
+                alt="Search Icon"
+                className="opacity-80"
+                    />
                 </div>
-                <div className="text-2xl font-semibold mb-2">{c.title}</div>
-                <div className="text-white/70 mb-4">{c.description}</div>
-                <div className="mt-auto flex items-center justify-between">
-                  <div className="text-sm text-white/50">likes</div>
-                  <Link
-                    href={`/challenges/${c.slug}`}
-                    className="px-4 py-2 rounded-xl bg-amber-600/80 hover:bg-amber-600 text-sm font-semibold"
-                  >
-                    Details
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-          {filteredChallenges.length === 0 && (
-            <p className="mt-8 text-center text-white">No challenge found.</p>
-          )}
-          {/* Pagination */}
-          <div className="flex justify-center gap-2 mt-10 align-bottom">
-            <button
-              className={`w-8 h-8 rounded-full ${currentPage === 1 ? 'bg-purple-600' : 'bg-slate-800'}`}
-              onClick={() => goToPage(1)}
-            >
-              1
-            </button>
-            {Array.from({ length: 4 }, (_, i) => pageBlockStart + i)
-              .filter((p) => p <= totalPages)
-              .map((page) => (
-                <button
-                  key={page}
-                  className={`w-8 h-8 rounded-full ${
-                    currentPage === page ? 'bg-purple-600' : 'bg-slate-800'
-                  }`}
-                  onClick={() => goToPage(page)}
+
+            <input
+                type="text"
+                placeholder="Search a challenge..."
+                value={searchQuery}
+                onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+                setPageBlockStart(2);
+                }}
+                className="relative w-full rounded-full bg-transparent py-3 pl-14 pr-4 text-white text-center text-xl placeholder:text-white/50 focus:outline-none"
+            />
+            </div>
+        </div>
+        
+    {/* Challenges Section */}
+    <div className="mb-8">
+        <div className="mx-auto max-w-md md:max-w-4xl">
+            <div className="mb-6 flex items-center justify-between gap-4">
+                <h2 className="text-xl font-bold border-l-4 border-purple-600 pl-3">
+                    Challenges
+                </h2>
+                <Link
+                    href="/challenges/create"
+                    className="px-4 py-2 rounded-xl bg-amber-600/80 hover:bg-amber-600 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
                 >
-                  {page}
-                </button>
-              ))}
-            {totalPages > pageBlockStart + 3 && (
-              <button className="w-8 h-8 rounded-full bg-slate-800" onClick={nextBlock}>
-                ...
-              </button>
-            )}
-          </div>
+                  Create a challenge
+                </Link>
+            </div>
+
+        {/* Cards de challenges */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                {paginatedChallenges.map((c) => (
+                <div
+                    key={c.id}
+                    className="rounded-2xl bg-slate-900/70 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden"
+                >
+                <div className="p-5 flex flex-col h-full">
+
+                {/* Tag / jeu */}
+                <div className="text-xs font-semibold tracking-widest text-purple-300/90 mb-2">
+                    {(c.game?.title ?? '').toUpperCase()}
+                </div>
+
+                {/* Titre */}
+                <div className="text-2xl font-semibold leading-tight mb-2">
+                    {c.title}
+                </div>
+
+                {/* Description */}
+                <div className="text-white/70 leading-relaxed mb-4">
+                    {c.description}
+                </div>
+
+                {/* votes + bouton */}
+                <div className="mt-auto flex items-center justify-between pt-2">
+                    <div className="flex items-center gap-2 text-white/70">
+                        <span className="relative w-8 h-8 shrink-0">
+                            <Image
+                                src={c.hasLiked ? "/like 1.png" : "/like 0.png"}
+                                alt={c.hasLiked ? "Liked" : "Not liked"}
+                                fill
+                                sizes="32px"
+                                className="object-contain"
+                            />
+                        </span>
+                        <span className="text-sm font-semibold">
+                            {formatVotes(c.likes)}
+                        </span>
+                        <span className="text-sm">likes</span>
+                    </div>
+
+                    <Link
+                        href={`/challenges/${c.slug}`}
+                        className="px-4 py-2 rounded-xl bg-amber-600/80 hover:bg-amber-600 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                    >
+                        Details
+                    </Link>
+                    </div>
+                </div>
+                </div>
+            ))}
+            </div>
+        </div>
+    </div>
+
+        {filteredChallenges.length === 0 && (
+            <p className="mt-6 text-center text-white">
+                {selectedGameId ? "No challenge for this game yet" : "No challenge found."}
+            </p>
+        )}
+
+        {/* Pages */}
+        <div className="flex justify-center gap-2 mb-12">
+          {/* Page 1 toujours visible */}
+          <button
+            className={`w-8 h-8 rounded-full flex items-center justify-center ${
+              currentPage === 1 ? 'bg-purple-600' : 'bg-slate-800 hover:bg-slate-700'
+            }`}
+            onClick={() => goToPage(1)}
+          >
+            1
+          </button>
+
+          {/* Les 4 pages du bloc */}
+          {Array.from({ length: 4 }, (_, i) => pageBlockStart + i)
+            .filter((p) => p <= totalPages)
+            .map((page) => (
+            <button
+              key={page}
+              className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                currentPage === page ? 'bg-purple-600' : 'bg-slate-800 hover:bg-slate-700'
+              }`}
+              onClick={() => goToPage(page)}
+            >
+              {page}
+            </button>
+          ))}
+
+          {/* Bouton ... : passe au bloc suivant */}
+          {totalPages > pageBlockStart + 3 && (
+          <button
+            type="button"
+            className="w-8 h-8 bg-slate-800 hover:bg-slate-700 rounded-full flex items-center justify-center"
+            onClick={nextBlock}
+            aria-label="Afficher les pages suivantes"
+          >
+            ...
+          </button>
+          )}
         </div>
       </main>
     </div>

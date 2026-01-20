@@ -284,12 +284,12 @@ export default function GameChallengesPage() {
                 <div className="mb-6 flex items-center justify-between gap-4">
                     <h2 className="text-xl font-bold border-l-4 border-purple-600 pl-3">Challenges</h2>
 
-                    <button
-                        type="button"
-                        className="px-4 py-2 rounded-xl bg-amber-600/80 hover:bg-amber-600 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                    <Link
+                    href="/challenges/create"
+                    className="px-4 py-2 rounded-xl bg-amber-600/80 hover:bg-amber-600 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
                     >
-                        Create a challenge
-                </button>
+                      Create a challenge
+                    </Link>
                 </div>
 
             {/* Cards des challenges */}
