@@ -75,3 +75,13 @@ export const meController = async (req: Request, res: Response, next: NextFuncti
     next(error);
   }
 };
+
+export const logOutontroller = async (req: Request, res: Response) => {
+  res.clearCookie('accessToken', {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'lax',
+    path: '/'
+  });
+  return res.status(200).json({ message: 'logged out successfully' });
+};
