@@ -127,7 +127,7 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* GamerChallenge news area */}
-      <div className="bg-[url(/baniere-leaderboard.png)] bg-no-repeat bg-cover h-50 text-center m-5 ml-10 mr-10 rounded-4xl">
+      <div className="bg-[url(/ratbanner.png)] bg-no-repeat bg-cover h-50 text-center m-5 ml-10 mr-10 rounded-4xl">
         <p>This is where the news come in</p>
       </div>
       <nav className="flex justify-center mb-8">
