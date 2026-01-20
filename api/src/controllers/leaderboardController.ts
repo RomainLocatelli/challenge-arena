@@ -107,7 +107,6 @@ export const getLeaderboard = async (req: Request, res: Response, next: NextFunc
         }
       };
     }
-
     res.json({
       topByParticipations: topByParticipations.map((u) => ({
         username: u.username,
