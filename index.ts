@@ -13,6 +13,8 @@ import leaderboardRoutes from './src/routes/leaderboard.js';
 import challengeVoteRoutes from './src/routes/challengeVote.js';
 import participationVoteRoutes from './src/routes/participationVote.js';
 import profileRoutes from './src/routes/profile.js';
+import reportRoutes from './src/routes/reports.js';
+import moderationRoutes from './src/routes/moderation.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -32,6 +34,8 @@ app.use('/challengeVote', challengeVoteRoutes);
 app.use('/participation', participationsRoutes);
 app.use('/participationVote', participationVoteRoutes);
 app.use('/leaderboard', leaderboardRoutes);
+app.use('/reports', reportRoutes);
+app.use('/moderation', moderationRoutes);
 
 // Route de test
 app.get('/health', (req, res) => {
