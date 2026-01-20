@@ -27,15 +27,6 @@ Content-Type: application/json
   "password": "Test1234!"
 }
 
-### 1.3 Connexion Bob (user normal)
-POST {{baseUrl}}/auth/login
-Content-Type: application/json
-
-{
-  "email": "bob@example.com",
-  "password": "Test1234!"
-}
-
 ###############################################
 # 2. RÉCUPÉRER DES IDs POUR LES TESTS
 ###############################################
@@ -43,8 +34,8 @@ Content-Type: application/json
 ### 2.1 Liste des challenges (pour récupérer un challengeId)
 GET {{baseUrl}}/challenges
 
-### 2.2 Détails d'un challenge (pour récupérer une participationId)
-GET {{baseUrl}}/challenges/speedrun-any-percent
+### 2.2 Détails d'un challenge (copie un slug depuis la réponse ci-dessus)
+GET {{baseUrl}}/challenges/slug/SLUG_DU_CHALLENGE_ICI
 
 ###############################################
 # 3. SIGNALEMENT (USER NORMAL)
@@ -72,7 +63,7 @@ Authorization: Bearer {{aliceToken}}
   "reason": "Cette participation montre des techniques de triche évidente."
 }
 
-### 3.3 Tenter de signaler le même challenge à nouveau (doit échouer)
+### 3.3 Tenter de signaler le même challenge à nouveau (doit échouer - duplicate)
 POST {{baseUrl}}/reports
 Content-Type: application/json
 Authorization: Bearer {{aliceToken}}
@@ -174,7 +165,7 @@ Authorization: Bearer {{aliceToken}}
 {
   "targetType": "CHALLENGE",
   "targetId": "id-inexistant-456",
-  "reason": "Signalement d'un challenge qui n'existe pas"
+  "reason": "Signalement d'un challenge qui n'existe pas avec une raison suffisamment longue"
 }
 
 ### 5.3 Approuver avec un targetType invalide (doit échouer - 400)
