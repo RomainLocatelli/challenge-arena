@@ -3,7 +3,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { fetchGames, type Game } from '@/lib/api';
 
 // Petit hook responsive (sans event resize manuel côté composant)
 function useMediaQuery(query: string) {
@@ -32,27 +31,14 @@ export default function GamesPage() {
   const ismd = useMediaQuery('(min-width: 768px)');
   const itemsPerPage = ismd ? 9 : 6;
 
-  // Chargement des jeux depuis l'API
-  // useEffect(() => {
-  //   fetchGames()
-  //     .then((data) => {
-  //       setGames(data);
-  //       setLoading(false);
-  //     })
-  //     .catch((err) => {
-  //       console.error('Failed to load games:', err);
-  //       setError('Failed to load games. Please try again later.');
-  //       setLoading(false);
-  //     });
-  // }, []);
-
   useEffect(() => {
     async function getAllGames() {
-      const registerUrl = process.env.API_URL || '';
-      const response = await fetch(registerUrl);
+      const registerUrl = process.env.NEXT_PUBLIC_API_URL || '';
+      const response = await fetch(`${registerUrl}games`);
       const replyDb = await response.json();
 
-      setGames(replyDb.topGames);
+      // Extraire le tableau games de l'objet
+      setGames(replyDb.games || []);
       setLoading(false);
     }
 
@@ -203,7 +189,9 @@ export default function GamesPage() {
           </button>
 
           {/* Les 4 pages du bloc */}
-          {Array.from({ length: 4 }, (_, i) => pageBlockStart + i).map((page) => (
+          {Array.from({ length: 4 }, (_, i) => pageBlockStart + i)
+            .filter((p) => p <= totalPages)
+            .map((page) => (
             <button
               key={page}
               className={`w-8 h-8 rounded-full flex items-center justify-center ${
@@ -216,6 +204,7 @@ export default function GamesPage() {
           ))}
 
           {/* Bouton ... : passe au bloc suivant */}
+          {totalPages > pageBlockStart + 3 && (
           <button
             type="button"
             className="w-8 h-8 bg-slate-800 hover:bg-slate-700 rounded-full flex items-center justify-center"
@@ -224,6 +213,7 @@ export default function GamesPage() {
           >
             ...
           </button>
+          )}
         </div>
       </main>
     </div>

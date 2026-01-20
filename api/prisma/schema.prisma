@@ -12,6 +12,11 @@ enum Role {
   ADMIN
 }
 
+enum ReportTargetType {
+  CHALLENGE
+  PARTICIPATION
+}
+
 model User {
   id                   String               @id @default(uuid(7))
   email                String               @unique
@@ -27,6 +32,7 @@ model User {
   challengeVotes       ChallengeVote[]
   participationVotes   ParticipationVote[]
   createdChallenges    Challenge[]          @relation("ChallengeCreator")
+  reports              Report[]
 
   @@map("users")
 }
@@ -44,7 +50,7 @@ model Game {
 
 model Challenge {
   id          String       @id @default(uuid(7))
-  slug        String       @unique        
+  slug        String       @unique
   title       String       @unique
   scoreFormat String       @map("score_format")
   description String
@@ -53,8 +59,8 @@ model Challenge {
   createdAt   DateTime     @default(now()) @map("created_at")
   updatedAt   DateTime     @updatedAt @map("updated_at")
   
-  creator         User                @relation("ChallengeCreator", fields: [createdBy], references: [id])
-  game            Game                @relation(fields: [gameId], references: [id])
+  creator         User                @relation("ChallengeCreator", fields: [createdBy], references: [id], onDelete: Cascade)
+  game            Game                @relation(fields: [gameId], references: [id], onDelete: Cascade)
   participations  Participation[]
   votes           ChallengeVote[]
 
@@ -69,8 +75,8 @@ model Participation {
   challengeId   String    @map("challenge_id")
   createdAt     DateTime  @default(now()) @map("created_at")
   
-  user      User                @relation(fields: [userId], references: [id])
-  challenge Challenge           @relation(fields: [challengeId], references: [id])
+  user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challenge Challenge           @relation(fields: [challengeId], references: [id], onDelete: Cascade)
   votes     ParticipationVote[]
 
   @@map("participations")
@@ -82,8 +88,8 @@ model ChallengeVote {
   challengeId String    @map("challenge_id")
   createdAt   DateTime  @default(now()) @map("created_at")
   
-  user      User      @relation(fields: [userId], references: [id])
-  challenge Challenge @relation(fields: [challengeId], references: [id])
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challenge Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
 
   @@unique([userId, challengeId])
   @@map("challenge_votes")
@@ -95,9 +101,23 @@ model ParticipationVote {
   participationId String        @map("participation_id")
   createdAt       DateTime      @default(now()) @map("created_at")
   
-  user          User          @relation(fields: [userId], references: [id])
-  participation Participation @relation(fields: [participationId], references: [id])
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  participation Participation @relation(fields: [participationId], references: [id], onDelete: Cascade)
 
   @@unique([userId, participationId])
   @@map("participation_votes")
+}
+
+model Report {
+  id          String            @id @default(uuid(7))
+  reason      String
+  userId      String            @map("user_id")
+  targetType  ReportTargetType  @map("target_type")
+  targetId    String            @map("target_id")
+  createdAt   DateTime          @default(now()) @map("created_at")
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, targetType, targetId])
+  @@map("reports")
 }
