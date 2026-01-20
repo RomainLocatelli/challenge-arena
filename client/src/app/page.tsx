@@ -78,7 +78,7 @@ export default function Home() {
             return (
               <div
                 key={challenge.id}
-                className="rounded-2xl shrink-0 snap-center bg-slate-900/70 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] w-60 lg:w-70 hover:outline-double  outline-(--button-select) delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 "
+                className="rounded-2xl shrink-0 snap-center bg-slate-900/70 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] w-60 lg:w-70 hover:outline-double outline-(--button-select) delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110"
               >
                 <div className="p-5 flex flex-col h-full">
                   {/* Tag / jeu */}
@@ -125,8 +125,13 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* GamerChallenge news area */}
-      <div className="relative bg-[url(/ratbanner.png)] bg-no-repeat bg-cover bg-top h-40 text-center m-5 ml-10 mr-10 rounded-4xl overflow-hidden">
-        <div className="absolute inset-0 flex items-center justify-center">
+      <div className="relative h-40 m-5 ml-10 mr-10 rounded-4xl overflow-hidden">
+        <img
+          src="/ratbanner.png"
+          alt="Banner"
+          className="absolute inset-0 w-full h-full object-cover object-top"
+        />
+        <div className="absolute inset-0 flex items-center justify-center z-10">
           <p className="text-white text-xl font-bold drop-shadow-lg">WELCOME TO GAMERCHALLENGE</p>
         </div>
       </div>
