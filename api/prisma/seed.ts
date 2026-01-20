@@ -8,7 +8,7 @@ const adapter = new PrismaPg({ connectionString });
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  console.log('🌱 Starting seed...');
+  console.log('🌱 Starting massive seed...');
 
   // Nettoyer la base
   await prisma.participationVote.deleteMany();
@@ -20,7 +20,7 @@ async function main() {
 
   console.log('✅ Database cleaned');
 
-  // Créer 10 users
+  // Créer 15 users (plus de diversité)
   const hashedPassword = await argon2.hash('Test1234!');
 
   const users = await Promise.all([
@@ -33,12 +33,7 @@ async function main() {
       }
     }),
     prisma.user.create({
-      data: {
-        email: 'bob@example.com',
-        username: 'bob',
-        password: hashedPassword,
-        role: 'USER'
-      }
+      data: { email: 'bob@example.com', username: 'bob', password: hashedPassword, role: 'USER' }
     }),
     prisma.user.create({
       data: {
@@ -57,12 +52,7 @@ async function main() {
       }
     }),
     prisma.user.create({
-      data: {
-        email: 'eve@example.com',
-        username: 'eve',
-        password: hashedPassword,
-        role: 'USER'
-      }
+      data: { email: 'eve@example.com', username: 'eve', password: hashedPassword, role: 'USER' }
     }),
     prisma.user.create({
       data: {
@@ -89,12 +79,22 @@ async function main() {
       }
     }),
     prisma.user.create({
-      data: {
-        email: 'iris@example.com',
-        username: 'iris',
-        password: hashedPassword,
-        role: 'USER'
-      }
+      data: { email: 'iris@example.com', username: 'iris', password: hashedPassword, role: 'USER' }
+    }),
+    prisma.user.create({
+      data: { email: 'jack@example.com', username: 'jack', password: hashedPassword, role: 'USER' }
+    }),
+    prisma.user.create({
+      data: { email: 'kate@example.com', username: 'kate', password: hashedPassword, role: 'USER' }
+    }),
+    prisma.user.create({
+      data: { email: 'leo@example.com', username: 'leo', password: hashedPassword, role: 'USER' }
+    }),
+    prisma.user.create({
+      data: { email: 'maya@example.com', username: 'maya', password: hashedPassword, role: 'USER' }
+    }),
+    prisma.user.create({
+      data: { email: 'noah@example.com', username: 'noah', password: hashedPassword, role: 'USER' }
     }),
     prisma.user.create({
       data: {
@@ -108,555 +108,906 @@ async function main() {
 
   console.log(`✅ Created ${users.length} users`);
 
-// Créer des games
-const games = await Promise.all([
-  prisma.game.create({
-    data: {
-      id: '326243',
-      slug: 'elden-ring',
-      title: 'Elden Ring',
-      imageUrl: 'https://media.rawg.io/media/games/5ec/5ecac5cb026ec26a56efcc546364e348.jpg'
-    }
-  }),
-  prisma.game.create({
-    data: {
-      id: '3328',
-      slug: 'the-witcher-3-wild-hunt',
-      title: 'The Witcher 3',
-      imageUrl: 'https://media.rawg.io/media/games/618/618c2031a07bbff6b4f611f10b6bcdbc.jpg'
-    }
-  }),
-  prisma.game.create({
-    data: {
-      id: '12447',
-      slug: 'dark-souls',
-      title: 'Dark Souls',
-      imageUrl: 'https://media.rawg.io/media/games/559/559bc0768f656ad0c63c54b80a82d680.jpg'
-    }
-  }),
-  prisma.game.create({
-    data: {
-      id: '58175',
-      slug: 'god-of-war-2018',
-      title: 'God of War (2018)',
-      imageUrl: 'https://media.rawg.io/media/games/4be/4be6a6ad0364751a96229c56bf69be59.jpg'
-    }
-  }),
-  prisma.game.create({
-    data: {
-      id: '22509',
-      slug: 'minecraft',
-      title: 'Minecraft',
-      imageUrl: 'https://media.rawg.io/media/games/b4e/b4e4c73d5aa4ec66bbf75375c4847a2b.jpg'
-    }
-  }),
-
-  // Autres jeux à supprimer plus tard
-  prisma.game.create({
-    data: {
-      id: "5679",
-      slug: "the-elder-scrolls-v-skyrim",
-      title: "The Elder Scrolls V: Skyrim",
-      imageUrl: "https://media.rawg.io/media/games/7a6/7a6e6c8ab1c0f1b2e24b2a2b1b7fdbd8.jpg",
-    },
-  }),
-  prisma.game.create({
-    data: {
-      id: "3498",
-      slug: "grand-theft-auto-v",
-      title: "Grand Theft Auto V",
-      imageUrl: "https://media.rawg.io/media/games/456/456dea5e1c7e3cd07060c14e96612001.jpg",
-    },
-  }),
-  prisma.game.create({
-    data: {
-      id: "4200",
-      slug: "portal-2",
-      title: "Portal 2",
-      imageUrl: "https://media.rawg.io/media/games/328/3283617cb7d75d67257fc58339188742.jpg",
-    },
-  }),
-  prisma.game.create({
-    data: {
-      id: "28",
-      slug: "red-dead-redemption-2",
-      title: "Red Dead Redemption 2",
-      imageUrl: "https://media.rawg.io/media/games/511/5117f9f9b8a5b2b3fbd6a3c8d7f7c6a1.jpg",
-    },
-  }),
-  prisma.game.create({
-    data: {
-      id: "1030",
-      slug: "limbo",
-      title: "LIMBO",
-      imageUrl: "https://media.rawg.io/media/games/2d4/2d4b8b13c7d2f1736d9877c3c9b1e6fe.jpg",
-    },
-  }),
-  prisma.game.create({
-    data: {
-      id: "22511",
-      slug: "the-legend-of-zelda-breath-of-the-wild",
-      title: "The Legend of Zelda: Breath of the Wild",
-      imageUrl: "https://media.rawg.io/media/games/cc1/cc1f996a9c0d2d1c2f9f2d46b3bb55d0.jpg",
-    },
-  }),
-  prisma.game.create({
-    data: {
-      id: "13536",
-      slug: "hollow-knight",
-      title: "Hollow Knight",
-      imageUrl: "https://media.rawg.io/media/games/1f5/1f5dfb8d5b0c9b62b9a7a1c8a6b7e9f0.jpg",
-    },
-  }),
-  prisma.game.create({
-    data: {
-      id: "58175",
-      slug: "hades",
-      title: "Hades",
-      imageUrl: "https://media.rawg.io/media/games/9f1/9f1c4a9a2b9b8a2a4a7d8d6b5a1b2c3d.jpg",
-    },
-  }),
-  // Fin des autres jeux
-]);
+  // Créer 30 jeux (IDs réels de RAWG API)
+  const games = await Promise.all([
+    prisma.game.create({
+      data: {
+        id: '3498',
+        slug: 'grand-theft-auto-v',
+        title: 'Grand Theft Auto V',
+        imageUrl: 'https://media.rawg.io/media/games/20a/20aa03a10cda45239fe22d035c0ebe64.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '3328',
+        slug: 'the-witcher-3-wild-hunt',
+        title: 'The Witcher 3: Wild Hunt',
+        imageUrl: 'https://media.rawg.io/media/games/618/618c2031a07bbff6b4f611f10b6bcdbc.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '4200',
+        slug: 'portal-2',
+        title: 'Portal 2',
+        imageUrl: 'https://media.rawg.io/media/games/328/3283617cb7d75d67257fc58339188742.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '5286',
+        slug: 'tomb-raider',
+        title: 'Tomb Raider (2013)',
+        imageUrl: 'https://media.rawg.io/media/games/021/021c4e21a1824d2526f925eff6324653.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '13536',
+        slug: 'portal',
+        title: 'Portal',
+        imageUrl: 'https://media.rawg.io/media/games/7fa/7fa0b586293c5861ee32490e953a4996.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '4291',
+        slug: 'counter-strike-global-offensive',
+        title: 'Counter-Strike: Global Offensive',
+        imageUrl: 'https://media.rawg.io/media/games/736/73619bd336c894d6941d926bfd563946.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '5679',
+        slug: 'the-elder-scrolls-v-skyrim',
+        title: 'The Elder Scrolls V: Skyrim',
+        imageUrl: 'https://media.rawg.io/media/games/7cf/7cfc9220b401b7a300e409e539c9afd5.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '12020',
+        slug: 'left-4-dead-2',
+        title: 'Left 4 Dead 2',
+        imageUrl: 'https://media.rawg.io/media/games/d58/d588947d4286e7b5e0e12e1bea7d9844.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '326243',
+        slug: 'elden-ring',
+        title: 'Elden Ring',
+        imageUrl: 'https://media.rawg.io/media/games/5ec/5ecac5cb026ec26a56efcc546364e348.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '802',
+        slug: 'borderlands-2',
+        title: 'Borderlands 2',
+        imageUrl: 'https://media.rawg.io/media/games/49c/49c3dfa4ce2f6f140cc4825868e858cb.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '28',
+        slug: 'red-dead-redemption-2',
+        title: 'Red Dead Redemption 2',
+        imageUrl: 'https://media.rawg.io/media/games/511/5118aff5091cb3efec399c808f8c598f.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '3439',
+        slug: 'life-is-strange',
+        title: 'Life is Strange',
+        imageUrl: 'https://media.rawg.io/media/games/562/562553814dd54e001a541e4ee83a591c.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '1030',
+        slug: 'limbo',
+        title: 'Limbo',
+        imageUrl: 'https://media.rawg.io/media/games/942/9424d6bb763dc38d9378b488603c87fa.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '23027',
+        slug: 'the-walking-dead',
+        title: 'The Walking Dead',
+        imageUrl: 'https://media.rawg.io/media/games/8d6/8d69eb6c32ed6acfd75f82d532144993.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '58175',
+        slug: 'god-of-war-2018',
+        title: 'God of War (2018)',
+        imageUrl: 'https://media.rawg.io/media/games/4be/4be6a6ad0364751a96229c56bf69be59.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '22509',
+        slug: 'minecraft',
+        title: 'Minecraft',
+        imageUrl: 'https://media.rawg.io/media/games/b4e/b4e4c73d5aa4ec66bbf75375c4847a2b.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '3272',
+        slug: 'rocket-league',
+        title: 'Rocket League',
+        imageUrl: 'https://media.rawg.io/media/games/8cc/8cce7c0e99dcc43d66c8efd42f9d03e3.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '3070',
+        slug: 'fallout-4',
+        title: 'Fallout 4',
+        imageUrl: 'https://media.rawg.io/media/games/d82/d82990b9c67ba0d2d09d4e6fa88885a7.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '12447',
+        slug: 'dark-souls',
+        title: 'Dark Souls',
+        imageUrl: 'https://media.rawg.io/media/games/559/559bc0768f656ad0c63c54b80a82d680.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '41494',
+        slug: 'cyberpunk-2077',
+        title: 'Cyberpunk 2077',
+        imageUrl: 'https://media.rawg.io/media/games/26d/26d4437715bee60138dab4a7c8c59c92.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '32',
+        slug: 'destiny-2',
+        title: 'Destiny 2',
+        imageUrl: 'https://media.rawg.io/media/games/34b/34b1f1850a1c06fd971bc6ab3ac0ce0e.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '58134',
+        slug: 'marvels-spider-man',
+        title: "Marvel's Spider-Man",
+        imageUrl: 'https://media.rawg.io/media/games/9aa/9aa42d16d425fa6f179fc9dc2f763647.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '19487',
+        slug: 'alan-wake',
+        title: 'Alan Wake',
+        imageUrl: 'https://media.rawg.io/media/games/5c0/5c0dd63002cb23f804aab327d40ef119.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '422',
+        slug: 'terraria',
+        title: 'Terraria',
+        imageUrl: 'https://media.rawg.io/media/games/f46/f466571d536f2e3ea9e815ad17177501.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '3192',
+        slug: 'ori-and-the-blind-forest',
+        title: 'Ori and the Blind Forest',
+        imageUrl: 'https://media.rawg.io/media/games/5bf/5bf88a28de96321c86561a65ee48e6c2.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '1447',
+        slug: 'deus-ex-human-revolution',
+        title: 'Deus Ex: Human Revolution',
+        imageUrl: 'https://media.rawg.io/media/games/c6b/c6bfece1daf8d06bc0a60632ac78e5bf.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '11936',
+        slug: 'resident-evil-4',
+        title: 'Resident Evil 4',
+        imageUrl: 'https://media.rawg.io/media/games/053/053fc543bf488349610f1ae2d0c1b51b.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '290856',
+        slug: 'apex-legends',
+        title: 'Apex Legends',
+        imageUrl: 'https://media.rawg.io/media/games/b72/b7233d5d5b1e75e86bb860ccc7aeca85.jpg'
+      }
+    }),
+    prisma.game.create({
+      data: {
+        id: '362',
+        slug: 'for-honor',
+        title: 'For Honor',
+        imageUrl: 'https://media.rawg.io/media/games/4e0/4e0e7b6d6906a131307c94266e5c9a1c.jpg'
+      }
+    })
+  ]);
 
   console.log(`✅ Created ${games.length} games`);
 
-  // Créer 8 challenges
-  const challenges = await Promise.all([
-    prisma.challenge.create({
-      data: {
-        title: 'Speedrun Any%',
-        slug: 'speedrun-any-percent',
-        scoreFormat: 'time',
-        description: 'Complete the game as fast as possible',
-        gameId: games[0].id,
-        createdBy: users[0].id
-      }
-    }),
-    prisma.challenge.create({
-      data: {
-        title: 'No Hit Challenge',
-        slug: 'no-hit-challenge',
-        scoreFormat: 'boolean',
-        description: 'Complete without taking damage',
-        gameId: games[0].id,
-        createdBy: users[1].id
-      }
-    }),
-    prisma.challenge.create({
-      data: {
-        title: 'Death March Difficulty',
-        slug: 'death-march-difficulty',
-        scoreFormat: 'score',
-        description: 'Complete on hardest difficulty',
-        gameId: games[1].id,
-        createdBy: users[2].id
-      }
-    }),
-    prisma.challenge.create({
-      data: {
-        title: 'All Achievements',
-        slug: 'all-achievements',
-        scoreFormat: 'score',
-        description: 'Unlock all achievements',
-        gameId: games[1].id,
-        createdBy: users[3].id
-      }
-    }),
-    prisma.challenge.create({
-      data: {
-        title: 'SL1 Run',
-        slug: 'sl1-run',
-        scoreFormat: 'boolean',
-        description: 'Complete Dark Souls at Soul Level 1',
-        gameId: games[2].id,
-        createdBy: users[4].id
-      }
-    }),
-    prisma.challenge.create({
-      data: {
-        title: 'God Mode Difficulty',
-        slug: 'god-mode-difficulty',
-        scoreFormat: 'time',
-        description: 'Complete on God difficulty',
-        gameId: games[3].id,
-        createdBy: users[5].id
-      }
-    }),
-    prisma.challenge.create({
-      data: {
-        title: 'Hardcore Survival',
-        slug: 'hardcore-survival',
-        scoreFormat: 'score',
-        description: 'Survive 100 days in Hardcore mode',
-        gameId: games[4].id,
-        createdBy: users[6].id
-      }
-    }),
-    prisma.challenge.create({
-      data: {
-        title: 'Boss Rush No Damage',
-        slug: 'boss-rush-no-damage',
-        scoreFormat: 'boolean',
-        description: 'Defeat all bosses without taking damage',
-        gameId: games[2].id,
-        createdBy: users[7].id
-      }
-    })
-  ]);
+  // Créer 75 challenges (2-3 par jeu, variété de scoreFormat)
+  const challenges = [];
+  const challengeData = [
+    // GTA V
+    {
+      game: 0,
+      title: 'Complete Story Mode',
+      slug: 'gta5-complete-story',
+      format: 'boolean',
+      desc: 'Finish all story missions'
+    },
+    {
+      game: 0,
+      title: 'Under the Bridge Speedrun',
+      slug: 'gta5-bridge-speed',
+      format: 'time',
+      desc: 'Complete all under the bridge challenges'
+    },
+    {
+      game: 0,
+      title: 'Stunt Jump Master',
+      slug: 'gta5-stunt-jumps',
+      format: 'score',
+      desc: 'Complete maximum stunt jumps'
+    },
+
+    // Witcher 3
+    {
+      game: 1,
+      title: 'Death March Completion',
+      slug: 'witcher3-death-march',
+      format: 'boolean',
+      desc: 'Beat the game on Death March'
+    },
+    {
+      game: 1,
+      title: 'Gwent Collector',
+      slug: 'witcher3-gwent',
+      format: 'score',
+      desc: 'Collect all Gwent cards'
+    },
+
+    // Portal 2
+    {
+      game: 2,
+      title: 'Co-op Speedrun',
+      slug: 'portal2-coop-speed',
+      format: 'time',
+      desc: 'Complete co-op campaign fast'
+    },
+    {
+      game: 2,
+      title: 'No Portal Bumps',
+      slug: 'portal2-no-bumps',
+      format: 'boolean',
+      desc: 'Complete without hitting walls'
+    },
+
+    // Tomb Raider
+    {
+      game: 3,
+      title: 'Relic Hunter',
+      slug: 'tombraider-relics',
+      format: 'score',
+      desc: 'Find all relics'
+    },
+    {
+      game: 3,
+      title: 'Bow Only Run',
+      slug: 'tombraider-bow-only',
+      format: 'boolean',
+      desc: 'Complete using only bow'
+    },
+
+    // Portal
+    {
+      game: 4,
+      title: 'Portal Speedrun Any%',
+      slug: 'portal-speedrun',
+      format: 'time',
+      desc: 'Beat the game as fast as possible'
+    },
+    {
+      game: 4,
+      title: 'Least Portals Challenge',
+      slug: 'portal-least-portals',
+      format: 'score',
+      desc: 'Complete with minimum portals'
+    },
+
+    // CS:GO
+    {
+      game: 5,
+      title: 'Ace Challenge',
+      slug: 'csgo-ace',
+      format: 'score',
+      desc: 'Get maximum aces in competitive'
+    },
+    {
+      game: 5,
+      title: 'Deagle Only Wins',
+      slug: 'csgo-deagle-wins',
+      format: 'score',
+      desc: 'Win rounds using only deagle'
+    },
+
+    // Skyrim
+    {
+      game: 6,
+      title: 'All Daedric Artifacts',
+      slug: 'skyrim-daedric',
+      format: 'boolean',
+      desc: 'Collect all Daedric artifacts'
+    },
+    {
+      game: 6,
+      title: 'Level 100 No Exploits',
+      slug: 'skyrim-level100',
+      format: 'boolean',
+      desc: 'Reach level 100 legitimately'
+    },
+    {
+      game: 6,
+      title: 'Dragon Kill Count',
+      slug: 'skyrim-dragons',
+      format: 'score',
+      desc: 'Kill maximum dragons'
+    },
+
+    // Left 4 Dead 2
+    {
+      game: 7,
+      title: 'Expert Realism No Death',
+      slug: 'l4d2-expert-nodeath',
+      format: 'boolean',
+      desc: 'Complete campaign without dying'
+    },
+    {
+      game: 7,
+      title: 'Melee Only Campaign',
+      slug: 'l4d2-melee-only',
+      format: 'boolean',
+      desc: 'Complete using only melee'
+    },
+
+    // Elden Ring
+    {
+      game: 8,
+      title: 'All Remembrances',
+      slug: 'eldenring-remembrances',
+      format: 'boolean',
+      desc: 'Defeat all remembrance bosses'
+    },
+    {
+      game: 8,
+      title: 'Level 1 Completion',
+      slug: 'eldenring-level1',
+      format: 'boolean',
+      desc: 'Beat the game at level 1'
+    },
+    {
+      game: 8,
+      title: 'Speedrun Any%',
+      slug: 'eldenring-speedrun',
+      format: 'time',
+      desc: 'Complete as fast as possible'
+    },
+
+    // Borderlands 2
+    {
+      game: 9,
+      title: 'Legendary Loot Hunter',
+      slug: 'bl2-legendary',
+      format: 'score',
+      desc: 'Collect legendary items'
+    },
+    {
+      game: 9,
+      title: 'OP10 Solo Clear',
+      slug: 'bl2-op10-solo',
+      format: 'boolean',
+      desc: 'Clear OP10 solo'
+    },
+
+    // RDR2
+    {
+      game: 10,
+      title: '100% Completion',
+      slug: 'rdr2-100percent',
+      format: 'boolean',
+      desc: 'Achieve 100% completion'
+    },
+    {
+      game: 10,
+      title: 'Sharpshooter Challenge',
+      slug: 'rdr2-sharpshooter',
+      format: 'score',
+      desc: 'Complete sharpshooter challenges'
+    },
+    {
+      game: 10,
+      title: 'Horseback Archery',
+      slug: 'rdr2-horse-archery',
+      format: 'score',
+      desc: 'Kill enemies from horseback with bow'
+    },
+
+    // Life is Strange
+    {
+      game: 11,
+      title: 'All Collectibles',
+      slug: 'lis-collectibles',
+      format: 'boolean',
+      desc: 'Find all optional photos'
+    },
+    {
+      game: 11,
+      title: 'Pacifist Run',
+      slug: 'lis-pacifist',
+      format: 'boolean',
+      desc: 'Make peaceful choices'
+    },
+
+    // Limbo
+    {
+      game: 12,
+      title: 'No Death Run',
+      slug: 'limbo-no-death',
+      format: 'boolean',
+      desc: 'Complete without dying'
+    },
+    {
+      game: 12,
+      title: 'Limbo Speedrun',
+      slug: 'limbo-speedrun',
+      format: 'time',
+      desc: 'Beat the game quickly'
+    },
+
+    // Walking Dead
+    {
+      game: 13,
+      title: 'All Achievements',
+      slug: 'twd-achievements',
+      format: 'boolean',
+      desc: 'Unlock all achievements'
+    },
+    {
+      game: 13,
+      title: 'Moral Dilemmas',
+      slug: 'twd-moral',
+      format: 'score',
+      desc: 'Make tough choices'
+    },
+
+    // God of War
+    {
+      game: 14,
+      title: 'Give Me God of War Difficulty',
+      slug: 'gow-gmgow',
+      format: 'boolean',
+      desc: 'Beat on hardest difficulty'
+    },
+    {
+      game: 14,
+      title: 'All Valkyries Defeated',
+      slug: 'gow-valkyries',
+      format: 'boolean',
+      desc: 'Defeat all Valkyries'
+    },
+    {
+      game: 14,
+      title: 'God of War Speedrun Any%',
+      slug: 'gow-speedrun',
+      format: 'time',
+      desc: 'Complete quickly'
+    },
+
+    // Minecraft
+    {
+      game: 15,
+      title: 'Hardcore 100 Days',
+      slug: 'minecraft-hardcore100',
+      format: 'boolean',
+      desc: 'Survive 100 days in hardcore'
+    },
+    {
+      game: 15,
+      title: 'Dragon Egg Collection',
+      slug: 'minecraft-dragon-eggs',
+      format: 'score',
+      desc: 'Collect dragon eggs'
+    },
+    {
+      game: 15,
+      title: 'Speedrun Random Seed',
+      slug: 'minecraft-speedrun',
+      format: 'time',
+      desc: 'Beat with random seed'
+    },
+
+    // Rocket League
+    {
+      game: 16,
+      title: 'Aerial Goals Challenge',
+      slug: 'rl-aerial-goals',
+      format: 'score',
+      desc: 'Score aerial goals'
+    },
+    {
+      game: 16,
+      title: 'Grand Champion Rank',
+      slug: 'rl-gc-rank',
+      format: 'boolean',
+      desc: 'Reach Grand Champion'
+    },
+
+    // Fallout 4
+    {
+      game: 17,
+      title: 'All Factions Completed',
+      slug: 'fo4-factions',
+      format: 'boolean',
+      desc: 'Complete all faction questlines'
+    },
+    {
+      game: 17,
+      title: 'Settlement Builder',
+      slug: 'fo4-settlements',
+      format: 'score',
+      desc: 'Build maximum settlements'
+    },
+    {
+      game: 17,
+      title: 'Survival Mode Complete',
+      slug: 'fo4-survival',
+      format: 'boolean',
+      desc: 'Beat on survival difficulty'
+    },
+
+    // Dark Souls
+    {
+      game: 18,
+      title: 'SL1 No Hit',
+      slug: 'ds1-sl1-nohit',
+      format: 'boolean',
+      desc: 'Beat at SL1 without being hit'
+    },
+    {
+      game: 18,
+      title: 'All Bosses Speedrun',
+      slug: 'ds1-allbosses-speed',
+      format: 'time',
+      desc: 'Defeat all bosses quickly'
+    },
+
+    // Cyberpunk 2077
+    {
+      game: 19,
+      title: 'All Endings Unlocked',
+      slug: 'cp2077-endings',
+      format: 'boolean',
+      desc: 'See all possible endings'
+    },
+    {
+      game: 19,
+      title: 'Legendary Gear Collection',
+      slug: 'cp2077-legendary',
+      format: 'score',
+      desc: 'Collect legendary items'
+    },
+
+    // Destiny 2
+    {
+      game: 20,
+      title: 'Raid Flawless Run',
+      slug: 'd2-raid-flawless',
+      format: 'boolean',
+      desc: 'Complete raid without deaths'
+    },
+    {
+      game: 20,
+      title: 'Crucible K/D Challenge',
+      slug: 'd2-crucible-kd',
+      format: 'score',
+      desc: 'Achieve high K/D ratio'
+    },
+    {
+      game: 20,
+      title: 'Exotic Collector',
+      slug: 'd2-exotics',
+      format: 'score',
+      desc: 'Collect exotic weapons'
+    },
+
+    // MGS V
+    {
+      game: 21,
+      title: 'S-Rank All Missions',
+      slug: 'mgsv-srank-all',
+      format: 'boolean',
+      desc: 'Get S-rank on all missions'
+    },
+    {
+      game: 21,
+      title: 'No Reflex Mode',
+      slug: 'mgsv-no-reflex',
+      format: 'boolean',
+      desc: 'Complete without reflex mode'
+    },
+
+    // Spider-Man
+    {
+      game: 22,
+      title: 'All Crimes Stopped',
+      slug: 'spiderman-crimes',
+      format: 'score',
+      desc: 'Stop all random crimes'
+    },
+    {
+      game: 22,
+      title: 'Perfect Combat Score',
+      slug: 'spiderman-combat',
+      format: 'score',
+      desc: 'Achieve perfect combat chains'
+    },
+
+    // Alan Wake
+    {
+      game: 23,
+      title: 'Nightmare Difficulty',
+      slug: 'alanwake-nightmare',
+      format: 'boolean',
+      desc: 'Beat on Nightmare'
+    },
+    {
+      game: 23,
+      title: 'Manuscript Collector',
+      slug: 'alanwake-manuscripts',
+      format: 'score',
+      desc: 'Find all manuscripts'
+    },
+
+    // Terraria
+    {
+      game: 24,
+      title: 'All Bosses Defeated',
+      slug: 'terraria-bosses',
+      format: 'boolean',
+      desc: 'Defeat every boss'
+    },
+    {
+      game: 24,
+      title: 'Building Contest',
+      slug: 'terraria-building',
+      format: 'score',
+      desc: 'Create impressive builds'
+    },
+
+    // Ori
+    {
+      game: 25,
+      title: 'One Life Mode',
+      slug: 'ori-onelife',
+      format: 'boolean',
+      desc: 'Complete in one life mode'
+    },
+    {
+      game: 25,
+      title: 'Ori Speedrun',
+      slug: 'ori-speedrun',
+      format: 'time',
+      desc: 'Complete quickly'
+    },
+
+    // Deus Ex
+    {
+      game: 26,
+      title: 'Pacifist Ghost Run',
+      slug: 'deusex-pacifist-ghost',
+      format: 'boolean',
+      desc: 'No kills, no detection'
+    },
+    {
+      game: 26,
+      title: 'Deus Ex All Achievements',
+      slug: 'deusex-achievements',
+      format: 'boolean',
+      desc: 'Unlock everything'
+    },
+
+    // RE4
+    {
+      game: 27,
+      title: 'Professional Difficulty',
+      slug: 're4-professional',
+      format: 'boolean',
+      desc: 'Beat on Professional'
+    },
+    {
+      game: 27,
+      title: 'Handcannon Unlock',
+      slug: 're4-handcannon',
+      format: 'boolean',
+      desc: 'Unlock infinite handcannon'
+    },
+
+    // Apex Legends
+    {
+      game: 28,
+      title: '4K Damage Badge',
+      slug: 'apex-4k-damage',
+      format: 'score',
+      desc: 'Deal 4000 damage in one match'
+    },
+    {
+      game: 28,
+      title: 'Win Streak',
+      slug: 'apex-winstreak',
+      format: 'score',
+      desc: 'Consecutive wins'
+    },
+
+    // For Honor
+    {
+      game: 28,
+      title: 'Reputation 70',
+      slug: 'forhonor-rep70',
+      format: 'boolean',
+      desc: 'Reach reputation 70 on one hero'
+    },
+    {
+      game: 28,
+      title: 'Duel Tournament Winner',
+      slug: 'forhonor-tournament',
+      format: 'boolean',
+      desc: 'Win ranked duel tournament'
+    }
+  ];
+
+  for (const cd of challengeData) {
+    challenges.push(
+      await prisma.challenge.create({
+        data: {
+          title: cd.title,
+          slug: cd.slug,
+          scoreFormat: cd.format,
+          description: cd.desc,
+          gameId: games[cd.game].id,
+          createdBy: users[cd.game % users.length].id
+        }
+      })
+    );
+  }
 
   console.log(`✅ Created ${challenges.length} challenges`);
 
-  // Créer 25 participations (pour avoir de la variété)
-  const participations = await Promise.all([
-    // Challenge 0 : 5 participations
-    prisma.participation.create({
-      data: {
-        submissionUrl: 'https://youtube.com/watch?v=1',
-        description: 'My first speedrun',
-        userId: users[0].id,
-        challengeId: challenges[0].id
+  // Créer 200+ participations (distribution variable)
+  const participations = [];
+  let participationCount = 0;
+
+  // Distribution intelligente : challenges populaires vs. niche
+  const popularChallenges = [0, 1, 8, 9, 10, 18, 19, 20, 24, 34, 35, 36, 44, 45]; // Indices
+
+  // Challenges populaires : 8-12 participations chacun
+  for (const challengeIdx of popularChallenges) {
+    const numParticipations = 8 + Math.floor(Math.random() * 5); // 8-12
+    for (let i = 0; i < numParticipations; i++) {
+      participations.push(
+        await prisma.participation.create({
+          data: {
+            submissionUrl: `https://youtube.com/watch?v=${participationCount++}`,
+            description: `Participation ${participationCount}`,
+            userId: users[i % users.length].id,
+            challengeId: challenges[challengeIdx].id
+          }
+        })
+      );
+    }
+  }
+
+  // Challenges moyens : 3-6 participations
+  for (let i = 0; i < challenges.length; i++) {
+    if (!popularChallenges.includes(i)) {
+      const numParticipations = 3 + Math.floor(Math.random() * 4); // 3-6
+      for (let j = 0; j < numParticipations; j++) {
+        participations.push(
+          await prisma.participation.create({
+            data: {
+              submissionUrl: `https://youtube.com/watch?v=${participationCount++}`,
+              description: `Participation for ${challenges[i].title}`,
+              userId: users[j % users.length].id,
+              challengeId: challenges[i].id
+            }
+          })
+        );
       }
-    }),
-    prisma.participation.create({
-      data: {
-        submissionUrl: 'https://youtube.com/watch?v=2',
-        description: 'Better time!',
-        userId: users[1].id,
-        challengeId: challenges[0].id
-      }
-    }),
-    prisma.participation.create({
-      data: {
-        submissionUrl: 'https://youtube.com/watch?v=3',
-        description: 'Personal best',
-        userId: users[2].id,
-        challengeId: challenges[0].id
-      }
-    }),
-    prisma.participation.create({
-      data: {
-        submissionUrl: 'https://youtube.com/watch?v=4',
-        description: 'World record attempt',
-        userId: users[3].id,
-        challengeId: challenges[0].id
-      }
-    }),
-    prisma.participation.create({
-      data: {
-        submissionUrl: 'https://youtube.com/watch?v=5',
-        description: 'Casual run',
-        userId: users[4].id,
-        challengeId: challenges[0].id
-      }
-    }),
-    // Challenge 1 : 3 participations
-    prisma.participation.create({
-      data: {
-        submissionUrl: 'https://youtube.com/watch?v=6',
-        description: 'Did it!',
-        userId: users[0].id,
-        challengeId: challenges[1].id
-      }
-    }),
-    prisma.participation.create({
-      data: {
-        submissionUrl: 'https://youtube.com/watch?v=7',
-        description: 'Flawless victory',
-        userId: users[5].id,
-        challengeId: challenges[1].id
-      }
-    }),
-    prisma.participation.create({
-      data: {
-        submissionUrl: 'https://youtube.com/watch?v=8',
-        description: 'After 50 attempts',
-        userId: users[6].id,
-        challengeId: challenges[1].id
-      }
-    }),
-    // Challenge 2 : 4 participations
-    prisma.participation.create({
-      data: {
-        submissionUrl: 'https://youtube.com/watch?v=9',
-        description: 'Perfect score',
-        userId: users[1].id,
-        challengeId: challenges[2].id
-      }
-    }),
-    prisma.participation.create({
-      data: {
-        submissionUrl: 'https://youtube.com/watch?v=10',
-        description: 'Good run',
-        userId: users[7].id,
-        challengeId: challenges[2].id
-      }
-    }),
-    prisma.participation.create({
-      data: {
-        submissionUrl: 'https://youtube.com/watch?v=11',
-        description: 'Solid attempt',
-        userId: users[8].id,
-        challengeId: challenges[2].id
-      }
-    }),
-    prisma.participation.create({
-      data: {
-        submissionUrl: 'https://youtube.com/watch?v=12',
-        description: 'Nearly there',
-        userId: users[0].id,
-        challengeId: challenges[2].id
-      }
-    }),
-    // Challenge 3 : 3 participations
-    prisma.participation.create({
-      data: {
-        submissionUrl: 'https://youtube.com/watch?v=13',
-        description: '100% completion',
-        userId: users[2].id,
-        challengeId: challenges[3].id
-      }
-    }),
-    prisma.participation.create({
-      data: {
-        submissionUrl: 'https://youtube.com/watch?v=14',
-        description: 'All achievements unlocked',
-        userId: users[3].id,
-        challengeId: challenges[3].id
-      }
-    }),
-    prisma.participation.create({
-      data: {
-        submissionUrl: 'https://youtube.com/watch?v=15',
-        description: 'Grinding complete',
-        userId: users[4].id,
-        challengeId: challenges[3].id
-      }
-    }),
-    // Challenge 4 : 2 participations
-    prisma.participation.create({
-      data: {
-        submissionUrl: 'https://youtube.com/watch?v=16',
-        description: 'SL1 complete!',
-        userId: users[5].id,
-        challengeId: challenges[4].id
-      }
-    }),
-    prisma.participation.create({
-      data: {
-        submissionUrl: 'https://youtube.com/watch?v=17',
-        description: 'Hardest challenge ever',
-        userId: users[0].id,
-        challengeId: challenges[4].id
-      }
-    }),
-    // Challenge 5 : 3 participations
-    prisma.participation.create({
-      data: {
-        submissionUrl: 'https://youtube.com/watch?v=18',
-        description: 'God mode beaten',
-        userId: users[6].id,
-        challengeId: challenges[5].id
-      }
-    }),
-    prisma.participation.create({
-      data: {
-        submissionUrl: 'https://youtube.com/watch?v=19',
-        description: 'Finally done',
-        userId: users[7].id,
-        challengeId: challenges[5].id
-      }
-    }),
-    prisma.participation.create({
-      data: {
-        submissionUrl: 'https://youtube.com/watch?v=20',
-        description: 'Epic run',
-        userId: users[1].id,
-        challengeId: challenges[5].id
-      }
-    }),
-    // Challenge 6 : 3 participations
-    prisma.participation.create({
-      data: {
-        submissionUrl: 'https://youtube.com/watch?v=21',
-        description: '100 days survived',
-        userId: users[8].id,
-        challengeId: challenges[6].id
-      }
-    }),
-    prisma.participation.create({
-      data: {
-        submissionUrl: 'https://youtube.com/watch?v=22',
-        description: 'Made it to day 150',
-        userId: users[2].id,
-        challengeId: challenges[6].id
-      }
-    }),
-    prisma.participation.create({
-      data: {
-        submissionUrl: 'https://youtube.com/watch?v=23',
-        description: 'Hardcore legend',
-        userId: users[0].id,
-        challengeId: challenges[6].id
-      }
-    }),
-    // Challenge 7 : 2 participations
-    prisma.participation.create({
-      data: {
-        submissionUrl: 'https://youtube.com/watch?v=24',
-        description: 'All bosses no damage',
-        userId: users[3].id,
-        challengeId: challenges[7].id
-      }
-    }),
-    prisma.participation.create({
-      data: {
-        submissionUrl: 'https://youtube.com/watch?v=25',
-        description: 'Insane run',
-        userId: users[0].id,
-        challengeId: challenges[7].id
-      }
-    })
-  ]);
+    }
+  }
 
   console.log(`✅ Created ${participations.length} participations`);
 
-  // Créer des votes sur participations (pour le leaderboard "topByLikes")
-  // On va créer beaucoup de votes pour différencier les users
-  await Promise.all([
-    // Alice (users[0]) a beaucoup de likes (elle a 5 participations)
-    prisma.participationVote.create({
-      data: { userId: users[1].id, participationId: participations[0].id }
-    }),
-    prisma.participationVote.create({
-      data: { userId: users[2].id, participationId: participations[0].id }
-    }),
-    prisma.participationVote.create({
-      data: { userId: users[3].id, participationId: participations[0].id }
-    }),
-    prisma.participationVote.create({
-      data: { userId: users[4].id, participationId: participations[5].id }
-    }),
-    prisma.participationVote.create({
-      data: { userId: users[5].id, participationId: participations[5].id }
-    }),
-    prisma.participationVote.create({
-      data: { userId: users[6].id, participationId: participations[11].id }
-    }),
-    prisma.participationVote.create({
-      data: { userId: users[7].id, participationId: participations[11].id }
-    }),
-    prisma.participationVote.create({
-      data: { userId: users[8].id, participationId: participations[16].id }
-    }),
-    prisma.participationVote.create({
-      data: { userId: users[1].id, participationId: participations[22].id }
-    }),
-    prisma.participationVote.create({
-      data: { userId: users[2].id, participationId: participations[24].id }
-    }),
+  // Créer votes sur participations (distribution réaliste)
+  const participationVotes = [];
+  for (let i = 0; i < participations.length; i++) {
+    // Certaines participations sont très populaires
+    const isPopular = i % 10 === 0;
+    const numVotes = isPopular
+      ? 8 + Math.floor(Math.random() * 6)
+      : 1 + Math.floor(Math.random() * 4);
 
-    // Bob (users[1]) a des likes
-    prisma.participationVote.create({
-      data: { userId: users[0].id, participationId: participations[1].id }
-    }),
-    prisma.participationVote.create({
-      data: { userId: users[3].id, participationId: participations[1].id }
-    }),
-    prisma.participationVote.create({
-      data: { userId: users[4].id, participationId: participations[8].id }
-    }),
-    prisma.participationVote.create({
-      data: { userId: users[5].id, participationId: participations[18].id }
-    }),
+    for (let j = 0; j < numVotes; j++) {
+      const voterIdx = (i + j + 1) % users.length;
+      try {
+        participationVotes.push(
+          await prisma.participationVote.create({
+            data: {
+              userId: users[voterIdx].id,
+              participationId: participations[i].id
+            }
+          })
+        );
+      } catch (e) {
+        // Skip duplicates
+      }
+    }
+  }
 
-    // Charlie (users[2])
-    prisma.participationVote.create({
-      data: { userId: users[1].id, participationId: participations[2].id }
-    }),
-    prisma.participationVote.create({
-      data: { userId: users[4].id, participationId: participations[12].id }
-    }),
-    prisma.participationVote.create({
-      data: { userId: users[5].id, participationId: participations[21].id }
-    }),
+  console.log(`✅ Created ${participationVotes.length} participation votes`);
 
-    // Diana (users[3])
-    prisma.participationVote.create({
-      data: { userId: users[0].id, participationId: participations[3].id }
-    }),
-    prisma.participationVote.create({
-      data: { userId: users[1].id, participationId: participations[13].id }
-    }),
-    prisma.participationVote.create({
-      data: { userId: users[2].id, participationId: participations[23].id }
-    }),
+  // Créer votes sur challenges
+  const challengeVotes = [];
+  for (let i = 0; i < challenges.length; i++) {
+    const numVotes = 2 + Math.floor(Math.random() * 8); // 2-9 votes par challenge
 
-    // Eve (users[4])
-    prisma.participationVote.create({
-      data: { userId: users[0].id, participationId: participations[4].id }
-    }),
-    prisma.participationVote.create({
-      data: { userId: users[1].id, participationId: participations[14].id }
-    }),
+    for (let j = 0; j < numVotes; j++) {
+      const voterIdx = (i + j) % users.length;
+      try {
+        challengeVotes.push(
+          await prisma.challengeVote.create({
+            data: {
+              userId: users[voterIdx].id,
+              challengeId: challenges[i].id
+            }
+          })
+        );
+      } catch (e) {
+        // Skip duplicates
+      }
+    }
+  }
 
-    // Frank (users[5])
-    prisma.participationVote.create({
-      data: { userId: users[0].id, participationId: participations[6].id }
-    }),
-    prisma.participationVote.create({
-      data: { userId: users[1].id, participationId: participations[15].id }
-    }),
+  console.log(`✅ Created ${challengeVotes.length} challenge votes`);
 
-    // Grace (users[6])
-    prisma.participationVote.create({
-      data: { userId: users[0].id, participationId: participations[7].id }
-    }),
-    prisma.participationVote.create({
-      data: { userId: users[1].id, participationId: participations[17].id }
-    }),
-
-    // Henry (users[7])
-    prisma.participationVote.create({
-      data: { userId: users[0].id, participationId: participations[9].id }
-    }),
-    prisma.participationVote.create({
-      data: { userId: users[2].id, participationId: participations[19].id }
-    }),
-
-    // Iris (users[8])
-    prisma.participationVote.create({
-      data: { userId: users[0].id, participationId: participations[10].id }
-    }),
-    prisma.participationVote.create({
-      data: { userId: users[1].id, participationId: participations[20].id }
-    })
-  ]);
-
-  console.log('✅ Created participation votes');
-
-  // Créer des votes sur challenges
-  await Promise.all([
-    prisma.challengeVote.create({
-      data: { userId: users[1].id, challengeId: challenges[0].id }
-    }),
-    prisma.challengeVote.create({
-      data: { userId: users[2].id, challengeId: challenges[0].id }
-    }),
-    prisma.challengeVote.create({
-      data: { userId: users[3].id, challengeId: challenges[1].id }
-    }),
-    prisma.challengeVote.create({
-      data: { userId: users[4].id, challengeId: challenges[2].id }
-    }),
-    prisma.challengeVote.create({
-      data: { userId: users[5].id, challengeId: challenges[3].id }
-    })
-  ]);
-
-  console.log('✅ Created challenge votes');
-
-  console.log('🎉 Seed completed!');
+  console.log('🎉 Massive seed completed!');
+  console.log(`📊 Stats:`);
+  console.log(`   - ${users.length} users`);
+  console.log(`   - ${games.length} games`);
+  console.log(`   - ${challenges.length} challenges`);
+  console.log(`   - ${participations.length} participations`);
+  console.log(`   - ${participationVotes.length} participation votes`);
+  console.log(`   - ${challengeVotes.length} challenge votes`);
 }
 
 main()
