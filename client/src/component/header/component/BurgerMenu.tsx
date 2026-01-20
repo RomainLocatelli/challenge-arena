@@ -13,6 +13,19 @@ export default function BurgerMenu() {
   const pathname = usePathname();
   const pathActive = (path: string) => pathname === path;
   const { user } = useAuth();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+
+  async function logOut() {
+    try {
+      await fetch(`${apiUrl}auth/logout`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   return (
     <nav className="text-right pr-3 pt-4 relative z-50">
       <button
@@ -30,7 +43,7 @@ export default function BurgerMenu() {
         </svg>
       </button>
       {isClose && (
-        <ul className="bg-(--button-area) rounded-xl text-center z-10 p-3 absolute right-1">
+        <ul className="bg-(--button-area) rounded-xl text-center z-50 p-3 absolute right-1">
           <li
             className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
           >
@@ -53,19 +66,6 @@ export default function BurgerMenu() {
           </li>
           {user ? (
             <li
-              className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/profile') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
-            >
-              <Link href="/profile">Profile</Link>
-            </li>
-          ) : (
-            <li
-              className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/login-register/register') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
-            >
-              <Link href="/login-register/register">Register</Link>
-            </li>
-          )}
-          {user ? (
-            <li
               className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/challenges/create') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
             >
               <Link href="/challenges/create">Create challenge</Link>
@@ -74,7 +74,20 @@ export default function BurgerMenu() {
             <li
               className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/login-register/login') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
             >
-              <Link href="/login-register/login">Login</Link>
+              <Link href="/challenges/create">Login</Link>
+            </li>
+          )}
+          {user ? (
+            <li
+              className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/profile') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
+            >
+              <Link href="/profile">Profile</Link>
+            </li>
+          ) : (
+            <li
+              className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/login-register/register') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
+            >
+              <Link href="/profile">Register</Link>
             </li>
           )}
           <li
@@ -82,10 +95,11 @@ export default function BurgerMenu() {
           >
             <Link href="/support">Support</Link>
           </li>
-          <li
-            className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/disconnect') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
-          >
-            <Link href="/disconnect">Disconnect</Link>
+
+          <li className={'m-1.5 pl-1.5 pr-1.5'}>
+            <button type="button" onClick={logOut}>
+              Disconnect
+            </button>
           </li>
         </ul>
       )}
