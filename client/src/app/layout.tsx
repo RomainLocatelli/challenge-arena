@@ -26,24 +26,26 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = cookies();
   const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
   let user = null;
+  const cookieStore = await cookies();
 
   try {
-    const res = await fetch(`${API_URL}auth/me`, {
+    const cookieHeader = cookieStore
+      .getAll()
+      .map((cookie) => `${cookie.name}=${cookie.value}`)
+      .join('; ');
+    const res = await fetch('http://api:3000/auth/me', {
       headers: {
-        Cookie: cookieStore.toString()
+        Cookie: cookieHeader
       },
       cache: 'no-store'
     });
-    console.log(res);
-    if (res.ok) {
-      user = await res.json();
-    }
+
+    user = await res.json();
   } catch (err) {
-    // silent
+    //  silent
   }
 
   return (
