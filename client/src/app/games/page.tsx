@@ -95,12 +95,12 @@ export default function GamesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex flex-col">
+    <div className="min-h-screen flex flex-col">
       <main className="px-4 md:px-8 py-6 max-w-7xl mx-auto">
         {/* Search Bar */}
         <div className="mb-8">
           <div className="relative max-w-md md:max-w-2xl mx-auto">
-            <div className="absolute inset-0 rounded-full bg-(--searchbar-color) ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.45)]" />
+            <div className="absolute inset-0 rounded-full bg-(--searchbar-color) ring-1 ring-foreground shadow-[0_10px_30px_rgba(0,0,0,0.45)]" />
             <div className="absolute left-3 top-1/2 -translate-y-1/2 z-10 h-12 w-12 flex items-center justify-center shadow">
               <Image
                 src="/loupe.png"
@@ -120,26 +120,26 @@ export default function GamesPage() {
                 setCurrentPage(1);
                 setPageBlockStart(2);
               }}
-              className="relative w-full rounded-full bg-transparent py-3 pl-14 pr-4 text-white text-center text-xl placeholder:text-white/50 focus:outline-none"
+              className="relative w-full rounded-full bg-transparent py-3 pl-14 pr-4  text-center text-xl placeholder:text-foreground focus:outline-none"
             />
           </div>
         </div>
 
         {/* Games Section */}
         <div className="mb-8">
-          <h2 className="text-xl font-bold mb-6 border-l-4 border-purple-600 pl-3">Games</h2>
+          <h2 className="text-xl font-bold mb-6 border-l-4 border-(--button-select) pl-3">Games</h2>
 
           {/* Loading state */}
           {loading && (
             <div className="flex justify-center items-center py-12">
-              <div className="text-white/60">Loading games...</div>
+              <div className="">Loading games...</div>
             </div>
           )}
 
           {/* Error state */}
           {error && (
             <div className="flex justify-center items-center py-12">
-              <div className="text-red-400">{error}</div>
+              <div className="text-(--error-text-message)">{error}</div>
             </div>
           )}
 
@@ -150,9 +150,9 @@ export default function GamesPage() {
                 <Link
                   key={game.id}
                   href={`/games/${game.id}`}
-                  className="group overflow-hidden rounded-4xl bg-slate-900 transition hover:ring-2 hover:ring-purple-600 delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 "
+                  className="group overflow-hidden rounded-4xl bg-(--button-area) transition hover:ring-2 hover:ring-(--button-select) delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 "
                 >
-                  <div className="relative aspect-square w-full overflow-hidden bg-slate-700 flex-none ">
+                  <div className="relative aspect-square w-full overflow-hidden flex-none ">
                     <Image
                       src={game.imageUrl || '/real-rat.png'}
                       alt={game.title}
@@ -173,7 +173,7 @@ export default function GamesPage() {
         </div>
 
         {!loading && !error && filteredGames.length === 0 && (
-          <p className="mt-6 text-center text-white/60">No game found.</p>
+          <p className="mt-6 text-center ">No game found.</p>
         )}
 
         {/* Pages */}
@@ -181,7 +181,9 @@ export default function GamesPage() {
           {/* Page 1 toujours visible */}
           <button
             className={`w-8 h-8 rounded-full flex items-center justify-center ${
-              currentPage === 1 ? 'bg-purple-600' : 'bg-slate-800 hover:bg-slate-700'
+              currentPage === 1
+                ? 'bg-(--button-select)'
+                : 'bg-(--button-area) hover:bg-(--searchbar-color)'
             }`}
             onClick={() => goToPage(1)}
           >
@@ -192,27 +194,29 @@ export default function GamesPage() {
           {Array.from({ length: 4 }, (_, i) => pageBlockStart + i)
             .filter((p) => p <= totalPages)
             .map((page) => (
-            <button
-              key={page}
-              className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                currentPage === page ? 'bg-purple-600' : 'bg-slate-800 hover:bg-slate-700'
-              }`}
-              onClick={() => goToPage(page)}
-            >
-              {page}
-            </button>
-          ))}
+              <button
+                key={page}
+                className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                  currentPage === page
+                    ? 'bg-(--button-select)'
+                    : 'bg-(--button-area) hover:bg-(--searchbar-color)'
+                }`}
+                onClick={() => goToPage(page)}
+              >
+                {page}
+              </button>
+            ))}
 
           {/* Bouton ... : passe au bloc suivant */}
           {totalPages > pageBlockStart + 3 && (
-          <button
-            type="button"
-            className="w-8 h-8 bg-slate-800 hover:bg-slate-700 rounded-full flex items-center justify-center"
-            onClick={nextBlock}
-            aria-label="Afficher les pages suivantes"
-          >
-            ...
-          </button>
+            <button
+              type="button"
+              className="w-8 h-8 bg-(--button-area) hover:bg-(--background-header) rounded-full flex items-center justify-center"
+              onClick={nextBlock}
+              aria-label="Afficher les pages suivantes"
+            >
+              ...
+            </button>
           )}
         </div>
       </main>
