@@ -5,11 +5,14 @@ import { createContext, useContext, useEffect, useState } from 'react';
 type User = {
   id: string;
   username: string;
+  email: string;
   role: string;
 };
+
 type AuthContextType = {
   user: User | null;
   setUser: (user: User | null) => void;
+  loading: boolean;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -26,7 +29,12 @@ export function AuthProvider({
     setUser(initialUser);
   }, [initialUser]);
 
-  return <AuthContext.Provider value={{ user, setUser }}>{children}</AuthContext.Provider>;
+
+  return (
+    <AuthContext.Provider value={{ user, setUser, loading }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {

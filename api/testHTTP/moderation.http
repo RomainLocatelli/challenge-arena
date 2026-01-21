@@ -1,9 +1,9 @@
 ### Variables (à remplir après les premières requêtes)
 @baseUrl = http://localhost:3000
-@adminToken = 
-@aliceToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMTliZGFmOC02M2IzLTcwMGQtOTU3OC0wNWY4ZTViYTYzM2IiLCJ1c2VybmFtZSI6ImFsaWNlIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3Njg5MTY0ODgsImV4cCI6MTc2OTUyMTI4OH0.q26L-7lRtODalmfqf7NNSuc92JyNd3VZyn8Fqmvvt6M
-@challengeId = 
-@participationId = 
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMTliZGZlYy1mYzYwLTcyNzgtOGVkMy05NWM2ODVjNTA4ZTgiLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzY5MDAwNjYyLCJleHAiOjE3Njk2MDU0NjJ9.trKr_aWxD6B8MhbWbADkwxZavW_J_ZgwORRov2-hDqY
+@aliceToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMTliZGZlYy1mYzUxLTc3NzctODhlYi0wMDA5Yzk2YzdlMmEiLCJ1c2VybmFtZSI6ImFsaWNlIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NjkwMDA2ODksImV4cCI6MTc2OTYwNTQ4OX0.LdKwifhI8zZtAxHQ_wGssIXY_I8Al3Z2k8yUfalAnSs
+@challengeId = 019bdfec-fd5b-70e7-a7cc-38e585179902
+@participationId = 019bdfec-ff74-7273-b4f0-9553b9ec59fe
 
 ###############################################
 # 1. AUTHENTIFICATION
@@ -35,7 +35,7 @@ Content-Type: application/json
 GET {{baseUrl}}/challenges
 
 ### 2.2 Détails d'un challenge (copie un slug depuis la réponse ci-dessus)
-GET {{baseUrl}}/challenges/slug/SLUG_DU_CHALLENGE_ICI
+GET {{baseUrl}}/challenges/apex-winstreak
 
 ###############################################
 # 3. SIGNALEMENT (USER NORMAL)
