@@ -10,4 +10,4 @@ COPY ./ ./
 
 EXPOSE 8008
 
-CMD ["npm", "run", "dev"]
+CMD ["npx", "next", "dev", "--hostname", "0.0.0.0", "--port", "8008"]
