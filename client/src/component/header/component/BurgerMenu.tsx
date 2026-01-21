@@ -2,8 +2,9 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/app/context/AuthContext';
+import { LogoutButton } from './Logout';
 
 export default function BurgerMenu() {
   const [isClose, setIsClose] = useState(false);
@@ -13,18 +14,6 @@ export default function BurgerMenu() {
   const pathname = usePathname();
   const pathActive = (path: string) => pathname === path;
   const { user } = useAuth();
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-
-  async function logOut() {
-    try {
-      await fetch(`${apiUrl}auth/logout`, {
-        method: 'POST',
-        credentials: 'include'
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  }
 
   return (
     <nav className="text-right pr-3 pt-4 relative z-50">
@@ -97,9 +86,7 @@ export default function BurgerMenu() {
           </li>
 
           <li className={'m-1.5 pl-1.5 pr-1.5'}>
-            <button type="button" onClick={logOut}>
-              Disconnect
-            </button>
+            <LogoutButton />
           </li>
         </ul>
       )}
