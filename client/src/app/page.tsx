@@ -139,24 +139,27 @@ export default function Home() {
         </div>
       </div>
       {!user ? (
-        <nav className="flex justify-center mb-8">
-          <Link href="/login-register/login">
-            <button
-              type="button"
-              className="bg-(--button-area) p-3 rounded-3xl mr-8 mt-6 cursor-pointer"
-            >
-              Login
-            </button>
-          </Link>
-          <Link href="/login-register/register">
-            <button
-              type="button"
-              className="bg-(--button-select) p-3 rounded-3xl  mt-6 cursor-pointer"
-            >
-              Register
-            </button>
-          </Link>
-        </nav>
+        <div>
+          <p className="text-center">Challenge yourself or others by registering or connecting</p>
+          <nav className="flex justify-center mb-8">
+            <Link href="/login-register/login">
+              <button
+                type="button"
+                className="bg-(--button-area) p-3 rounded-3xl mr-8 mt-6 cursor-pointer"
+              >
+                Login
+              </button>
+            </Link>
+            <Link href="/login-register/register">
+              <button
+                type="button"
+                className="bg-(--button-select) p-3 rounded-3xl  mt-6 cursor-pointer"
+              >
+                Register
+              </button>
+            </Link>
+          </nav>
+        </div>
       ) : (
         <p></p>
       )}
