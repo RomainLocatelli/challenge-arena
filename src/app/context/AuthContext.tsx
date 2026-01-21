@@ -1,5 +1,6 @@
 'use client';
-import { createContext, useContext, useState, useEffect } from 'react';
+
+import { createContext, useContext, useEffect, useState } from 'react';
 
 type User = {
   id: string;
@@ -16,22 +17,18 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  // Charger l'user au montage depuis localStorage
+export function AuthProvider({
+  user: initialUser,
+  children
+}: {
+  user: User | null;
+  children: React.ReactNode;
+}) {
+  const [user, setUser] = useState<User | null>(initialUser);
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (e) {
-        console.error('Failed to parse user from localStorage', e);
-      }
-    }
-    setLoading(false);
-  }, []);
+    setUser(initialUser);
+  }, [initialUser]);
+
 
   return (
     <AuthContext.Provider value={{ user, setUser, loading }}>
