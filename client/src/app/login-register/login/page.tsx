@@ -42,15 +42,13 @@ export default function AuthLogin() {
         // Gérer les erreurs du backend
         setErrorMessage(data.message || 'Invalid credentials');
         setIsLoading(false);
+
         return;
       }
 
-      // Login réussi : le token est dans le cookie httpOnly
-      // On peut stocker l'user en localStorage si nécessaire
-      localStorage.setItem('user', JSON.stringify(data.user));
-
       // Rediriger vers la page d'accueil (ou dashboard)
-      router.push('/');
+      router.replace('/');
+      router.refresh();
     } catch (error) {
       console.error('Login error:', error);
       setErrorMessage('Network error. Please try again later.');
