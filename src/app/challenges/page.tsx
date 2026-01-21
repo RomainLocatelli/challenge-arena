@@ -226,7 +226,7 @@ export default function ChallengesPage() {
                 return (
                   <div
                     key={c.id}
-                    className="rounded-2xl bg-(--background-header) ring-1 ring-foreground/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden"
+                    className="rounded-2xl bg-(--button-area) ring-1 ring-foreground/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden"
                   >
                     <div className="p-5 flex flex-col h-full">
                       {/* Tag / jeu */}

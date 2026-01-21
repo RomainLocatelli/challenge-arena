@@ -2,14 +2,35 @@
 @layer theme, base, components, utilities;
 
 :root {
-  --background: #fdf9e8;
+  --background: #f9fafb;
+  --foreground: #1a1a1a;
+  --background-header: #eef1f7;
+  --button-area: #e4e7ee;
+  --button-select: color-mix(in srgb, #8554da 80%, transparent);
+  --button-game-challenge: color-mix(in srgb, #8554da 80%, transparent);
+  --button-game-challenge-hover: #8554da;
+  --searchbar-color: #6b3cf615;
+  --leadboard-first: #d4af37;
+  --leadboard-second: #9ca3af;
+  --leadboard-third: #b87333;
+  --leadboard-mix-one: #ffffff;
+  --leadboard-mix-two: #e6dcff;
+  --leadboard-me: #e5e7eb;
+  --text-hover: #fff8e1;
+  --error-text-message: var(--color-red-400);
+  --error-area-message: color-mix(in srgb, var(--color-red-500) 10%, transparent);
+  --error-border-message: color-mix(in srgb, var(--color-red-500) 50%, transparent);
+}
+
+/* :root {
+  --background: #e3f2fd;
   --foreground: #000000;
-  --background-header: #f3ecd9;
-  --button-area: #e0d7c4;
-  --button-select: #83c612;
-  --button-game-challenge: color-mix(in srgb, var(--color-amber-600) 80%, transparent);
-  --button-game-challenge-hover: var(--color-amber-600);
-  --searchbar-color: #9dfc28de;
+  --background-header: #1976d2;
+  --button-area: #64b5f6;
+  --button-select: #7b39edd8;
+  --button-game-challenge: color-mix(in srgb, #8554da 80%, transparent);
+  --button-game-challenge-hover: #8554da;
+  --searchbar-color: #353dd4a8;
   --leadboard-first: #ffd700;
   --leadboard-second: #c0c0c0;
   --leadboard-third: #cd7f32;
@@ -20,7 +41,7 @@
   --error-text-message: var(--color-red-400);
   --error-area-message: color-mix(in srgb, var(--color-red-500) 10%, transparent);
   --error-border-message: color-mix(in srgb, var(--color-red-500) 50%, transparent);
-}
+} */
 
 @theme inline {
   --color-background: var(--background);

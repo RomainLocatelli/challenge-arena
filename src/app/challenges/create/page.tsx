@@ -229,9 +229,9 @@ export default function CreateChallengePage() {
 
             {/* Meta (Game + Created by) */}
             <div className="mt-3 flex items-start justify-between gap-3">
-              <div className="text-background/80 space-y-2">
+              <div className="text-foreground/80 space-y-2">
                 <div className="text-sm">
-                  <span className="text-background/60">Game :</span>{' '}
+                  <span className="text-foreground/60">Game :</span>{' '}
                   <div className="relative ml-2">
                     <input
                       type="text"
@@ -282,7 +282,7 @@ export default function CreateChallengePage() {
                 </div>
 
                 <div className="text-sm">
-                  <span className="text-background/60">Created by</span>{' '}
+                  <span className="text-foreground/60">Created by</span>{' '}
                   <span className="font-semibold">{currentUserName}</span>
                 </div>
               </div>
@@ -290,7 +290,7 @@ export default function CreateChallengePage() {
 
             {/* Image URL */}
             <div className="mt-4">
-              <div className="text-sm font-semibold text-background/80 mb-2">Image URL</div>
+              <div className="text-sm font-semibold text-foreground/80 mb-2">Image URL</div>
               <input
                 value={imageUrl}
                 onChange={(e) => setImageUrl(e.target.value)}
@@ -304,14 +304,14 @@ export default function CreateChallengePage() {
 
             {/* Score Format */}
             <div className="mt-4">
-              <div className="text-sm font-semibold text-background/80 mb-2">Score Format</div>
+              <div className="text-sm font-semibold text-foreground/80 mb-2">Score Format</div>
               <input
                 value={scoreFormat}
                 onChange={(e) => setScoreFormat(e.target.value)}
                 className="w-full bg-foreground/40 ring-1 ring-background/10 rounded-xl px-3 py-2 text-sm focus:outline-none"
                 placeholder="e.g., SCORE, TIME, KILLS, etc."
               />
-              <div className="text-xs text-background/50 mt-2">
+              <div className="text-xs text-foreground/50 mt-2">
                 Comment sera mesuré le succès du challenge (ex: SCORE, TIME, DISTANCE...)
               </div>
             </div>
@@ -334,7 +334,7 @@ export default function CreateChallengePage() {
                     className="flex-1 bg-foreground/40 ring-1 ring-background/10 rounded-xl px-3 py-2 text-sm focus:outline-none resize-none min-h-[44px]"
                     placeholder="Description (max 100 chars)"
                   />
-                  <div className="text-xs text-background/50 w-12 text-right pt-2">
+                  <div className="text-xs text-foreground/50 w-12 text-right pt-2">
                     {description.length}/100
                   </div>
                 </div>
@@ -352,7 +352,7 @@ export default function CreateChallengePage() {
                 <button
                   type="button"
                   onClick={addBullet}
-                  className="text-sm text-background/70 hover:text-background"
+                  className="text-sm text-foreground/70 hover:text-background"
                 >
                   + Add
                 </button>
@@ -383,7 +383,7 @@ export default function CreateChallengePage() {
                   ))}
                 </ul>
                 {detailsPoints.length === 0 ? (
-                  <div className="text-sm text-background/60">No details yet. Add one.</div>
+                  <div className="text-sm text-foreground/60">No details yet. Add one.</div>
                 ) : null}
               </div>
             </div>
@@ -397,7 +397,7 @@ export default function CreateChallengePage() {
                 className={`px-10 py-3 rounded-full font-semibold shadow-[0_10px_25px_rgba(0,0,0,0.45)] ${
                   canCreate
                     ? 'bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover)'
-                    : 'bg-(--button-select) text-background/50 cursor-not-allowed'
+                    : 'bg-(--button-select) text-foreground/50 cursor-not-allowed'
                 }`}
               >
                 Create
