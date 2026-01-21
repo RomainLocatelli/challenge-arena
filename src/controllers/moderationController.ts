@@ -4,6 +4,9 @@
 // approveContent : approuver un contenu = suppression de tous ses signalements
 // deleteReportedChallenge : supprime définitivement un challenge signalé /!\ onDelete: Cascade => participations, votes, reports /!\
 // deleteReportedParticipation : supprime définitivement une participation signalée /!\ onDelete: Cascade => votes, reports /!\
+// getAllUsers : récupère tous les utilisateurs
+// banUser : banni un utilisateur
+// unbanUser : débanni un utilisateur
 
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../../lib/prisma.js';
@@ -247,6 +250,125 @@ export const deleteReportedParticipation = async (req: Request, res: Response, n
       message: 'Participation deleted successfully',
       details: {
         deletedVotes: participation._count.votes
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Liste tous les users (pour la page admin)
+export const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        role: true,
+        isDeleted: true,
+        deletedAt: true,
+        isBanned: true,
+        bannedAt: true,
+        createdAt: true,
+        _count: {
+          select: {
+            createdChallenges: true,
+            participations: true
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    res.json({ users });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Bannir un utilisateur
+export const banUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { userId } = req.params;
+
+    // Vérifier que l'user existe
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, username: true, email: true, isBanned: true, role: true }
+    });
+
+    if (!user) {
+      throw new AppError('User not found', 404);
+    }
+
+    // Empêcher un admin de se bannir lui-même
+    if (req.userId === userId) {
+      throw new AppError('You cannot ban yourself', 400);
+    }
+
+    // Vérifier si déjà banni
+    if (user.isBanned) {
+      throw new AppError('User is already banned', 400);
+    }
+
+    // Bannir l'user
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        isBanned: true,
+        bannedAt: new Date()
+      }
+    });
+
+    res.json({
+      message: 'User banned successfully',
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Débannir un utilisateur
+export const unbanUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { userId } = req.params;
+
+    // Vérifier que l'user existe
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, username: true, email: true, isBanned: true }
+    });
+
+    if (!user) {
+      throw new AppError('User not found', 404);
+    }
+
+    // Vérifier si déjà débanni
+    if (!user.isBanned) {
+      throw new AppError('User is not banned', 400);
+    }
+
+    // Débannir l'user
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        isBanned: false,
+        bannedAt: null
+      }
+    });
+
+    res.json({
+      message: 'User unbanned successfully',
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email
       }
     });
   } catch (error) {
