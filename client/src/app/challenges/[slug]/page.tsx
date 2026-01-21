@@ -3,8 +3,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo, useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/app/context/AuthContext';
+
 
 // hook responsive
 function useMediaQuery(query: string) {
@@ -62,6 +63,7 @@ export default function ChallengeDetailsPage() {
   const { user } = useAuth();
   const params = useParams<{ slug: string }>();
   const slug = params?.slug;
+  const searchParams = useSearchParams();
 
   const isMd = useMediaQuery('(min-width: 768px)');
   const defaultVisible = isMd ? 4 : 3;
@@ -272,6 +274,18 @@ export default function ChallengeDetailsPage() {
     setPLink(p?.link ?? '');
     setIsModalOpen(true);
   };
+
+  // Ouvrir automatiquement le modal si participationId est dans l'URL
+  useEffect(() => {
+    const participationId = searchParams.get('participationId');
+    if (participationId) {
+      const participation = participations.find((p) => p.id === participationId);
+      if (participation) {
+        openViewModal(participationId);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   const openEditModalForActive = () => {
     if (!activeParticipation) {
