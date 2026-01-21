@@ -341,14 +341,14 @@ export default function ChallengeDetailsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
+    <div className="min-h-screen ">
       <main className="mx-auto w-full max-w-[430px] md:max-w-5xl px-4 md:px-8 py-5 md:py-8">
         {/* Card principale */}
-        <div className="rounded-3xl bg-slate-900/70 ring-1 ring-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.55)] overflow-hidden">
+        <div className="rounded-3xl bg-(--background-header)/70 ring-1 ring-background/10 shadow-[0_20px_60px_rgba(0,0,0,0.55)] overflow-hidden">
           {/* Header */}
-          <div className="relative h-32 md:h-48 lg:h-64 w-full bg-slate-800">
+          <div className="relative h-32 md:h-48 lg:h-64 w-full bg-(--button-area)">
             <Image src={headerImage} alt={title} fill sizes="430px" className="object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-foreground/65 via-foreground/15 to-transparent" />
           </div>
 
           {/* Contenu */}
@@ -361,7 +361,7 @@ export default function ChallengeDetailsPage() {
                 <input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full bg-slate-950/40 ring-1 ring-white/10 rounded-xl px-3 py-2 text-2xl font-semibold focus:outline-none"
+                  className="w-full bg-foreground/40 ring-1 ring-background/10 rounded-xl px-3 py-2 text-2xl font-semibold focus:outline-none"
                   placeholder="Challenge title"
                 />
               )}
@@ -388,24 +388,24 @@ export default function ChallengeDetailsPage() {
                     className="object-contain"
                   />
                 </button>
-                <div className="mt-1 text-xs text-white/70">{formatLikes(challengeLikes)}</div>
+                <div className="mt-1 text-xs text-foreground/70">{formatLikes(challengeLikes)}</div>
               </div>
             </div>
 
             {/* Meta + Modify */}
             <div className="mt-3 flex items-start justify-between gap-3">
-              <div className="text-white/80">
+              <div className="text-foreground/80">
                 <div className="text-sm">
-                  <span className="text-white/60">Game :</span>{' '}
+                  <span className="text-foreground/60">Game :</span>{' '}
                   <Link
                     href={`/games/${challengeFromDb.gameId}`}
-                    className="text-xs font-semibold tracking-widest text-purple-300/90 mb-2 hover:underline"
+                    className="text-xs font-semibold tracking-widest text-(--button-select)/90 mb-2 hover:underline"
                   >
                     {challengeFromDb.gameTitle}
                   </Link>
                 </div>
                 <div className="text-sm">
-                  <span className="text-white/60">Created by</span>{' '}
+                  <span className="text-foreground/60">Created by</span>{' '}
                   <span className="font-semibold">{challengeFromDb.createdBy}</span>
                 </div>
               </div>
@@ -414,7 +414,7 @@ export default function ChallengeDetailsPage() {
                 <button
                   type="button"
                   onClick={() => setIsEditing(true)}
-                  className="px-4 py-2 rounded-2xl bg-slate-800 hover:bg-slate-700 ring-1 ring-white/10 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                  className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
                 >
                   Modify
                 </button>
@@ -423,14 +423,14 @@ export default function ChallengeDetailsPage() {
                   <button
                     type="button"
                     onClick={cancelEdits}
-                    className="px-4 py-2 rounded-2xl bg-slate-800 hover:bg-slate-700 ring-1 ring-white/10 text-sm font-semibold"
+                    className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm font-semibold"
                   >
                     Cancel
                   </button>
                   <button
                     type="button"
                     onClick={saveEdits}
-                    className="px-4 py-2 rounded-2xl bg-amber-600/80 hover:bg-amber-600 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                    className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
                   >
                     Save
                   </button>
@@ -441,14 +441,14 @@ export default function ChallengeDetailsPage() {
             {/* Image edit */}
             {isEditing ? (
               <div className="mt-4">
-                <div className="text-sm font-semibold text-white/80 mb-2">Image URL</div>
+                <div className="text-sm font-semibold text-foreground/80 mb-2">Image URL</div>
                 <input
                   value={imageUrl ?? ''}
                   onChange={(e) => setImageUrl(e.target.value || undefined)}
-                  className="w-full bg-slate-950/40 ring-1 ring-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none"
+                  className="w-full bg-foreground/40 ring-1 ring-background/10 rounded-xl px-3 py-2 text-sm focus:outline-none"
                   placeholder="https://..."
                 />
-                <div className="text-xs text-white/50 mt-2">
+                <div className="text-xs text-foreground/50 mt-2">
                   Laisse vide pour afficher l’image du jeu par défaut.
                 </div>
               </div>
@@ -458,24 +458,24 @@ export default function ChallengeDetailsPage() {
             <div className="mt-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="h-5 w-1 rounded-full bg-purple-600" />
+                  <div className="h-5 w-1 rounded-full bg-(--button-select)" />
                   <div className="font-semibold">Description :</div>
                 </div>
               </div>
 
-              <div className="mt-3 rounded-2xl bg-slate-950/30 ring-1 ring-white/10 p-3">
+              <div className="mt-3 rounded-2xl bg-slate-950/30 ring-1 ring-background/10 p-3">
                 {!isEditing ? (
-                  <div className="text-white/85">{clamp100(descriptionPoints[0] ?? '')}</div>
+                  <div className="text-foreground/85">{clamp100(descriptionPoints[0] ?? '')}</div>
                 ) : (
                   <div className="flex items-start gap-3">
                     <textarea
                       value={descriptionPoints[0] ?? ''}
                       maxLength={100}
                       onChange={(e) => setDescriptionPoints([e.target.value])}
-                      className="flex-1 bg-slate-950/40 ring-1 ring-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none resize-none min-h-[44px]"
+                      className="flex-1 bg-(--background-header)/40 ring-1 ring-background/10 rounded-xl px-3 py-2 text-sm focus:outline-none resize-none min-h-[44px]"
                       placeholder="Description (max 100 chars)"
                     />
-                    <div className="text-xs text-white/50 w-12 text-right pt-2">
+                    <div className="text-xs text-foreground/50 w-12 text-right pt-2">
                       {(descriptionPoints[0] ?? '').length}/100
                     </div>
                   </div>
@@ -487,7 +487,7 @@ export default function ChallengeDetailsPage() {
             <div className="mt-5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="h-5 w-1 rounded-full bg-purple-600" />
+                  <div className="h-5 w-1 rounded-full bg-(--button-select)" />
                   <div className="font-semibold">Challenge Details :</div>
                 </div>
 
@@ -495,31 +495,31 @@ export default function ChallengeDetailsPage() {
                   <button
                     type="button"
                     onClick={() => addBullet('details')}
-                    className="text-sm text-white/70 hover:text-white"
+                    className="text-sm text-foreground/70 hover:text-foreground"
                   >
                     + Add
                   </button>
                 ) : null}
               </div>
 
-              <div className="mt-3 rounded-2xl bg-slate-950/30 ring-1 ring-white/10 p-3">
+              <div className="mt-3 rounded-2xl bg-slate-950/30 ring-1 ring-background/10 p-3">
                 <ul className="space-y-2">
                   {detailsPoints.map((txt, idx) => (
                     <li key={`det-${idx}`} className="flex items-start gap-3">
-                      <span className="mt-1.5 h-2 w-2 rounded-full bg-white/70 shrink-0" />
+                      <span className="mt-1.5 h-2 w-2 rounded-full bg-foreground/70 shrink-0" />
                       {!isEditing ? (
-                        <div className="text-white/85">{txt}</div>
+                        <div className="text-foreground/85">{txt}</div>
                       ) : (
                         <div className="flex-1 flex items-center gap-2">
                           <input
                             value={txt}
                             onChange={(e) => updateBullet('details', idx, e.target.value)}
-                            className="flex-1 bg-slate-950/40 ring-1 ring-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none"
+                            className="flex-1 bg-slate-950/40 ring-1 ring-background/10 rounded-xl px-3 py-2 text-sm focus:outline-none"
                           />
                           <button
                             type="button"
                             onClick={() => removeBullet('details', idx)}
-                            className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 ring-1 ring-white/10 text-sm"
+                            className="px-3 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm"
                             aria-label="Remove detail item"
                           >
                             ✕
@@ -577,7 +577,7 @@ export default function ChallengeDetailsPage() {
             <div
               key={p.id}
               onClick={() => openViewModal(p.id)}
-              className="cursor-pointer rounded-2xl bg-slate-900/70 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] p-4"
+              className="cursor-pointer rounded-2xl bg-slate-900/70 ring-1 ring-background/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] p-4"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
@@ -634,7 +634,7 @@ export default function ChallengeDetailsPage() {
                       <button
                         type="button"
                         onClick={() => removeParticipation(p.id)}
-                        className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 ring-1 ring-white/10 text-sm"
+                        className="px-3 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm"
                         aria-label="Remove participation"
                       >
                         🗑
@@ -652,7 +652,7 @@ export default function ChallengeDetailsPage() {
           <div className="mt-5 flex justify-center pb-8">
             <button
               type="button"
-              className="px-6 py-2 rounded-full bg-slate-800 hover:bg-slate-700 ring-1 ring-white/10 text-sm font-semibold"
+              className="px-6 py-2 rounded-full bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm font-semibold"
               onClick={() =>
                 setVisibleCount((v) => Math.min(v + defaultVisible, participations.length))
               }
@@ -672,7 +672,7 @@ export default function ChallengeDetailsPage() {
               }
             }}
           >
-            <div className="w-full max-w-[430px] md:max-w-xl rounded-3xl bg-slate-900 ring-1 ring-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.65)] overflow-hidden">
+            <div className="w-full max-w-[430px] md:max-w-xl rounded-3xl bg-slate-900 ring-1 ring-background/10 shadow-[0_20px_60px_rgba(0,0,0,0.65)] overflow-hidden">
               {/* Header */}
               <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between">
                 <div className="font-semibold">
@@ -687,7 +687,7 @@ export default function ChallengeDetailsPage() {
                       e.stopPropagation();
                       deleteActiveParticipation();
                     }}
-                    className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 ring-1 ring-white/10 text-sm"
+                    className="px-3 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm"
                     aria-label="Delete participation"
                     title="Delete"
                   >
@@ -697,7 +697,7 @@ export default function ChallengeDetailsPage() {
                   <button
                     type="button"
                     onClick={closeModal}
-                    className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 ring-1 ring-white/10 text-sm"
+                    className="px-3 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm"
                   >
                     ✕
                   </button>
@@ -711,14 +711,14 @@ export default function ChallengeDetailsPage() {
                   <div className="text-sm font-semibold text-white/80 mb-2">Description</div>
 
                   {modalMode === 'view' ? (
-                    <div className="rounded-2xl bg-slate-950/30 ring-1 ring-white/10 p-3 text-white/85 whitespace-pre-wrap">
+                    <div className="rounded-2xl bg-slate-950/30 ring-1 ring-background/10 p-3 text-white/85 whitespace-pre-wrap">
                       {activeParticipation?.description ?? ''}
                     </div>
                   ) : (
                     <textarea
                       value={pDesc}
                       onChange={(e) => setPDesc(e.target.value)}
-                      className="w-full rounded-2xl bg-slate-950/30 ring-1 ring-white/10 p-3 text-sm text-white/90 focus:outline-none resize-none min-h-[100px]"
+                      className="w-full rounded-2xl bg-slate-950/30 ring-1 ring-background/10 p-3 text-sm text-white/90 focus:outline-none resize-none min-h-[100px]"
                       placeholder="Your participation description..."
                     />
                   )}
@@ -729,14 +729,14 @@ export default function ChallengeDetailsPage() {
                   <div className="text-sm font-semibold text-white/80 mb-2">Link</div>
 
                   {modalMode === 'view' ? (
-                    <div className="rounded-2xl bg-slate-950/30 ring-1 ring-white/10 p-3 text-white/85 break-all">
+                    <div className="rounded-2xl bg-slate-950/30 ring-1 ring-background/10 p-3 text-white/85 break-all">
                       {activeParticipation?.link ? activeParticipation.link : '—'}
                     </div>
                   ) : (
                     <input
                       value={pLink}
                       onChange={(e) => setPLink(e.target.value)}
-                      className="w-full rounded-2xl bg-slate-950/30 ring-1 ring-white/10 px-3 py-3 text-sm text-white/90 focus:outline-none"
+                      className="w-full rounded-2xl bg-slate-950/30 ring-1 ring-background/10 px-3 py-3 text-sm text-white/90 focus:outline-none"
                       placeholder="https://..."
                     />
                   )}
@@ -752,7 +752,7 @@ export default function ChallengeDetailsPage() {
                       <button
                         type="button"
                         onClick={openEditModalForActive}
-                        className="px-4 py-2 rounded-2xl bg-slate-800 hover:bg-slate-700 ring-1 ring-white/10 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                        className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
                       >
                         Modify
                       </button>
@@ -761,7 +761,7 @@ export default function ChallengeDetailsPage() {
                     <button
                       type="button"
                       onClick={closeModal}
-                      className="px-4 py-2 rounded-2xl bg-slate-800 hover:bg-slate-700 ring-1 ring-white/10 text-sm font-semibold"
+                      className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm font-semibold"
                     >
                       Close
                     </button>
@@ -778,7 +778,7 @@ export default function ChallengeDetailsPage() {
                           closeModal();
                         }
                       }}
-                      className="px-4 py-2 rounded-2xl bg-slate-800 hover:bg-slate-700 ring-1 ring-white/10 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                      className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
                     >
                       Cancel
                     </button>
