@@ -25,6 +25,7 @@ export default function Home() {
   };
 
   const { user } = useAuth();
+  console.log(user);
 
   const [homePageGames, setHomePageGames] = useState<Game[]>([]);
   const [homePageChallenges, setHomePageChallenges] = useState<Challenge[]>([]);
