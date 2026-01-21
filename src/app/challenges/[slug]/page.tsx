@@ -1,9 +1,10 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
-import { useMemo, useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import Image from 'next/image';
+import Link from 'next/link';
+import { useMemo, useState, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { useAuth } from '@/app/context/AuthContext';
 
 // hook responsive
 function useMediaQuery(query: string) {
@@ -12,18 +13,18 @@ function useMediaQuery(query: string) {
     const mq = window.matchMedia(query);
     const onChange = () => setMatches(mq.matches);
     onChange();
-    mq.addEventListener?.("change", onChange);
-    return () => mq.removeEventListener?.("change", onChange);
+    mq.addEventListener?.('change', onChange);
+    return () => mq.removeEventListener?.('change', onChange);
   }, [query]);
   return matches;
 }
 
 type Participation = {
   id: string;
-  userId: string;  
+  userId: string;
   name: string;
-  description: string; 
-  scoreLabel: string; 
+  description: string;
+  scoreLabel: string;
   link?: string;
   hasLiked?: boolean;
   likes: number;
@@ -49,7 +50,7 @@ type Challenge = {
 
 // Description avec max 100 chars
 const clamp100 = (s: string) => {
-  const t = (s ?? "").trim();
+  const t = (s ?? '').trim();
   if (t.length <= 100) {
     return t;
   }
@@ -58,97 +59,98 @@ const clamp100 = (s: string) => {
 
 export default function ChallengeDetailsPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const params = useParams<{ slug: string }>();
   const slug = params?.slug;
 
-  const isMd = useMediaQuery("(min-width: 768px)");
+  const isMd = useMediaQuery('(min-width: 768px)');
   const defaultVisible = isMd ? 4 : 3;
 
   useEffect(() => {
-  setVisibleCount(defaultVisible);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [isMd]);
+    setVisibleCount(defaultVisible);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMd]);
 
-// TODO: remplacer par un fetch BDD (slug)
-const challengeFromDb: Challenge = useMemo(
-  () => ({
-    id:  "hollow-knight-steel-soul-no-spells",
-    slug: slug ?? "hollow-knight-steel-soul-no-spells",
-    title: "Steel Soul: No Spells",
-    gameId: "hollow-knight",
-    gameTitle: "Hollow Knight",
-    createdBy: "NailMaster",
-    image: undefined,
-    gameImage: "/real-rat.png",
-    description: [
-      "Vaincre un boss majeur en mode Steel Soul.",
-      "Aucun sort autorisé (Vengeful Spirit, Desolate Dive, Howling Wraiths...).",
-      "Le run doit être en solo, sans mods.",
-    ],
-    details: [
-      "Lancer une nouvelle partie en Steel Soul.",
-      "Choisir un boss majeur (Hornet, Soul Master, Mantis Lords, etc.).",
-      "Interdiction d’utiliser tout sort pendant le combat.",
-      "Les charms sont autorisés (sauf si tu veux ajouter une variante).",
-      "Valider avec une preuve vidéo complète du combat.",
-    ],
-    hasLiked: true,
-    likes: 353,
-    participations: [
-      {
-        id: "p1",
-        userId: "user_2",
-        name: "Léo V.",
-        scoreLabel: "Boss: Soul Master • Temps: 2:41",
-        description: "Vaincu Soul Master en Steel Soul, vidéo complète disponible.",
-        link: "https://youtube.com/watch?v=hollowknight_run_241",
-        hasLiked: false,
-        likes: 14,
-      },
-      {
-        id: "p2",
-        userId: "user_3",
-        name: "Mina R.",
-        scoreLabel: "Boss: Mantis Lords • Temps: 3:18",
-        description: "Mantis Lords sans sorts, run enregistré.",
-        link: "https://youtube.com/watch?v=mantis_no_spells_318",
-        hasLiked: true,
-        likes: 25,
-      },
-      {
-        id: "p3",
-        userId: "user_4",
-        name: "Yanis K.",
-        scoreLabel: "Boss: Hornet (Greenpath) • Temps: 1:57",
-        description: "Hornet down, proof video included.",
-        link: "https://youtube.com/watch?v=hornet_steel_soul_157",
-        hasLiked: false,
-        likes: 8,
-      },
-      {
-        id: "p4",
-        userId: "user_5",
-        name: "Chloé D.",
-        scoreLabel: "Boss: Broken Vessel • Temps: 4:06",
-        description: "Broken Vessel kill without spells.",
-        link: "https://youtube.com/watch?v=brokenvessel_nospells_406",
-        hasLiked: false,
-        likes: 3,
-      },
-      {
-        id: "p5",
-        userId: "user_6",
-        name: "Samir B.",
-        scoreLabel: "Boss: Dung Defender • Temps: 2:12",
-        description: "Dung Defender run, no spells used.",
-        link: "https://youtube.com/watch?v=dungdefender_212",
-        hasLiked: true,
-        likes: 21,
-      },
-    ],
-  }),
-  [slug]
-);
+  // TODO: remplacer par un fetch BDD (slug)
+  const challengeFromDb: Challenge = useMemo(
+    () => ({
+      id: 'hollow-knight-steel-soul-no-spells',
+      slug: slug ?? 'hollow-knight-steel-soul-no-spells',
+      title: 'Steel Soul: No Spells',
+      gameId: 'hollow-knight',
+      gameTitle: 'Hollow Knight',
+      createdBy: 'NailMaster',
+      image: undefined,
+      gameImage: '/real-rat.png',
+      description: [
+        'Vaincre un boss majeur en mode Steel Soul.',
+        'Aucun sort autorisé (Vengeful Spirit, Desolate Dive, Howling Wraiths...).',
+        'Le run doit être en solo, sans mods.'
+      ],
+      details: [
+        'Lancer une nouvelle partie en Steel Soul.',
+        'Choisir un boss majeur (Hornet, Soul Master, Mantis Lords, etc.).',
+        'Interdiction d’utiliser tout sort pendant le combat.',
+        'Les charms sont autorisés (sauf si tu veux ajouter une variante).',
+        'Valider avec une preuve vidéo complète du combat.'
+      ],
+      hasLiked: true,
+      likes: 353,
+      participations: [
+        {
+          id: 'p1',
+          userId: 'user_2',
+          name: 'Léo V.',
+          scoreLabel: 'Boss: Soul Master • Temps: 2:41',
+          description: 'Vaincu Soul Master en Steel Soul, vidéo complète disponible.',
+          link: 'https://youtube.com/watch?v=hollowknight_run_241',
+          hasLiked: false,
+          likes: 14
+        },
+        {
+          id: 'p2',
+          userId: 'user_3',
+          name: 'Mina R.',
+          scoreLabel: 'Boss: Mantis Lords • Temps: 3:18',
+          description: 'Mantis Lords sans sorts, run enregistré.',
+          link: 'https://youtube.com/watch?v=mantis_no_spells_318',
+          hasLiked: true,
+          likes: 25
+        },
+        {
+          id: 'p3',
+          userId: 'user_4',
+          name: 'Yanis K.',
+          scoreLabel: 'Boss: Hornet (Greenpath) • Temps: 1:57',
+          description: 'Hornet down, proof video included.',
+          link: 'https://youtube.com/watch?v=hornet_steel_soul_157',
+          hasLiked: false,
+          likes: 8
+        },
+        {
+          id: 'p4',
+          userId: 'user_5',
+          name: 'Chloé D.',
+          scoreLabel: 'Boss: Broken Vessel • Temps: 4:06',
+          description: 'Broken Vessel kill without spells.',
+          link: 'https://youtube.com/watch?v=brokenvessel_nospells_406',
+          hasLiked: false,
+          likes: 3
+        },
+        {
+          id: 'p5',
+          userId: 'user_6',
+          name: 'Samir B.',
+          scoreLabel: 'Boss: Dung Defender • Temps: 2:12',
+          description: 'Dung Defender run, no spells used.',
+          link: 'https://youtube.com/watch?v=dungdefender_212',
+          hasLiked: true,
+          likes: 21
+        }
+      ]
+    }),
+    [slug]
+  );
 
   // Like toggle
   const [challengeHasLiked, setChallengeHasLiked] = useState(!!challengeFromDb.hasLiked);
@@ -163,12 +165,8 @@ const challengeFromDb: Challenge = useMemo(
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(challengeFromDb.title);
   const [imageUrl, setImageUrl] = useState<string | undefined>(challengeFromDb.image);
-  const [descriptionPoints, setDescriptionPoints] = useState<string[]>(
-    challengeFromDb.description
-  );
-  const [detailsPoints, setDetailsPoints] = useState<string[]>(
-    challengeFromDb.details
-  );
+  const [descriptionPoints, setDescriptionPoints] = useState<string[]>(challengeFromDb.description);
+  const [detailsPoints, setDetailsPoints] = useState<string[]>(challengeFromDb.details);
   const [participations, setParticipations] = useState<Participation[]>(
     challengeFromDb.participations
   );
@@ -201,25 +199,25 @@ const challengeFromDb: Challenge = useMemo(
     setIsEditing(false);
   };
 
-    // Gestion des lignes à puces
-  const addBullet = (kind: "desc" | "details") => {
-    if (kind === "desc") {
-      setDescriptionPoints((p) => [...p, ""]);
+  // Gestion des lignes à puces
+  const addBullet = (kind: 'desc' | 'details') => {
+    if (kind === 'desc') {
+      setDescriptionPoints((p) => [...p, '']);
     } else {
-      setDetailsPoints((p) => [...p, ""]);
+      setDetailsPoints((p) => [...p, '']);
     }
   };
 
-  const updateBullet = (kind: "desc" | "details", idx: number, val: string) => {
-    if (kind === "desc") {
+  const updateBullet = (kind: 'desc' | 'details', idx: number, val: string) => {
+    if (kind === 'desc') {
       setDescriptionPoints((p) => p.map((x, i) => (i === idx ? val : x)));
     } else {
       setDetailsPoints((p) => p.map((x, i) => (i === idx ? val : x)));
     }
   };
 
-  const removeBullet = (kind: "desc" | "details", idx: number) => {
-    if (kind === "desc") {
+  const removeBullet = (kind: 'desc' | 'details', idx: number) => {
+    if (kind === 'desc') {
       setDescriptionPoints((p) => p.filter((_, i) => i !== idx));
     } else {
       setDetailsPoints((p) => p.filter((_, i) => i !== idx));
@@ -230,15 +228,15 @@ const challengeFromDb: Challenge = useMemo(
   const displayedParticipations = participations.slice(0, visibleCount);
   const canViewMore = visibleCount < participations.length;
 
-  const currentUserId = "user_1"; // TODO: remplacer par user session
+  const currentUserId = 'user_1'; // TODO: remplacer par user session
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState<"create" | "view" | "edit">("view");
+  const [modalMode, setModalMode] = useState<'create' | 'view' | 'edit'>('view');
   const [activeParticipationId, setActiveParticipationId] = useState<string | null>(null);
 
   // Champs du formulaire (create / edit)
-  const [pDesc, setPDesc] = useState("");
-  const [pLink, setPLink] = useState("");
+  const [pDesc, setPDesc] = useState('');
+  const [pLink, setPLink] = useState('');
 
   const activeParticipation = useMemo(() => {
     if (!activeParticipationId) {
@@ -252,122 +250,109 @@ const challengeFromDb: Challenge = useMemo(
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setModalMode("view");
+    setModalMode('view');
     setActiveParticipationId(null);
-    setPDesc("");
-    setPLink("");
+    setPDesc('');
+    setPLink('');
   };
 
   const openCreateModal = () => {
-    setModalMode("create");
+    setModalMode('create');
     setActiveParticipationId(null);
-    setPDesc("");
-    setPLink("");
+    setPDesc('');
+    setPLink('');
     setIsModalOpen(true);
   };
 
   const openViewModal = (pId: string) => {
     const p = participations.find((x) => x.id === pId);
-    setModalMode("view");
+    setModalMode('view');
     setActiveParticipationId(pId);
-    setPDesc(p?.description ?? "");
-    setPLink(p?.link ?? "");
+    setPDesc(p?.description ?? '');
+    setPLink(p?.link ?? '');
     setIsModalOpen(true);
   };
 
-const openEditModalForActive = () => {
-  if (!activeParticipation) {
-    return;
-  }
-  setModalMode("edit");
-  setPDesc(activeParticipation.description ?? "");
-  setPLink(activeParticipation.link ?? "");
-};
-
-const submitCreate = async () => {
-  const desc = pDesc.trim();
-  const link = pLink.trim();
-
-  if (!desc) {
-    return;
-  }
-
-  const newP: Participation = {
-    id: `p_${Date.now()}`,
-    userId: currentUserId,
-    name: "Username", 
-    scoreLabel: "Score -", 
-    description: desc,
-    link: link || undefined,
-    hasLiked: false,
-    likes: 0,
+  const openEditModalForActive = () => {
+    if (!activeParticipation) {
+      return;
+    }
+    setModalMode('edit');
+    setPDesc(activeParticipation.description ?? '');
+    setPLink(activeParticipation.link ?? '');
   };
 
-  setParticipations((prev) => [newP, ...prev]);
+  const submitCreate = async () => {
+    const desc = pDesc.trim();
+    const link = pLink.trim();
 
-  // TODO BDD: insert participation (challengeFromDb.id, userId, desc, link)
-  closeModal();
-};
+    if (!desc) {
+      return;
+    }
 
-const saveEdit = async () => {
-  if (!activeParticipation) {
-    return;
-  }
+    const newP: Participation = {
+      id: `p_${Date.now()}`,
+      userId: currentUserId,
+      name: 'Username',
+      scoreLabel: 'Score -',
+      description: desc,
+      link: link || undefined,
+      hasLiked: false,
+      likes: 0
+    };
 
-  const desc = pDesc.trim();
-  const link = pLink.trim();
+    setParticipations((prev) => [newP, ...prev]);
 
-  if (!desc) {
-    return;
-  }
+    // TODO BDD: insert participation (challengeFromDb.id, userId, desc, link)
+    closeModal();
+  };
 
-  setParticipations((prev) =>
-    prev.map((x) =>
-      x.id === activeParticipation.id
-        ? { ...x, description: desc, link: link || undefined }
-        : x
-    )
-  );
+  const saveEdit = async () => {
+    if (!activeParticipation) {
+      return;
+    }
 
-  // TODO BDD: update participation (activeParticipation.id)
-  setModalMode("view");
-};
+    const desc = pDesc.trim();
+    const link = pLink.trim();
 
-const deleteActiveParticipation = async () => {
-  if (!activeParticipation) {
-    return;
-  }
+    if (!desc) {
+      return;
+    }
 
-  setParticipations((prev) => prev.filter((x) => x.id !== activeParticipation.id));
+    setParticipations((prev) =>
+      prev.map((x) =>
+        x.id === activeParticipation.id ? { ...x, description: desc, link: link || undefined } : x
+      )
+    );
 
-  // TODO BDD: delete participation (activeParticipation.id)
-  closeModal();
-};
+    // TODO BDD: update participation (activeParticipation.id)
+    setModalMode('view');
+  };
 
+  const deleteActiveParticipation = async () => {
+    if (!activeParticipation) {
+      return;
+    }
 
+    setParticipations((prev) => prev.filter((x) => x.id !== activeParticipation.id));
+
+    // TODO BDD: delete participation (activeParticipation.id)
+    closeModal();
+  };
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       <main className="mx-auto w-full max-w-[430px] md:max-w-5xl px-4 md:px-8 py-5 md:py-8">
-
         {/* Card principale */}
         <div className="rounded-3xl bg-slate-900/70 ring-1 ring-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.55)] overflow-hidden">
-          
           {/* Header */}
           <div className="relative h-32 md:h-48 lg:h-64 w-full bg-slate-800">
-            <Image
-              src={headerImage}
-              alt={title}
-              fill
-              sizes="430px"
-              className="object-cover"
-            />
+            <Image src={headerImage} alt={title} fill sizes="430px" className="object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent" />
           </div>
-        
+
           {/* Contenu */}
           <div className="p-5 md:p-8">
-            
             {/* Title + like */}
             <div className="flex items-start justify-between gap-3">
               {!isEditing ? (
@@ -393,11 +378,11 @@ const deleteActiveParticipation = async () => {
                   }}
                   className="relative w-10 h-10 shrink-0 hover:opacity-90"
                   aria-pressed={challengeHasLiked}
-                  aria-label={challengeHasLiked ? "Unlike challenge" : "Like challenge"}
+                  aria-label={challengeHasLiked ? 'Unlike challenge' : 'Like challenge'}
                 >
                   <Image
-                    src={challengeHasLiked ? "/like 1.png" : "/like 0.png"}
-                    alt={challengeHasLiked ? "Liked" : "Not liked"}
+                    src={challengeHasLiked ? '/like 1.png' : '/like 0.png'}
+                    alt={challengeHasLiked ? 'Liked' : 'Not liked'}
                     fill
                     sizes="40px"
                     className="object-contain"
@@ -411,7 +396,7 @@ const deleteActiveParticipation = async () => {
             <div className="mt-3 flex items-start justify-between gap-3">
               <div className="text-white/80">
                 <div className="text-sm">
-                  <span className="text-white/60">Game :</span>{" "}
+                  <span className="text-white/60">Game :</span>{' '}
                   <Link
                     href={`/games/${challengeFromDb.gameId}`}
                     className="text-xs font-semibold tracking-widest text-purple-300/90 mb-2 hover:underline"
@@ -420,7 +405,7 @@ const deleteActiveParticipation = async () => {
                   </Link>
                 </div>
                 <div className="text-sm">
-                  <span className="text-white/60">Created by</span>{" "}
+                  <span className="text-white/60">Created by</span>{' '}
                   <span className="font-semibold">{challengeFromDb.createdBy}</span>
                 </div>
               </div>
@@ -458,7 +443,7 @@ const deleteActiveParticipation = async () => {
               <div className="mt-4">
                 <div className="text-sm font-semibold text-white/80 mb-2">Image URL</div>
                 <input
-                  value={imageUrl ?? ""}
+                  value={imageUrl ?? ''}
                   onChange={(e) => setImageUrl(e.target.value || undefined)}
                   className="w-full bg-slate-950/40 ring-1 ring-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none"
                   placeholder="https://..."
@@ -480,20 +465,18 @@ const deleteActiveParticipation = async () => {
 
               <div className="mt-3 rounded-2xl bg-slate-950/30 ring-1 ring-white/10 p-3">
                 {!isEditing ? (
-                  <div className="text-white/85">
-                    {clamp100(descriptionPoints[0] ?? "")}
-                  </div>
+                  <div className="text-white/85">{clamp100(descriptionPoints[0] ?? '')}</div>
                 ) : (
                   <div className="flex items-start gap-3">
                     <textarea
-                      value={descriptionPoints[0] ?? ""}
+                      value={descriptionPoints[0] ?? ''}
                       maxLength={100}
                       onChange={(e) => setDescriptionPoints([e.target.value])}
                       className="flex-1 bg-slate-950/40 ring-1 ring-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none resize-none min-h-[44px]"
                       placeholder="Description (max 100 chars)"
                     />
                     <div className="text-xs text-white/50 w-12 text-right pt-2">
-                      {(descriptionPoints[0] ?? "").length}/100
+                      {(descriptionPoints[0] ?? '').length}/100
                     </div>
                   </div>
                 )}
@@ -511,7 +494,7 @@ const deleteActiveParticipation = async () => {
                 {isEditing ? (
                   <button
                     type="button"
-                    onClick={() => addBullet("details")}
+                    onClick={() => addBullet('details')}
                     className="text-sm text-white/70 hover:text-white"
                   >
                     + Add
@@ -530,12 +513,12 @@ const deleteActiveParticipation = async () => {
                         <div className="flex-1 flex items-center gap-2">
                           <input
                             value={txt}
-                            onChange={(e) => updateBullet("details", idx, e.target.value)}
+                            onChange={(e) => updateBullet('details', idx, e.target.value)}
                             className="flex-1 bg-slate-950/40 ring-1 ring-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none"
                           />
                           <button
                             type="button"
-                            onClick={() => removeBullet("details", idx)}
+                            onClick={() => removeBullet('details', idx)}
                             className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 ring-1 ring-white/10 text-sm"
                             aria-label="Remove detail item"
                           >
@@ -549,17 +532,41 @@ const deleteActiveParticipation = async () => {
               </div>
             </div>
 
-        {/* Participate */}
+            {/* Participate */}
             <div className="mt-6 flex justify-center md:justify-end">
-              <button
-                type="button"
-                className="px-10 py-3 rounded-full bg-purple-600 hover:bg-purple-500 font-semibold shadow-[0_10px_25px_rgba(0,0,0,0.45)]"
-                onClick={() => {
-                  openCreateModal();
-                }}
-              >
-                Participate
-              </button>
+              {user ? (
+                <button
+                  type="button"
+                  className="px-10 py-3 rounded-full bg-purple-600 hover:bg-purple-500 font-semibold shadow-[0_10px_25px_rgba(0,0,0,0.45)]"
+                  onClick={() => {
+                    openCreateModal();
+                  }}
+                >
+                  Participate
+                </button>
+              ) : (
+                <div>
+                  <p className="text-center">Connection required to participate</p>
+                  <nav className="flex justify-center mb-8">
+                    <Link href="/login-register/login">
+                      <button
+                        type="button"
+                        className="bg-(--button-area) p-3 rounded-3xl mr-8 mt-6 cursor-pointer"
+                      >
+                        Login
+                      </button>
+                    </Link>
+                    <Link href="/login-register/register">
+                      <button
+                        type="button"
+                        className="bg-(--button-select) p-3 rounded-3xl  mt-6 cursor-pointer"
+                      >
+                        Register
+                      </button>
+                    </Link>
+                  </nav>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -582,51 +589,57 @@ const deleteActiveParticipation = async () => {
                     </div>
                   ) : null}
                 </div>
-                
-        {/* Likes + en mode Modify : bouton suppression participation */}
+
+                {/* Likes + en mode Modify : bouton suppression participation */}
                 <div className="flex items-center gap-2 shrink-0">
                   <div
                     onClick={(e) => e.stopPropagation()}
                     onMouseDown={(e) => e.stopPropagation()} // utile sur mobile
                     className="flex flex-col items-center leading-none"
                   >
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setParticipations((prev) =>
-                        prev.map((x) => {
-                          if (x.id !== p.id) { return x; }
-                          const currentlyLiked = Boolean(x.hasLiked);
-                          const nextHasLiked = !currentlyLiked;
-                          return { ...x, hasLiked: nextHasLiked, likes: currentlyLiked ? x.likes + 1 : x.likes - 1 };
-                        })
-                      );
-                    }}
-                    className="relative w-8 h-8 hover:opacity-90"
-                    aria-pressed={!!p.hasLiked}
-                    aria-label={p.hasLiked ? "Unlike participation" : "Like participation"}
-                  >
-                    <Image
-                      src={p.hasLiked ? "/like 1.png" : "/like 0.png"}
-                      alt={p.hasLiked ? "Liked" : "Not liked"}
-                      fill
-                      sizes="32px"
-                      className="object-contain"
-                    />
-                  </button>
-                  <div className="mt-1 text-xs text-white/70">{formatLikes(p.likes)}</div>
-
-        {/* En mode Modify : bouton suppression participation */}
-                  {isEditing ? (
                     <button
                       type="button"
-                      onClick={() => removeParticipation(p.id)}
-                      className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 ring-1 ring-white/10 text-sm"
-                      aria-label="Remove participation"
+                      onClick={() => {
+                        setParticipations((prev) =>
+                          prev.map((x) => {
+                            if (x.id !== p.id) {
+                              return x;
+                            }
+                            const currentlyLiked = Boolean(x.hasLiked);
+                            const nextHasLiked = !currentlyLiked;
+                            return {
+                              ...x,
+                              hasLiked: nextHasLiked,
+                              likes: currentlyLiked ? x.likes + 1 : x.likes - 1
+                            };
+                          })
+                        );
+                      }}
+                      className="relative w-8 h-8 hover:opacity-90"
+                      aria-pressed={!!p.hasLiked}
+                      aria-label={p.hasLiked ? 'Unlike participation' : 'Like participation'}
                     >
-                      🗑
+                      <Image
+                        src={p.hasLiked ? '/like 1.png' : '/like 0.png'}
+                        alt={p.hasLiked ? 'Liked' : 'Not liked'}
+                        fill
+                        sizes="32px"
+                        className="object-contain"
+                      />
                     </button>
-                  ) : null}
+                    <div className="mt-1 text-xs text-white/70">{formatLikes(p.likes)}</div>
+
+                    {/* En mode Modify : bouton suppression participation */}
+                    {isEditing ? (
+                      <button
+                        type="button"
+                        onClick={() => removeParticipation(p.id)}
+                        className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 ring-1 ring-white/10 text-sm"
+                        aria-label="Remove participation"
+                      >
+                        🗑
+                      </button>
+                    ) : null}
                   </div>
                 </div>
               </div>
@@ -641,9 +654,7 @@ const deleteActiveParticipation = async () => {
               type="button"
               className="px-6 py-2 rounded-full bg-slate-800 hover:bg-slate-700 ring-1 ring-white/10 text-sm font-semibold"
               onClick={() =>
-                setVisibleCount((v) =>
-                  Math.min(v + defaultVisible, participations.length)
-                )
+                setVisibleCount((v) => Math.min(v + defaultVisible, participations.length))
               }
             >
               View more
@@ -655,26 +666,26 @@ const deleteActiveParticipation = async () => {
           <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4"
             onMouseDown={(e) => {
-        // clic dehors => close
-              if (e.target === e.currentTarget) { closeModal(); }
+              // clic dehors => close
+              if (e.target === e.currentTarget) {
+                closeModal();
+              }
             }}
           >
             <div className="w-full max-w-[430px] md:max-w-xl rounded-3xl bg-slate-900 ring-1 ring-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.65)] overflow-hidden">
-        {/* Header */}
+              {/* Header */}
               <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between">
                 <div className="font-semibold">
-                  {modalMode === "create"
-                    ? "New participation"
-                    : "Participation"}
+                  {modalMode === 'create' ? 'New participation' : 'Participation'}
                 </div>
 
-        {/* suppression en haut à droite si owner */}
-                {modalMode !== "create" && isOwnActiveParticipation ? (
+                {/* suppression en haut à droite si owner */}
+                {modalMode !== 'create' && isOwnActiveParticipation ? (
                   <button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                  deleteActiveParticipation();
+                      deleteActiveParticipation();
                     }}
                     className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 ring-1 ring-white/10 text-sm"
                     aria-label="Delete participation"
@@ -693,16 +704,15 @@ const deleteActiveParticipation = async () => {
                 )}
               </div>
 
-        {/* Body */}
+              {/* Body */}
               <div className="p-5 space-y-4">
-
-        {/* Description */}
+                {/* Description */}
                 <div>
                   <div className="text-sm font-semibold text-white/80 mb-2">Description</div>
 
-                  {modalMode === "view" ? (
+                  {modalMode === 'view' ? (
                     <div className="rounded-2xl bg-slate-950/30 ring-1 ring-white/10 p-3 text-white/85 whitespace-pre-wrap">
-                      {activeParticipation?.description ?? ""}
+                      {activeParticipation?.description ?? ''}
                     </div>
                   ) : (
                     <textarea
@@ -714,13 +724,13 @@ const deleteActiveParticipation = async () => {
                   )}
                 </div>
 
-        {/* Link */}
+                {/* Link */}
                 <div>
                   <div className="text-sm font-semibold text-white/80 mb-2">Link</div>
 
-                  {modalMode === "view" ? (
+                  {modalMode === 'view' ? (
                     <div className="rounded-2xl bg-slate-950/30 ring-1 ring-white/10 p-3 text-white/85 break-all">
-                      {activeParticipation?.link ? activeParticipation.link : "—"}
+                      {activeParticipation?.link ? activeParticipation.link : '—'}
                     </div>
                   ) : (
                     <input
@@ -733,11 +743,10 @@ const deleteActiveParticipation = async () => {
                 </div>
               </div>
 
-        {/* Footer */}
+              {/* Footer */}
               <div className="px-5 py-4 border-t border-white/10 flex items-center justify-end gap-2">
-        
-        {/* VIEW mode */}
-        {modalMode === "view" ? (
+                {/* VIEW mode */}
+                {modalMode === 'view' ? (
                   <>
                     {isOwnActiveParticipation ? (
                       <button
@@ -759,13 +768,12 @@ const deleteActiveParticipation = async () => {
                   </>
                 ) : (
                   <>
-            
-            {/* Create / Edit */}
+                    {/* Create / Edit */}
                     <button
                       type="button"
                       onClick={() => {
-                        if (modalMode === "edit") {
-                          setModalMode("view");
+                        if (modalMode === 'edit') {
+                          setModalMode('view');
                         } else {
                           closeModal();
                         }
@@ -777,7 +785,7 @@ const deleteActiveParticipation = async () => {
 
                     <button
                       type="button"
-                      onClick={modalMode === "create" ? submitCreate : saveEdit}
+                      onClick={modalMode === 'create' ? submitCreate : saveEdit}
                       className="px-8 py-2.5 rounded-full bg-purple-600 hover:bg-purple-500 font-semibold shadow-[0_10px_25px_rgba(0,0,0,0.45)]"
                     >
                       Submit
