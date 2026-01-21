@@ -63,7 +63,7 @@ export default function BurgerMenu() {
             <li
               className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/login-register/login') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
             >
-              <Link href="/login-register/login'">Login</Link>
+              <Link href="/login-register/login">Login</Link>
             </li>
           )}
           {user ? (
