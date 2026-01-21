@@ -42,15 +42,13 @@ export default function AuthLogin() {
         // Gérer les erreurs du backend
         setErrorMessage(data.message || 'Invalid credentials');
         setIsLoading(false);
+
         return;
       }
 
-      // Login réussi : le token est dans le cookie httpOnly
-      // On peut stocker l'user en localStorage si nécessaire
-      localStorage.setItem('user', JSON.stringify(data.user));
-
       // Rediriger vers la page d'accueil (ou dashboard)
-      router.push('/');
+      router.replace('/');
+      router.refresh();
     } catch (error) {
       console.error('Login error:', error);
       setErrorMessage('Network error. Please try again later.');
@@ -59,15 +57,15 @@ export default function AuthLogin() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950">
+    <main className="min-h-screen">
       {/* Header stylé */}
       <div className="relative min-h-[35vh] flex items-center justify-center overflow-hidden">
         {/* Glow effect */}
 
         {/* Contenu */}
         <div className="relative z-10 text-center px-4">
-          <h1 className="text-5xl md:text-6xl font-black mb-4 bg-gradient-to-r ">Log In</h1>
-          <p className="text-lg text-white/70">Your next challenge is waiting</p>
+          <h1 className="text-5xl md:text-6xl font-extrabold mb-4 bg-gradient-to-r ">Log In</h1>
+          <p className="text-lg ">Your next challenge is waiting</p>
         </div>
       </div>
 
@@ -75,8 +73,8 @@ export default function AuthLogin() {
       <form onSubmit={handleSubmit} className="max-w-md mx-auto px-4 pb-20">
         <div className="space-y-4">
           {/* Email */}
-          <div className="flex flex-col p-4 bg-slate-800/50 rounded-2xl border border-slate-700 focus-within:border-purple-600 transition">
-            <label htmlFor="email" className="text-sm text-white/60 mb-1">
+          <div className="flex flex-col p-4 bg-(--button-area) rounded-2xl border border-(--searchbar-color) focus-within:border-(--button-select) transition">
+            <label htmlFor="email" className="text-sm mb-1">
               Email address
             </label>
             <input
@@ -86,13 +84,13 @@ export default function AuthLogin() {
               onChange={(e) => setUserEmail(e.target.value)}
               id="email"
               required
-              className="bg-transparent text-white outline-none placeholder:text-white/40"
+              className="bg-transparent  outline-none "
             />
           </div>
 
           {/* Password */}
-          <div className="flex flex-col p-4 bg-slate-800/50 rounded-2xl border border-slate-700 focus-within:border-purple-600 transition">
-            <label htmlFor="password" className="text-sm text-white/60 mb-1">
+          <div className="flex flex-col p-4 bg-(--button-area) rounded-2xl border border-(--searchbar-color) focus-within:border-(--button-select) transition">
+            <label htmlFor="password" className="text-sm mb-1">
               Password
             </label>
             <input
@@ -102,15 +100,15 @@ export default function AuthLogin() {
               onChange={(e) => setPassword(e.target.value)}
               id="password"
               required
-              className="bg-transparent text-white outline-none placeholder:text-white/40"
+              className="bg-transparent  outline-none "
             />
           </div>
         </div>
 
         {/* Error message */}
         {errorMessage && (
-          <div className="mt-4 p-3 bg-red-500/10 border border-red-500/50 rounded-lg">
-            <p className="text-red-400 text-sm text-center">{errorMessage}</p>
+          <div className="mt-4 p-3 bg-(--error-area-message) border border-(--error-border-message) rounded-lg">
+            <p className="text-(--error-text-message) text-sm text-center">{errorMessage}</p>
           </div>
         )}
 
@@ -118,7 +116,7 @@ export default function AuthLogin() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full mt-6 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-600/50 p-4 rounded-2xl font-semibold transition"
+          className="w-full mt-6 bg-(--searchbar-color) hover:bg-(--button-select)  p-4 rounded-2xl font-semibold transition"
         >
           {isLoading ? 'Logging in...' : 'Log In'}
         </button>

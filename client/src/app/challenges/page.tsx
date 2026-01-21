@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useAuth } from '../context/AuthContext';
 
 // hook responsive
 function useMediaQuery(query: string) {
@@ -21,33 +22,34 @@ function useMediaQuery(query: string) {
 }
 
 type Game = { id: string; title: string; imageUrl: string };
-  type Challenge = {
-    createdAt: string;
-    createdBy: string;
-    description: string;
-    game: {
-      id: string;
-      title: string;
-      imageUrl: string;
-      description: string;
-    };
-    gameId: string;
+type Challenge = {
+  createdAt: string;
+  createdBy: string;
+  description: string;
+  game: {
     id: string;
-    // optional slug used for links
-    slug?: string;
-    scoreFormat: string;
     title: string;
-    updatedAt: string;
-    voteCount: number;
-    // optional flag indicating whether the current user has liked the challenge
-    hasLiked?: boolean;
+    imageUrl: string;
+    description: string;
   };
+  gameId: string;
+  id: string;
+  // optional slug used for links
+  slug?: string;
+  scoreFormat: string;
+  title: string;
+  updatedAt: string;
+  voteCount: number;
+  // optional flag indicating whether the current user has liked the challenge
+  hasLiked?: boolean;
+};
 
-  const formatVotes = (n: number) => {
-    return `${n}`;
-  };
+const formatVotes = (n: number) => {
+  return `${n}`;
+};
 
 export default function ChallengesPage() {
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [pageBlockStart, setPageBlockStart] = useState(2);
@@ -63,34 +65,34 @@ export default function ChallengesPage() {
      API CALLS
   ====================== */
 
-useEffect(() => {
-  async function fetchGames() {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-    const res = await fetch(`${baseUrl}games`);
-    const data = await res.json();
-    setGames(data.games || []);
-  }
+  useEffect(() => {
+    async function fetchGames() {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+      const res = await fetch(`${baseUrl}games`);
+      const data = await res.json();
+      setGames(data.games || []);
+    }
 
-  fetchGames();
-}, []);
+    fetchGames();
+  }, []);
 
-useEffect(() => {
-  async function fetchChallenges() {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-    const res = await fetch(`${baseUrl}challenges`);
-    const data = await res.json();
+  useEffect(() => {
+    async function fetchChallenges() {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+      const res = await fetch(`${baseUrl}challenges`);
+      const data = await res.json();
 
-    // on s'assure que voteCount existe
-    const list = (data.challenges || data || []).map((c: Partial<Challenge>) => ({
-      ...c,
-      voteCount: c.voteCount ?? 0,
-    })) as Challenge[];
+      // on s'assure que voteCount existe
+      const list = (data.challenges || data || []).map((c: Partial<Challenge>) => ({
+        ...c,
+        voteCount: c.voteCount ?? 0
+      })) as Challenge[];
 
-    setChallenges(list);
-  }
+      setChallenges(list);
+    }
 
-  fetchChallenges();
-}, []);
+    fetchChallenges();
+  }, []);
 
   /* ======================
      FILTERING
@@ -107,8 +109,7 @@ useEffect(() => {
       }
 
       const matchesQuery =
-        c.title.toLowerCase().includes(q) ||
-        c.game.title.toLowerCase().includes(q);
+        c.title.toLowerCase().includes(q) || c.game.title.toLowerCase().includes(q);
 
       return matchesGame && matchesQuery;
     });
@@ -149,118 +150,135 @@ useEffect(() => {
      RENDER
   ====================== */
 
-    return (
-    <div className="min-h-screen bg-slate-950 text-white flex flex-col">
-        <main className="px-4 md:px-8 py-6 max-w-7xl mx-auto w-full">
-
+  return (
+    <div className="min-h-screen flex flex-col">
+      <main className="px-4 md:px-8 py-6 max-w-7xl mx-auto w-full">
         {/* Search Bar */}
         <div className="mb-6">
-            <div className="relative max-w-md md:max-w-2xl mx-auto">
-                <div className="absolute inset-0 rounded-full bg-(--searchbar-color) ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.45)]" />
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 z-10 h-12 w-12 flex items-center justify-center shadow">
-                    <Image
+          <div className="relative max-w-md md:max-w-2xl mx-auto">
+            <div className="absolute inset-0 rounded-full bg-(--searchbar-color) ring-1 ring-foreground/10 shadow-[0_10px_30px_rgba(0,0,0,0.45)]" />
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 z-10 h-12 w-12 flex items-center justify-center shadow">
+              <Image
                 src="/loupe.png"
                 width={100}
                 height={100}
                 alt="Search Icon"
                 className="opacity-80"
-                    />
-                </div>
+              />
+            </div>
 
             <input
-                type="text"
-                placeholder="Search a challenge..."
-                value={searchQuery}
-                onChange={(e) => {
+              type="text"
+              placeholder="Search a challenge..."
+              value={searchQuery}
+              onChange={(e) => {
                 setSearchQuery(e.target.value);
                 setCurrentPage(1);
                 setPageBlockStart(2);
-                }}
-                className="relative w-full rounded-full bg-transparent py-3 pl-14 pr-4 text-white text-center text-xl placeholder:text-white/50 focus:outline-none"
+              }}
+              className="relative w-full rounded-full bg-transparent py-3 pl-14 pr-4  text-center text-xl  focus:outline-none"
             />
-            </div>
+          </div>
         </div>
-        
-    {/* Challenges Section */}
-    <div className="mb-8">
-        <div className="mx-auto max-w-md md:max-w-4xl">
+
+        {/* Challenges Section */}
+        <div className="mb-8">
+          <div className="mx-auto max-w-md md:max-w-4xl">
             <div className="mb-6 flex items-center justify-between gap-4">
-                <h2 className="text-xl font-bold border-l-4 border-purple-600 pl-3">
-                    Challenges
-                </h2>
+              <h2 className="text-xl font-bold border-l-4 border-(--button-select) pl-3">
+                Challenges
+              </h2>
+              {user ? (
                 <Link
-                    href="/challenges/create"
-                    className="px-4 py-2 rounded-xl bg-amber-600/80 hover:bg-amber-600 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                  href="/challenges/create"
+                  className="px-4 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
                 >
                   Create a challenge
                 </Link>
+              ) : (
+                <div>
+                  <p>To create a challenge, register or login </p>
+                  <nav className="flex justify-center mb-8">
+                    <Link href="/login-register/login">
+                      <button
+                        type="button"
+                        className="bg-(--button-area) p-3 rounded-3xl mr-8 mt-6 cursor-pointer"
+                      >
+                        Login
+                      </button>
+                    </Link>
+                    <Link href="/login-register/register">
+                      <button
+                        type="button"
+                        className="bg-(--button-select) p-3 rounded-3xl  mt-6 cursor-pointer"
+                      >
+                        Register
+                      </button>
+                    </Link>
+                  </nav>
+                </div>
+              )}
             </div>
 
-        {/* Cards de challenges */}
+            {/* Cards de challenges */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                {paginatedChallenges.map((c) => {
+              {paginatedChallenges.map((c) => {
                 return (
-                <div
+                  <div
                     key={c.id}
-                    className="rounded-2xl bg-slate-900/70 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden"
-                >
+                    className="rounded-2xl bg-(--button-area) ring-1 ring-foreground/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden"
+                  >
                     <div className="p-5 flex flex-col h-full">
-
-                    {/* Tag / jeu */}
-                    <div className="text-xs font-semibold tracking-widest text-purple-300/90 mb-2">
+                      {/* Tag / jeu */}
+                      <div className="text-xs font-semibold tracking-widest text-(--button-select)/90 mb-2">
                         {(c.game?.title ?? '').toUpperCase()}
-                    </div>
+                      </div>
 
-                    {/* Titre */}
-                    <div className="text-2xl font-semibold leading-tight mb-2">
-                        {c.title}
-                    </div>
+                      {/* Titre */}
+                      <div className="text-2xl font-semibold leading-tight mb-2">{c.title}</div>
 
-                    {/* Description */}
-                    <div className="text-white/70 leading-relaxed mb-4">
-                        {c.description}
-                    </div>
+                      {/* Description */}
+                      <div className="text-foreground/70 leading-relaxed mb-4">{c.description}</div>
 
-                    {/* votes + bouton */}
-                    <div className="mt-auto flex items-center justify-between pt-2">
-                        <div className="flex items-center gap-3 text-white/70">
-                            <span className="relative w-8 h-8 shrink-0">
-                                <Image
-                                    src={c.hasLiked ? "/like 1.png" : "/like 0.png"}
-                                    alt={c.hasLiked ? "Liked" : "Not liked"}
-                                    fill
-                                    sizes="32px"
-                                    style={{ objectFit: 'contain' }}
-                                />
+                      {/* votes + bouton */}
+                      <div className="mt-auto flex items-center justify-between pt-2">
+                        <div className="flex items-center gap-3 ">
+                          <span className="relative w-8 h-8 shrink-0">
+                            <Image
+                              src={c.hasLiked ? '/like 1.png' : '/like 0.png'}
+                              alt={c.hasLiked ? 'Liked' : 'Not liked'}
+                              fill
+                              sizes="32px"
+                              style={{ objectFit: 'contain' }}
+                            />
+                          </span>
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-sm font-semibold">
+                              {formatVotes(c.voteCount)}
                             </span>
-                            <div className="flex items-baseline gap-1">
-                                <span className="text-sm font-semibold">
-                                    {formatVotes(c.voteCount)}
-                                </span>
-                                <span className="text-sm">likes</span>
-                            </div>
+                            <span className="text-sm">likes</span>
+                          </div>
                         </div>
 
                         <Link
-                            href={`/challenges/${c.slug ?? c.id}`}
-                            className="px-4 py-2 rounded-xl bg-amber-600/80 hover:bg-amber-600 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                          href={`/challenges/${c.slug ?? c.id}`}
+                          className="px-4 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
                         >
-                            Details
+                          Details
                         </Link>
+                      </div>
                     </div>
-                    </div>
-                </div>
+                  </div>
                 );
-                })}
-
+              })}
             </div>
+          </div>
         </div>
-    </div>
 
         {filteredChallenges.length === 0 && (
-            <p className="mt-6 text-center text-white">
-                {selectedGameId ? "No challenge for this game yet" : "No challenge found."}
-            </p>
+          <p className="mt-6 text-center ">
+            {selectedGameId ? 'No challenge for this game yet' : 'No challenge found.'}
+          </p>
         )}
 
         {/* Pages */}
@@ -268,7 +286,9 @@ useEffect(() => {
           {/* Page 1 toujours visible */}
           <button
             className={`w-8 h-8 rounded-full flex items-center justify-center ${
-              currentPage === 1 ? 'bg-purple-600' : 'bg-slate-800 hover:bg-slate-700'
+              currentPage === 1
+                ? 'bg-(--button-select)'
+                : 'bg-(--button-area) hover:bg-(--searchbar-color)'
             }`}
             onClick={() => goToPage(1)}
           >
@@ -279,27 +299,29 @@ useEffect(() => {
           {Array.from({ length: 4 }, (_, i) => pageBlockStart + i)
             .filter((p) => p <= totalPages)
             .map((page) => (
-            <button
-              key={page}
-              className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                currentPage === page ? 'bg-purple-600' : 'bg-slate-800 hover:bg-slate-700'
-              }`}
-              onClick={() => goToPage(page)}
-            >
-              {page}
-            </button>
-          ))}
+              <button
+                key={page}
+                className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                  currentPage === page
+                    ? 'bg-(--button-select)'
+                    : 'bg-(--button-area) hover:bg-(--background-header)'
+                }`}
+                onClick={() => goToPage(page)}
+              >
+                {page}
+              </button>
+            ))}
 
           {/* Bouton ... : passe au bloc suivant */}
           {totalPages > pageBlockStart + 3 && (
-          <button
-            type="button"
-            className="w-8 h-8 bg-slate-800 hover:bg-slate-700 rounded-full flex items-center justify-center"
-            onClick={nextBlock}
-            aria-label="Afficher les pages suivantes"
-          >
-            ...
-          </button>
+            <button
+              type="button"
+              className="w-8 h-8 bg-(--button-area) hover:bg-(--background-header) rounded-full flex items-center justify-center"
+              onClick={nextBlock}
+              aria-label="Afficher les pages suivantes"
+            >
+              ...
+            </button>
           )}
         </div>
       </main>

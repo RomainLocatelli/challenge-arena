@@ -18,7 +18,15 @@ export const register = async (data: RegisterInput) => {
       }
     });
     //  Retire le mdp avant de retourner
-    const { password: _, ...userWithoutPassword } = user;
+    const {
+      password: _1,
+      email: _2,
+      isDeleted: _3,
+      deletedAt: _4,
+      createdAt: _5,
+      updatedAt: _6,
+      ...userWithoutPassword
+    } = user;
     return userWithoutPassword;
   } catch (error: any) {
     //  Erreur si le user existe déjà
@@ -49,11 +57,36 @@ export const login = async (data: LoginInput) => {
   if (user.isDeleted) {
     throw new AppError('User account deleted or not found', 403);
   }
+  const {
+    password: _1,
+    email: _2,
+    isDeleted: _3,
+    deletedAt: _4,
+    createdAt: _5,
+    updatedAt: _6,
+    ...userWithoutPassword
+  } = user;
+  return userWithoutPassword;
+};
+
+// Récupérer un utilisateur par son ID
+export const getUserById = async (userId: string) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId }
+  });
 
   if (user.isBanned) {
     throw new AppError('User account banned. Contact the support.', 403);
   }
 
-  const { password: _, ...userWithoutPassword } = user;
+  const {
+    password: _1,
+    email: _2,
+    isDeleted: _3,
+    deletedAt: _4,
+    createdAt: _5,
+    updatedAt: _6,
+    ...userWithoutPassword
+  } = user;
   return userWithoutPassword;
 };
