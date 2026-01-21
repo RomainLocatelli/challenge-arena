@@ -4,6 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo, useState, useEffect } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useAuth } from '@/app/context/AuthContext';
+
 
 // hook responsive
 function useMediaQuery(query: string) {
@@ -58,6 +60,7 @@ const clamp100 = (s: string) => {
 
 export default function ChallengeDetailsPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const params = useParams<{ slug: string }>();
   const slug = params?.slug;
   const searchParams = useSearchParams();
@@ -545,15 +548,39 @@ export default function ChallengeDetailsPage() {
 
             {/* Participate */}
             <div className="mt-6 flex justify-center md:justify-end">
-              <button
-                type="button"
-                className="px-10 py-3 rounded-full bg-purple-600 hover:bg-purple-500 font-semibold shadow-[0_10px_25px_rgba(0,0,0,0.45)]"
-                onClick={() => {
-                  openCreateModal();
-                }}
-              >
-                Participate
-              </button>
+              {user ? (
+                <button
+                  type="button"
+                  className="px-10 py-3 rounded-full bg-purple-600 hover:bg-purple-500 font-semibold shadow-[0_10px_25px_rgba(0,0,0,0.45)]"
+                  onClick={() => {
+                    openCreateModal();
+                  }}
+                >
+                  Participate
+                </button>
+              ) : (
+                <div>
+                  <p className="text-center">Connection required to participate</p>
+                  <nav className="flex justify-center mb-8">
+                    <Link href="/login-register/login">
+                      <button
+                        type="button"
+                        className="bg-(--button-area) p-3 rounded-3xl mr-8 mt-6 cursor-pointer"
+                      >
+                        Login
+                      </button>
+                    </Link>
+                    <Link href="/login-register/register">
+                      <button
+                        type="button"
+                        className="bg-(--button-select) p-3 rounded-3xl  mt-6 cursor-pointer"
+                      >
+                        Register
+                      </button>
+                    </Link>
+                  </nav>
+                </div>
+              )}
             </div>
           </div>
         </div>
