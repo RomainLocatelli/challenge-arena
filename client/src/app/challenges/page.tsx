@@ -151,12 +151,12 @@ export default function ChallengesPage() {
   ====================== */
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex flex-col">
+    <div className="min-h-screen flex flex-col">
       <main className="px-4 md:px-8 py-6 max-w-7xl mx-auto w-full">
         {/* Search Bar */}
         <div className="mb-6">
           <div className="relative max-w-md md:max-w-2xl mx-auto">
-            <div className="absolute inset-0 rounded-full bg-(--searchbar-color) ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.45)]" />
+            <div className="absolute inset-0 rounded-full bg-(--searchbar-color) ring-1 ring-foreground/10 shadow-[0_10px_30px_rgba(0,0,0,0.45)]" />
             <div className="absolute left-3 top-1/2 -translate-y-1/2 z-10 h-12 w-12 flex items-center justify-center shadow">
               <Image
                 src="/loupe.png"
@@ -176,7 +176,7 @@ export default function ChallengesPage() {
                 setCurrentPage(1);
                 setPageBlockStart(2);
               }}
-              className="relative w-full rounded-full bg-transparent py-3 pl-14 pr-4 text-white text-center text-xl placeholder:text-white/50 focus:outline-none"
+              className="relative w-full rounded-full bg-transparent py-3 pl-14 pr-4  text-center text-xl  focus:outline-none"
             />
           </div>
         </div>
@@ -185,11 +185,13 @@ export default function ChallengesPage() {
         <div className="mb-8">
           <div className="mx-auto max-w-md md:max-w-4xl">
             <div className="mb-6 flex items-center justify-between gap-4">
-              <h2 className="text-xl font-bold border-l-4 border-purple-600 pl-3">Challenges</h2>
+              <h2 className="text-xl font-bold border-l-4 border-(--button-select) pl-3">
+                Challenges
+              </h2>
               {user ? (
                 <Link
                   href="/challenges/create"
-                  className="px-4 py-2 rounded-xl bg-amber-600/80 hover:bg-amber-600 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                  className="px-4 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
                 >
                   Create a challenge
                 </Link>
@@ -224,11 +226,11 @@ export default function ChallengesPage() {
                 return (
                   <div
                     key={c.id}
-                    className="rounded-2xl bg-slate-900/70 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden"
+                    className="rounded-2xl bg-(--button-area) ring-1 ring-foreground/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden"
                   >
                     <div className="p-5 flex flex-col h-full">
                       {/* Tag / jeu */}
-                      <div className="text-xs font-semibold tracking-widest text-purple-300/90 mb-2">
+                      <div className="text-xs font-semibold tracking-widest text-(--button-select)/90 mb-2">
                         {(c.game?.title ?? '').toUpperCase()}
                       </div>
 
@@ -236,11 +238,11 @@ export default function ChallengesPage() {
                       <div className="text-2xl font-semibold leading-tight mb-2">{c.title}</div>
 
                       {/* Description */}
-                      <div className="text-white/70 leading-relaxed mb-4">{c.description}</div>
+                      <div className="text-foreground/70 leading-relaxed mb-4">{c.description}</div>
 
                       {/* votes + bouton */}
                       <div className="mt-auto flex items-center justify-between pt-2">
-                        <div className="flex items-center gap-3 text-white/70">
+                        <div className="flex items-center gap-3 ">
                           <span className="relative w-8 h-8 shrink-0">
                             <Image
                               src={c.hasLiked ? '/like 1.png' : '/like 0.png'}
@@ -260,7 +262,7 @@ export default function ChallengesPage() {
 
                         <Link
                           href={`/challenges/${c.slug ?? c.id}`}
-                          className="px-4 py-2 rounded-xl bg-amber-600/80 hover:bg-amber-600 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                          className="px-4 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
                         >
                           Details
                         </Link>
@@ -274,7 +276,7 @@ export default function ChallengesPage() {
         </div>
 
         {filteredChallenges.length === 0 && (
-          <p className="mt-6 text-center text-white">
+          <p className="mt-6 text-center ">
             {selectedGameId ? 'No challenge for this game yet' : 'No challenge found.'}
           </p>
         )}
@@ -284,7 +286,9 @@ export default function ChallengesPage() {
           {/* Page 1 toujours visible */}
           <button
             className={`w-8 h-8 rounded-full flex items-center justify-center ${
-              currentPage === 1 ? 'bg-purple-600' : 'bg-slate-800 hover:bg-slate-700'
+              currentPage === 1
+                ? 'bg-(--button-select)'
+                : 'bg-(--button-area) hover:bg-(--searchbar-color)'
             }`}
             onClick={() => goToPage(1)}
           >
@@ -298,7 +302,9 @@ export default function ChallengesPage() {
               <button
                 key={page}
                 className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  currentPage === page ? 'bg-purple-600' : 'bg-slate-800 hover:bg-slate-700'
+                  currentPage === page
+                    ? 'bg-(--button-select)'
+                    : 'bg-(--button-area) hover:bg-(--background-header)'
                 }`}
                 onClick={() => goToPage(page)}
               >
@@ -310,7 +316,7 @@ export default function ChallengesPage() {
           {totalPages > pageBlockStart + 3 && (
             <button
               type="button"
-              className="w-8 h-8 bg-slate-800 hover:bg-slate-700 rounded-full flex items-center justify-center"
+              className="w-8 h-8 bg-(--button-area) hover:bg-(--background-header) rounded-full flex items-center justify-center"
               onClick={nextBlock}
               aria-label="Afficher les pages suivantes"
             >
