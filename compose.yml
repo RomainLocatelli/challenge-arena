@@ -12,8 +12,8 @@ services:
         condition: service_healthy
     volumes:
       - ./api:/app
-      - /app/node_modules
-      - /app/generated
+      # - /app/node_modules
+      # - /app/generated
     command: npm run devdb
     networks:
       - gamer-network
@@ -51,6 +51,7 @@ services:
       - api
     volumes:
       - ./client:/app
+      # - /app/node_modules
       - /app/.next
     command: npm run dev
     networks:
