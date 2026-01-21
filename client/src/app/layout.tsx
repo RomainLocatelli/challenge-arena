@@ -45,6 +45,7 @@ export default async function RootLayout({
 
     const data = await res.json();
     user = data.user;
+    console.log(user.userId);
   } catch (err) {
     //  silent
   }
