@@ -84,10 +84,13 @@ export default function BurgerMenu() {
           >
             <Link href="/support">Support</Link>
           </li>
-
-          <li className={'m-1.5 pl-1.5 pr-1.5'}>
-            <LogoutButton />
-          </li>
+          {user ? (
+            <li className={'m-1.5 pl-1.5 pr-1.5'}>
+              <LogoutButton />
+            </li>
+          ) : (
+            <p></p>
+          )}
         </ul>
       )}
     </nav>
