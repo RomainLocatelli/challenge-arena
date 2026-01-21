@@ -20,24 +20,22 @@ import {
 type Tab = 'users' | 'challenges' | 'participations';
 
 export default function AdminPage() {
-  const { user, loading: authLoading } = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
 
   const [activeTab, setActiveTab] = useState<Tab>('users');
-  
+
   const [users, setUsers] = useState<User[]>([]);
   const [usersLoading, setUsersLoading] = useState(true);
-  
+
   const [challenges, setChallenges] = useState<ReportedChallenge[]>([]);
-  
+
   const [participations, setParticipations] = useState<ReportedParticipation[]>([]);
-  
+
   const [error, setError] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   useEffect(() => {
-    if (authLoading) {return};
-    
     if (!user) {
       router.push('/login-register/login');
       return;
@@ -47,26 +45,25 @@ export default function AdminPage() {
       router.push('/');
       return;
     }
-  }, [user, authLoading, router]);
+  }, [user, router]);
 
   useEffect(() => {
     async function loadData() {
       try {
         setUsersLoading(true);
-        
+
         // Charger users
         const usersData = await fetchAllUsers();
         setUsers(usersData);
-        
+
         // Charger challenges et participations en parallèle (juste pour les compter)
         const [challengesData, participationsData] = await Promise.all([
           fetchReportedChallenges(),
           fetchReportedParticipations()
         ]);
-        
+
         setChallenges(challengesData);
         setParticipations(participationsData);
-        
       } catch (err: any) {
         setError(err.message || 'Failed to load data');
       } finally {
@@ -80,7 +77,9 @@ export default function AdminPage() {
   }, [user]);
 
   const handleBan = async (userId: string) => {
-    if (!confirm('Ban this user?')) {return};
+    if (!confirm('Ban this user?')) {
+      return;
+    }
 
     try {
       setActionLoading(userId);
@@ -124,7 +123,9 @@ export default function AdminPage() {
   };
 
   const handleDeleteChallenge = async (challengeId: string) => {
-    if (!confirm('Delete this challenge? (cascade)')) {return};
+    if (!confirm('Delete this challenge? (cascade)')) {
+      return;
+    }
 
     try {
       setActionLoading(challengeId);
@@ -150,7 +151,9 @@ export default function AdminPage() {
   };
 
   const handleDeleteParticipation = async (participationId: string) => {
-    if (!confirm('Delete this participation? (cascade)')) {return};
+    if (!confirm('Delete this participation? (cascade)')) {
+      return;
+    }
 
     try {
       setActionLoading(participationId);
@@ -164,12 +167,16 @@ export default function AdminPage() {
   };
 
   const getUserDisplayName = (u: User) => {
-    if (u.isDeleted) {return 'Deleted user'};
-    if (u.isBanned) {return 'Banned user'};
+    if (u.isDeleted) {
+      return 'Deleted user';
+    }
+    if (u.isBanned) {
+      return 'Banned user';
+    }
     return u.username;
   };
 
-  if (authLoading || !user || user.role !== 'ADMIN') {
+  if (!user || user.role !== 'ADMIN') {
     return null;
   }
 
@@ -184,9 +191,7 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       <main className="px-4 md:px-8 py-6 max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6 border-l-4 border-purple-600 pl-3">
-          Moderation
-        </h1>
+        <h1 className="text-3xl font-bold mb-6 border-l-4 border-purple-600 pl-3">Moderation</h1>
 
         <div className="flex gap-2 mb-6">
           <button
