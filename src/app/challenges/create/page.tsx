@@ -199,12 +199,12 @@ export default function CreateChallengePage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
+    <div className="min-h-screen  ">
       <main className="mx-auto w-full max-w-[430px] md:max-w-5xl px-4 md:px-8 py-5 md:py-8">
         {/* Card principale */}
-        <div className="rounded-3xl bg-slate-900/70 ring-1 ring-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.55)] overflow-hidden">
+        <div className="rounded-3xl bg-background/70 ring-1 ring-background/10 shadow-[0_20px_60px_rgba(0,0,0,0.55)] overflow-hidden">
           {/* Header */}
-          <div className="relative h-32 md:h-48 lg:h-64 w-full bg-slate-800">
+          <div className="relative h-32 md:h-48 lg:h-64 w-full bg-(--button-area)">
             <Image
               src={headerImage}
               alt={title || 'New challenge'}
@@ -212,7 +212,7 @@ export default function CreateChallengePage() {
               sizes="(max-width: 767px) 430px, 1024px"
               className="object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-foreground/65 via-foreground/15 to-transparent" />
           </div>
 
           {/* Contenu */}
@@ -222,34 +222,34 @@ export default function CreateChallengePage() {
               <input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full bg-slate-950/40 ring-1 ring-white/10 rounded-xl px-3 py-2 text-2xl md:text-4xl font-semibold focus:outline-none text-center"
+                className="w-full bg-foreground/40 ring-1 ring-background/10 rounded-xl px-3 py-2 text-2xl md:text-4xl font-semibold focus:outline-none text-center"
                 placeholder="Challenge title"
               />
             </div>
 
             {/* Meta (Game + Created by) */}
             <div className="mt-3 flex items-start justify-between gap-3">
-              <div className="text-white/80 space-y-2">
+              <div className="text-background/80 space-y-2">
                 <div className="text-sm">
-                  <span className="text-white/60">Game :</span>{' '}
+                  <span className="text-background/60">Game :</span>{' '}
                   <div className="relative ml-2">
                     <input
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       onFocus={() => setShowDropdown(true)}
-                      className="bg-slate-950/40 ring-1 ring-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none w-64"
+                      className="bg-foreground/40 ring-1 ring-background/10 rounded-xl px-3 py-2 text-sm focus:outline-none w-64"
                       placeholder="Search for a game..."
                     />
 
                     {isSearching && (
                       <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                        <div className="animate-spin h-4 w-4 border-2 border-white/20 border-t-white rounded-full" />
+                        <div className="animate-spin h-4 w-4 border-2 border-background/20 border-t-background rounded-full" />
                       </div>
                     )}
 
                     {showDropdown && searchResults.length > 0 && (
-                      <div className="absolute z-10 mt-1 w-full bg-slate-900 ring-1 ring-white/10 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                      <div className="absolute z-10 mt-1 w-full bg-(--background-header) ring-1 ring-background/10 rounded-xl shadow-lg max-h-60 overflow-y-auto">
                         {searchResults.map((game) => (
                           <button
                             key={game.id}
@@ -259,7 +259,7 @@ export default function CreateChallengePage() {
                               setSearchQuery(game.name);
                               setShowDropdown(false);
                             }}
-                            className="w-full px-3 py-2 text-left hover:bg-slate-800 flex items-center gap-3 text-sm"
+                            className="w-full px-3 py-2 text-left hover:bg-(--button-area) flex items-center gap-3 text-sm"
                           >
                             {game.background_image && (
                               <img
@@ -275,14 +275,14 @@ export default function CreateChallengePage() {
                     )}
                   </div>
                   {selectedGame && (
-                    <div className="mt-2 text-xs text-white/70">
+                    <div className="mt-2 text-xs text-background/70">
                       Selected: <span className="font-semibold">{selectedGame.name}</span>
                     </div>
                   )}
                 </div>
 
                 <div className="text-sm">
-                  <span className="text-white/60">Created by</span>{' '}
+                  <span className="text-background/60">Created by</span>{' '}
                   <span className="font-semibold">{currentUserName}</span>
                 </div>
               </div>
@@ -290,28 +290,28 @@ export default function CreateChallengePage() {
 
             {/* Image URL */}
             <div className="mt-4">
-              <div className="text-sm font-semibold text-white/80 mb-2">Image URL</div>
+              <div className="text-sm font-semibold text-background/80 mb-2">Image URL</div>
               <input
                 value={imageUrl}
                 onChange={(e) => setImageUrl(e.target.value)}
-                className="w-full bg-slate-950/40 ring-1 ring-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none"
+                className="w-full bg-foreground/40 ring-1 ring-background/10 rounded-xl px-3 py-2 text-sm focus:outline-none"
                 placeholder="https://..."
               />
-              <div className="text-xs text-white/50 mt-2">
+              <div className="text-xs text-background/50 mt-2">
                 Laisse vide pour afficher l’image du jeu par défaut.
               </div>
             </div>
 
             {/* Score Format */}
             <div className="mt-4">
-              <div className="text-sm font-semibold text-white/80 mb-2">Score Format</div>
+              <div className="text-sm font-semibold text-background/80 mb-2">Score Format</div>
               <input
                 value={scoreFormat}
                 onChange={(e) => setScoreFormat(e.target.value)}
-                className="w-full bg-slate-950/40 ring-1 ring-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none"
+                className="w-full bg-foreground/40 ring-1 ring-background/10 rounded-xl px-3 py-2 text-sm focus:outline-none"
                 placeholder="e.g., SCORE, TIME, KILLS, etc."
               />
-              <div className="text-xs text-white/50 mt-2">
+              <div className="text-xs text-background/50 mt-2">
                 Comment sera mesuré le succès du challenge (ex: SCORE, TIME, DISTANCE...)
               </div>
             </div>
@@ -320,21 +320,21 @@ export default function CreateChallengePage() {
             <div className="mt-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="h-5 w-1 rounded-full bg-purple-600" />
+                  <div className="h-5 w-1 rounded-full bg-(--button-select)" />
                   <div className="font-semibold">Description :</div>
                 </div>
               </div>
 
-              <div className="mt-3 rounded-2xl bg-slate-950/30 ring-1 ring-white/10 p-3">
+              <div className="mt-3 rounded-2xl bg-foreground/30 ring-1 ring-background/10 p-3">
                 <div className="flex items-start gap-3">
                   <textarea
                     value={description}
                     maxLength={100}
                     onChange={(e) => setDescription(e.target.value)}
-                    className="flex-1 bg-slate-950/40 ring-1 ring-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none resize-none min-h-[44px]"
+                    className="flex-1 bg-foreground/40 ring-1 ring-background/10 rounded-xl px-3 py-2 text-sm focus:outline-none resize-none min-h-[44px]"
                     placeholder="Description (max 100 chars)"
                   />
-                  <div className="text-xs text-white/50 w-12 text-right pt-2">
+                  <div className="text-xs text-background/50 w-12 text-right pt-2">
                     {description.length}/100
                   </div>
                 </div>
@@ -345,35 +345,35 @@ export default function CreateChallengePage() {
             <div className="mt-5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="h-5 w-1 rounded-full bg-purple-600" />
+                  <div className="h-5 w-1 rounded-full bg-(--button-select)" />
                   <div className="font-semibold">Challenge Details :</div>
                 </div>
 
                 <button
                   type="button"
                   onClick={addBullet}
-                  className="text-sm text-white/70 hover:text-white"
+                  className="text-sm text-background/70 hover:text-background"
                 >
                   + Add
                 </button>
               </div>
 
-              <div className="mt-3 rounded-2xl bg-slate-950/30 ring-1 ring-white/10 p-3">
+              <div className="mt-3 rounded-2xl bg-foreground/30 ring-1 ring-background/10 p-3">
                 <ul className="space-y-2">
                   {detailsPoints.map((txt, idx) => (
                     <li key={`det-${idx}`} className="flex items-start gap-3">
-                      <span className="mt-1.5 h-2 w-2 rounded-full bg-white/70 shrink-0" />
+                      <span className="mt-1.5 h-2 w-2 rounded-full bg-background/70 shrink-0" />
                       <div className="flex-1 flex items-center gap-2">
                         <input
                           value={txt}
                           onChange={(e) => updateBullet(idx, e.target.value)}
-                          className="flex-1 bg-slate-950/40 ring-1 ring-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none"
+                          className="flex-1 bg-foreground/40 ring-1 ring-background/10 rounded-xl px-3 py-2 text-sm focus:outline-none"
                           placeholder={`Detail ${idx + 1}`}
                         />
                         <button
                           type="button"
                           onClick={() => removeBullet(idx)}
-                          className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 ring-1 ring-white/10 text-sm"
+                          className="px-3 py-2 rounded-xl bg-(--background-header) hover:bg-(--button-area) ring-1 ring-background/10 text-sm"
                           aria-label="Remove detail item"
                         >
                           ✕
@@ -383,7 +383,7 @@ export default function CreateChallengePage() {
                   ))}
                 </ul>
                 {detailsPoints.length === 0 ? (
-                  <div className="text-sm text-white/60">No details yet. Add one.</div>
+                  <div className="text-sm text-background/60">No details yet. Add one.</div>
                 ) : null}
               </div>
             </div>
@@ -396,8 +396,8 @@ export default function CreateChallengePage() {
                 onClick={createChallenge}
                 className={`px-10 py-3 rounded-full font-semibold shadow-[0_10px_25px_rgba(0,0,0,0.45)] ${
                   canCreate
-                    ? 'bg-amber-600/80 hover:bg-amber-600'
-                    : 'bg-slate-700 text-white/50 cursor-not-allowed'
+                    ? 'bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover)'
+                    : 'bg-(--button-select) text-background/50 cursor-not-allowed'
                 }`}
               >
                 Create
