@@ -56,6 +56,7 @@ export const getHomeFeed = async (req: Request, res: Response, next: NextFunctio
         return {
           id: game.id,
           title: game.title,
+          slug: game.slug,
           imageUrl: game.imageUrl,
           totalVotes
         };

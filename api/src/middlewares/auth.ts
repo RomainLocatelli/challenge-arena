@@ -13,8 +13,6 @@ declare global {
 }
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-  console.log('🔍 AUTH - Cookies reçus:', req.cookies);
-  console.log('🔍 AUTH - Token:', req.cookies.accessToken);
   try {
     // Extraire le token depuis les cookies
     const token = req.cookies.accessToken;

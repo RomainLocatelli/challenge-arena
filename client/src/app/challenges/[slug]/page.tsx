@@ -35,7 +35,7 @@ type ChallengeDetails = {
   slug: string;
   title: string;
   description: string;
-  details?: string[];
+  details: string[];
   scoreFormat: string;
   createdAt: string;
   updatedAt: string;
@@ -57,6 +57,36 @@ const clamp100 = (s: string) => {
   }
   return `${t.slice(0, 97)}...`;
 };
+
+function buildChallengeDescription(desc: string, details: string[]) {
+  const cleanDesc = (desc ?? '').trim();
+  const cleanDetails = (details ?? []).map((d) => d.trim()).filter(Boolean);
+
+  if (cleanDetails.length === 0) {
+    return cleanDesc;
+  }
+
+  return `${cleanDesc}\n\nDetails:\n${cleanDetails.join('\n')}`;
+}
+
+function splitDescriptionAndDetails(raw: string): { desc: string; details: string[] } {
+  const text = (raw ?? '').replace(/\r\n/g, '\n').trim();
+  const re = /\n\s*details\s*:?\s*\n/i;
+  const parts = text.split(re);
+  if (parts.length < 2) {
+    return { desc: text, details: [] };
+  }
+
+  const desc = (parts[0] ?? '').trim();
+  const detailsBlock = (parts[1] ?? '').trim();
+
+  const details = detailsBlock
+    .split('\n')
+    .map((l) => l.trim())
+    .filter(Boolean);
+
+  return { desc, details };
+}
 
 export default function ChallengeDetailsPage() {
   const router = useRouter();
@@ -186,8 +216,17 @@ export default function ChallengeDetailsPage() {
     setIsEditing(false);
     setTitle(challenge.title);
     setImageUrl(undefined); // API n’a pas image custom dans la seed
-    setDescriptionPoints([challenge.description]);
-    setDetailsPoints(challenge.details ?? []);
+
+    const parsed = splitDescriptionAndDetails(challenge.description);
+
+    const finalDetails =
+      parsed.details.length > 0
+        ? parsed.details
+        : (challenge.details ?? []).filter(Boolean);
+
+setDescriptionPoints([parsed.desc]);
+setDetailsPoints(finalDetails);
+
     setParticipations(challenge.participations ?? []);
   }, [challenge]);
 
@@ -254,9 +293,13 @@ export default function ChallengeDetailsPage() {
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
     const payload = {
       title: title.trim(),
-      description: clamp100(descriptionPoints[0] ?? ''),
-      details: detailsPoints
+      scoreFormat: challenge.scoreFormat, 
+      description: buildChallengeDescription(
+        clamp100(descriptionPoints[0] ?? ''),
+        detailsPoints
+      )
     };
+
 
     const res = await fetch(`${baseUrl}/challenges/${challenge.id}`, {
       method: 'PATCH',
@@ -278,8 +321,7 @@ export default function ChallengeDetailsPage() {
         ? {
             ...prev,
             title: payload.title,
-            description: payload.description,
-            details: payload.details
+            description: payload.description
           }
         : prev
     );

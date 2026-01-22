@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from './context/AuthContext';
 
 export default function Home() {
-  type Game = { id: string; title: string; imageUrl: string };
+  type Game = { id: string; title: string; imageUrl: string; slug: string };
   type Challenge = {
     createdAt: string;
     createdBy: string;
@@ -20,6 +20,7 @@ export default function Home() {
     id: string;
     scoreFormat: string;
     title: string;
+    slug: string;
     updatedAt: string;
     voteCount: number;
   };
@@ -46,6 +47,14 @@ export default function Home() {
     return `${n}`;
   };
 
+  function extractShortDescription(raw: string) {
+    const text = (raw ?? '').replace(/\r\n/g, '\n').trim();
+    const idx = text.search(/\n\s*details\s*:?\s*\n/i);
+    if (idx === -1) { return text; }
+    return text.slice(0, idx).trim();
+  }
+
+
   // Game shown on screen
   function gamesShownOnPage(games: Game[]) {
     return (
@@ -54,7 +63,7 @@ export default function Home() {
           return (
             <Link
               key={game.id}
-              href={`/games/${game.id}`}
+              href={`/games/${game.slug}`}
               className="bg-(--button-area) hover:outline-double  outline-(--button-select) shrink-0 rounded-4xl snap-centertransition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 mt-5 ml-5 mr-5"
             >
               <Image
@@ -92,7 +101,7 @@ export default function Home() {
                   <div className="text-2xl font-semibold leading-tight mb-2">{challenge.title}</div>
                   {/* Description */}
                   <div className="text-foreground/70 leading-relaxed mb-4">
-                    {challenge.description}
+                    {extractShortDescription(challenge.description)}
                   </div>
                   {/* votes + bouton */}
                   <div className="mt-auto flex items-center justify-between pt-2">
@@ -111,12 +120,13 @@ export default function Home() {
                       </span>
                       <span className="text-sm"> likes</span>
                     </div>
-                    <button
+                    <Link
+                      href={`/challenges/${challenge.slug}`}
                       type="button"
                       className="px-4 py-2 rounded-xl bg-(--button-game-challenge)  text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)] hover:bg-(--button-game-challenge-hover)"
                     >
                       Details
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </div>

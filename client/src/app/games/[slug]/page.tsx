@@ -26,6 +26,7 @@ type Game = {
   title: string;
   imageUrl: string;
   description?: string;
+  slug: string;
 };
 
 type Challenge = {
@@ -42,6 +43,7 @@ type Challenge = {
   scoreFormat: string;
   game?: {
     id: string;
+    slug: string;
     title: string;
     imageUrl: string;
     description?: string;
@@ -97,7 +99,7 @@ export default function GamePage() {
     if (!slug) {
       return null;
     }
-    return games.find((g) => g.id === slug) ?? null;
+    return games.find((g) => g.slug === slug) ?? null;
   }, [slug, games]);
 
   // Reset when slug changes
@@ -109,23 +111,36 @@ export default function GamePage() {
 
   // Filter challenges for selected game + search
   const filteredChallenges = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
+    // If no slug, return empty
     if (!slug) {
       return [];
     }
 
-    return challenges.filter((c) => {
-      if (c.gameId !== slug) {
+    // find the game using the slug
+    const currentGame = games.find((g) => g.slug === slug);
+
+    // Si le jeu n'existe pas, retourne tableau vide
+    if (!currentGame) {
+      return [];
+    }
+
+    const searchTerm = searchQuery.trim().toLowerCase();
+    // Keep only the games challenge
+    return challenges.filter((challenge) => {
+      if (challenge.gameId !== currentGame.id) {
         return false;
       }
-      if (!q) {
+
+      if (!searchTerm) {
         return true;
       }
 
-      const gameTitle = c.game?.title ?? '';
-      return c.title.toLowerCase().includes(q) || gameTitle.toLowerCase().includes(q);
+      const challengeTitle = challenge.title.toLowerCase();
+      const gameTitle = (challenge.game?.title ?? currentGame.title).toLowerCase();
+
+      return challengeTitle.includes(searchTerm) || gameTitle.includes(searchTerm);
     });
-  }, [searchQuery, challenges, slug]);
+  }, [searchQuery, challenges, slug, games]);
 
   // Pagination
   const totalPages = Math.max(1, Math.ceil(filteredChallenges.length / itemsPerPage));
