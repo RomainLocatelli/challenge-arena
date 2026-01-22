@@ -20,7 +20,7 @@ export default function BurgerMenu() {
     <nav className="text-right pr-3 pt-4 relative z-50">
       <button
         type="button"
-        className="bg-(--button-area) p-2 rounded-xl cursor-pointer"
+        className="bg-(--header-button-area) p-2 rounded-xl cursor-pointer"
         onClick={openCloseMenu}
       >
         <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24 ">

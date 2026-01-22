@@ -7,7 +7,7 @@ export default function Menu() {
   const pathActive = (path: string) => pathname === path;
   return (
     <nav className="collapse lg:visible lg:content-center">
-      <ul className="lg:flex lg:bg-(--button-area) lg:rounded-full">
+      <ul className="lg:flex lg:bg-(--header-button-area) lg:rounded-full">
         <li
           className={`m-2 p-2 pr-4 pl-4 ${pathActive('/') ? 'bg-(--button-select)' : ''} rounded-3xl`}
         >

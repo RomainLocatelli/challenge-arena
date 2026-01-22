@@ -5,8 +5,10 @@ import Link from 'next/link';
 
 import BurgerMenu from './component/BurgerMenu';
 import Menu from './component/Menu';
+import { useAuth } from '@/app/context/AuthContext';
 
 export default function Header() {
+  const { user } = useAuth();
   return (
     <div className="bg-(--background-header) flex justify-between h-24 ">
       <Link href="/" className="flex">
@@ -23,8 +25,10 @@ export default function Header() {
       {/* desktop menu */}
 
       <Menu />
-
-      <BurgerMenu />
+      <div className="flex">
+        {user ? <p className="content-center mr-5">Welcome {user.username}</p> : <div></div>}
+        <BurgerMenu />
+      </div>
     </div>
   );
 }
