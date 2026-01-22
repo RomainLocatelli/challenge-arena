@@ -20,6 +20,7 @@ export default function Home() {
     id: string;
     scoreFormat: string;
     title: string;
+    slug: string;
     updatedAt: string;
     voteCount: number;
   };
@@ -111,12 +112,13 @@ export default function Home() {
                       </span>
                       <span className="text-sm"> likes</span>
                     </div>
-                    <button
+                    <Link
+                      href={`/challenges/${challenge.slug}`}
                       type="button"
                       className="px-4 py-2 rounded-xl bg-(--button-game-challenge)  text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)] hover:bg-(--button-game-challenge-hover)"
                     >
                       Details
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </div>
