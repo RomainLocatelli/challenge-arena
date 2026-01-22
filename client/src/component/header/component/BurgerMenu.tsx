@@ -80,11 +80,11 @@ export default function BurgerMenu() {
               <Link href="/login-register/register">Register</Link>
             </li>
           )}
-          <li
-            className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/support') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
-          >
-            <Link href="/support">Support</Link>
-          </li>
+            <li
+              className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/support') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
+            >
+              <Link href="/support">Support</Link>
+            </li>
           <li>
             <ThemeToggle />
           </li>
