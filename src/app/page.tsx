@@ -47,6 +47,14 @@ export default function Home() {
     return `${n}`;
   };
 
+  function extractShortDescription(raw: string) {
+    const text = (raw ?? '').replace(/\r\n/g, '\n').trim();
+    const idx = text.search(/\n\s*details\s*:?\s*\n/i);
+    if (idx === -1) { return text; }
+    return text.slice(0, idx).trim();
+  }
+
+
   // Game shown on screen
   function gamesShownOnPage(games: Game[]) {
     return (
@@ -93,7 +101,7 @@ export default function Home() {
                   <div className="text-2xl font-semibold leading-tight mb-2">{challenge.title}</div>
                   {/* Description */}
                   <div className="text-foreground/70 leading-relaxed mb-4">
-                    {challenge.description}
+                    {extractShortDescription(challenge.description)}
                   </div>
                   {/* votes + bouton */}
                   <div className="mt-auto flex items-center justify-between pt-2">
