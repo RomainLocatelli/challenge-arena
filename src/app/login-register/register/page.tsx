@@ -23,7 +23,7 @@ export default function AuthRegister() {
 
   async function postForm(url: string, values: Register) {
     try {
-      const response = await fetch(`${url}auth/register`, {
+      const response = await fetch(`${url}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
