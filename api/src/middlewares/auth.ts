@@ -13,6 +13,8 @@ declare global {
 }
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+  console.log('🔍 AUTH - Cookies reçus:', req.cookies);
+  console.log('🔍 AUTH - Token:', req.cookies.accessToken);
   try {
     // Extraire le token depuis les cookies
     const token = req.cookies.accessToken;
@@ -25,13 +27,17 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
     const secret = process.env.JWT_SECRET || 'fallback-secret';
     const decoded = jwt.verify(token, secret) as { userId: string; username: string; role: string };
 
-    // Vérifier que l'user existe et n'est pas supprimé
+    // Vérifier que l'user existe et n'est pas supprimé ou banni
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId }
     });
 
     if (!user || user.isDeleted) {
       throw new AppError('User account deleted or not found', 403);
+    }
+
+    if (user.isBanned) {
+      throw new AppError('User account banned. Contact the support.', 403);
     }
 
     // Ajouter userId dans req pour l'utiliser dans les controllers

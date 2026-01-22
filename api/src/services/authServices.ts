@@ -18,7 +18,15 @@ export const register = async (data: RegisterInput) => {
       }
     });
     //  Retire le mdp avant de retourner
-    const { password: _, ...userWithoutPassword } = user;
+    const {
+      password: _1,
+      email: _2,
+      isDeleted: _3,
+      deletedAt: _4,
+      createdAt: _5,
+      updatedAt: _6,
+      ...userWithoutPassword
+    } = user;
     return userWithoutPassword;
   } catch (error: any) {
     //  Erreur si le user existe déjà
@@ -45,7 +53,19 @@ export const login = async (data: LoginInput) => {
     throw new AppError('Invalid email or password', 401);
   }
 
-  const { password: _, ...userWithoutPassword } = user;
+  // j'ai ajouté ici gestion des comptes supprimé / banni
+  if (user.isDeleted) {
+    throw new AppError('User account deleted or not found', 403);
+  }
+  const {
+    password: _1,
+    email: _2,
+    isDeleted: _3,
+    deletedAt: _4,
+    createdAt: _5,
+    updatedAt: _6,
+    ...userWithoutPassword
+  } = user;
   return userWithoutPassword;
 };
 
@@ -59,6 +79,18 @@ export const getUserById = async (userId: string) => {
     throw new AppError('User not found', 404);
   }
 
-  const { password: _, ...userWithoutPassword } = user;
+  //   if (user.isBanned) {
+  //   throw new AppError('User account banned. Contact the support.', 403);
+  // }
+
+  const {
+    password: _1,
+    email: _2,
+    isDeleted: _3,
+    deletedAt: _4,
+    createdAt: _5,
+    updatedAt: _6,
+    ...userWithoutPassword
+  } = user;
   return userWithoutPassword;
 };
