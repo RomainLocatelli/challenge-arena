@@ -81,20 +81,22 @@ export default function Home() {
             return (
               <div
                 key={challenge.id}
-                className="rounded-2xl shrink-0 snap-center bg-slate-900/70 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] w-60 lg:w-70 hover:outline-double outline-(--button-select) delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110"
+                className="rounded-2xl shrink-0 snap-center bg-(--button-area) ring-1 ring-background/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] w-60 lg:w-70 hover:outline-double outline-(--button-select) delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110"
               >
                 <div className="p-5 flex flex-col h-full">
                   {/* Tag / jeu */}
-                  <div className="text-xs font-semibold tracking-widest text-purple-300/90 mb-2">
+                  <div className="text-xs font-semibold tracking-widest text-(--button-select) mb-2">
                     {(challenge.game.title ?? challenge.title).toUpperCase()}
                   </div>
                   {/* Titre */}
                   <div className="text-2xl font-semibold leading-tight mb-2">{challenge.title}</div>
                   {/* Description */}
-                  <div className="text-white/70 leading-relaxed mb-4">{challenge.description}</div>
+                  <div className="text-foreground/70 leading-relaxed mb-4">
+                    {challenge.description}
+                  </div>
                   {/* votes + bouton */}
                   <div className="mt-auto flex items-center justify-between pt-2">
-                    <div className="items-center gap-2 text-white/70">
+                    <div className="items-center gap-2 text-foreground/70">
                       <span className="relative w-8 h-8 shrink-0">
                         {/* <Image
                     src={challenge.hasLiked ? '/like 1.png' : '/like 0.png'}
@@ -111,7 +113,7 @@ export default function Home() {
                     </div>
                     <button
                       type="button"
-                      className="px-4 py-2 rounded-xl bg-amber-600/80  text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)] hover:bg-(--button-select)"
+                      className="px-4 py-2 rounded-xl bg-(--button-game-challenge)  text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)] hover:bg-(--button-game-challenge-hover)"
                     >
                       Details
                     </button>
@@ -126,7 +128,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen ">
       {/* GamerChallenge news area */}
       <div className="relative h-40 m-5 ml-10 mr-10 rounded-4xl overflow-hidden">
         <img
@@ -139,24 +141,27 @@ export default function Home() {
         </div>
       </div>
       {!user ? (
-        <nav className="flex justify-center mb-8">
-          <Link href="/login-register/login">
-            <button
-              type="button"
-              className="bg-(--button-area) p-3 rounded-3xl mr-8 mt-6 cursor-pointer"
-            >
-              Login
-            </button>
-          </Link>
-          <Link href="/login-register/register">
-            <button
-              type="button"
-              className="bg-(--button-select) p-3 rounded-3xl  mt-6 cursor-pointer"
-            >
-              Register
-            </button>
-          </Link>
-        </nav>
+        <div>
+          <p className="text-center">Challenge yourself or others by registering or connecting</p>
+          <nav className="flex justify-center mb-8">
+            <Link href="/login-register/login">
+              <button
+                type="button"
+                className="bg-(--button-area) p-3 rounded-3xl mr-8 mt-6 cursor-pointer"
+              >
+                Login
+              </button>
+            </Link>
+            <Link href="/login-register/register">
+              <button
+                type="button"
+                className="bg-(--button-select) p-3 rounded-3xl  mt-6 cursor-pointer"
+              >
+                Register
+              </button>
+            </Link>
+          </nav>
+        </div>
       ) : (
         <p></p>
       )}
