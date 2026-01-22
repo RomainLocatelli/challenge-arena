@@ -6,7 +6,6 @@ import { useMemo, useState, useEffect } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/app/context/AuthContext'; // Remplacer avec le bon chemin
 
-
 // hook responsive
 function useMediaQuery(query: string) {
   const [matches, setMatches] = useState(false);
@@ -25,8 +24,8 @@ type Participation = {
   userId: string;
   name: string;
   description: string;
-  scoreLabel: string; 
-  link?: string; 
+  scoreLabel: string;
+  link?: string;
   hasLiked?: boolean;
   likes: number;
 };
@@ -36,11 +35,11 @@ type ChallengeDetails = {
   slug: string;
   title: string;
   description: string;
-  details?: string[]; 
+  details?: string[];
   scoreFormat: string;
   createdAt: string;
   updatedAt: string;
-  createdBy: string; 
+  createdBy: string;
   gameId: string;
   gameTitle: string;
   gameImage: string;
@@ -74,7 +73,7 @@ export default function ChallengeDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
 
-  // UI state 
+  // UI state
   const [challengeHasLiked, setChallengeHasLiked] = useState(false);
   const [challengeLikes, setChallengeLikes] = useState(0);
 
@@ -111,7 +110,7 @@ export default function ChallengeDetailsPage() {
         setLoadError(null);
 
         const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-        const res = await fetch(`${baseUrl}challenges/${slug}`, {
+        const res = await fetch(`${baseUrl}/challenges/${slug}`, {
           cache: 'no-store'
         });
 
@@ -124,7 +123,7 @@ export default function ChallengeDetailsPage() {
 
         const raw = (data?.challenge ?? data) as any;
 
-        // Normalisation 
+        // Normalisation
         const normalized: ChallengeDetails = {
           id: raw.id,
           slug: raw.slug,
@@ -135,11 +134,7 @@ export default function ChallengeDetailsPage() {
           createdAt: raw.createdAt ?? '',
           updatedAt: raw.updatedAt ?? '',
 
-          createdBy:
-            raw.createdBy?.username ??
-            raw.createdBy?.name ??
-            raw.createdBy ??
-            '—',
+          createdBy: raw.createdBy?.username ?? raw.createdBy?.name ?? raw.createdBy ?? '—',
 
           gameId: raw.gameId ?? raw.game?.id ?? '',
           gameTitle: raw.game?.title ?? raw.gameTitle ?? '',
@@ -245,12 +240,16 @@ export default function ChallengeDetailsPage() {
   const canViewMore = visibleCount < participations.length;
 
   const authHeaders = (): Record<string, string> => {
-    if (!token) { return {} as Record<string, string>; }
+    if (!token) {
+      return {} as Record<string, string>;
+    }
     return { Authorization: `Bearer ${token}` };
   };
 
   const saveEdits = async () => {
-    if (!challenge) { return; }
+    if (!challenge) {
+      return;
+    }
 
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
     const payload = {
@@ -259,7 +258,7 @@ export default function ChallengeDetailsPage() {
       details: detailsPoints
     };
 
-    const res = await fetch(`${baseUrl}challenges/${challenge.id}`, {
+    const res = await fetch(`${baseUrl}/challenges/${challenge.id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -289,7 +288,9 @@ export default function ChallengeDetailsPage() {
   };
 
   const cancelEdits = () => {
-    if (!challenge) { return; }
+    if (!challenge) {
+      return;
+    }
     setTitle(challenge.title);
     setImageUrl(undefined);
     setDescriptionPoints([challenge.description]);
@@ -347,7 +348,9 @@ export default function ChallengeDetailsPage() {
   };
 
   const openEditModalForActive = () => {
-    if (!activeParticipation) { return; }
+    if (!activeParticipation) {
+      return;
+    }
     setModalMode('edit');
     setPDesc(activeParticipation.description ?? '');
     setPLink(activeParticipation.link ?? '');
@@ -355,14 +358,18 @@ export default function ChallengeDetailsPage() {
 
   // Ces 3 actions nécessitent des routes côté Express (participations)
   const submitCreate = async () => {
-    if (!challenge) { return; }
+    if (!challenge) {
+      return;
+    }
     const desc = pDesc.trim();
     const link = pLink.trim();
-    if (!desc) { return; }
+    if (!desc) {
+      return;
+    }
 
-    // POST /challenges/:id/participations  
+    // POST /challenges/:id/participations
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-    const res = await fetch(`${baseUrl}challenges/${challenge.id}/participations`, {
+    const res = await fetch(`${baseUrl}/challenges/${challenge.id}/participations`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -396,14 +403,18 @@ export default function ChallengeDetailsPage() {
   };
 
   const saveEdit = async () => {
-    if (!activeParticipation) { return; }
+    if (!activeParticipation) {
+      return;
+    }
     const desc = pDesc.trim();
     const link = pLink.trim();
-    if (!desc) { return; }
+    if (!desc) {
+      return;
+    }
 
     // PATCH /participations/:id
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-    const res = await fetch(`${baseUrl}participations/${activeParticipation.id}`, {
+    const res = await fetch(`${baseUrl}/participations/${activeParticipation.id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -428,11 +439,13 @@ export default function ChallengeDetailsPage() {
   };
 
   const deleteActiveParticipation = async () => {
-    if (!activeParticipation) { return; }
+    if (!activeParticipation) {
+      return;
+    }
 
     // DELETE /participations/:id
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-    const res = await fetch(`${baseUrl}participations/${activeParticipation.id}`, {
+    const res = await fetch(`${baseUrl}/participations/${activeParticipation.id}`, {
       method: 'DELETE',
       headers: { ...authHeaders() }
     });
@@ -447,85 +460,91 @@ export default function ChallengeDetailsPage() {
     closeModal();
   };
 
-  // Like challenge 
-    const toggleChallengeLike = async () => {
-      if (!challenge) { return; }
-  
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-      const next = !challengeHasLiked;
-  
-      setChallengeHasLiked(next);
-      setChallengeLikes((n) => n + (next ? 1 : -1));
-  
-      const res = await fetch(`${baseUrl}challenges/${challenge.id}/votes`, {
-        method: next ? 'POST' : 'DELETE',
-        headers: { ...authHeaders() }
-      });
-  
-      if (!res.ok) {
-        setChallengeHasLiked(!next);
-        setChallengeLikes((n) => n + (next ? -1 : 1));
-      }
-    };
-  
-    const toggleParticipationLike = async (p: Participation) => {
-      if (!challenge) { return; }
-  
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-      const next = !p.hasLiked;
-  
+  // Like challenge
+  const toggleChallengeLike = async () => {
+    if (!challenge) {
+      return;
+    }
+
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+    const next = !challengeHasLiked;
+
+    setChallengeHasLiked(next);
+    setChallengeLikes((n) => n + (next ? 1 : -1));
+
+    const res = await fetch(`http://api:3000/challenges/${challenge.id}/votes`, {
+      method: next ? 'POST' : 'DELETE',
+      headers: { ...authHeaders() }
+    });
+
+    if (!res.ok) {
+      setChallengeHasLiked(!next);
+      setChallengeLikes((n) => n + (next ? -1 : 1));
+    }
+  };
+
+  const toggleParticipationLike = async (p: Participation) => {
+    if (!challenge) {
+      return;
+    }
+
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+    const next = !p.hasLiked;
+
+    setParticipations((prev) =>
+      prev.map((x) =>
+        x.id === p.id ? { ...x, hasLiked: next, likes: x.likes + (next ? 1 : -1) } : x
+      )
+    );
+
+    const res = await fetch(`${baseUrl}/participations/${p.id}/votes`, {
+      method: next ? 'POST' : 'DELETE',
+      headers: { ...authHeaders() }
+    });
+
+    if (!res.ok) {
       setParticipations((prev) =>
         prev.map((x) =>
-          x.id === p.id ? { ...x, hasLiked: next, likes: x.likes + (next ? 1 : -1) } : x
+          x.id === p.id ? { ...x, hasLiked: !next, likes: x.likes + (next ? -1 : 1) } : x
         )
       );
-  
-      const res = await fetch(`${baseUrl}participations/${p.id}/votes`, {
-        method: next ? 'POST' : 'DELETE',
-        headers: { ...authHeaders() }
-      });
-  
-      if (!res.ok) {
-        setParticipations((prev) =>
-          prev.map((x) =>
-            x.id === p.id ? { ...x, hasLiked: !next, likes: x.likes + (next ? -1 : 1) } : x
-          )
-        );
-      }
-    };
-  
-    const onToggleChallengeLike = () => {
-      toggleChallengeLike();
-    };
-  
-    const onToggleParticipationLike = (pId: string) => {
-      const p = participations.find((x) => x.id === pId);
-      if (!p) { return; }
-      toggleParticipationLike(p);
-    };
-  
-    const removeParticipation = async (id: string) => {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-      const res = await fetch(`${baseUrl}participations/${id}`, {
-        method: 'DELETE',
-        headers: { ...authHeaders() }
-      });
-  
-      if (!res.ok) {
-        const msg = await res.text().catch(() => '');
-        alert(msg || 'Failed to delete participation');
-        return;
-      }
-  
-      setParticipations((prev) => prev.filter((x) => x.id !== id));
-      if (activeParticipationId === id) {
-        closeModal();
-      }
-    };
-  
-    const deleteActive = async () => {
-      await deleteActiveParticipation();
-    };
+    }
+  };
+
+  const onToggleChallengeLike = () => {
+    toggleChallengeLike();
+  };
+
+  const onToggleParticipationLike = (pId: string) => {
+    const p = participations.find((x) => x.id === pId);
+    if (!p) {
+      return;
+    }
+    toggleParticipationLike(p);
+  };
+
+  const removeParticipation = async (id: string) => {
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+    const res = await fetch(`${baseUrl}/participations/${id}`, {
+      method: 'DELETE',
+      headers: { ...authHeaders() }
+    });
+
+    if (!res.ok) {
+      const msg = await res.text().catch(() => '');
+      alert(msg || 'Failed to delete participation');
+      return;
+    }
+
+    setParticipations((prev) => prev.filter((x) => x.id !== id));
+    if (activeParticipationId === id) {
+      closeModal();
+    }
+  };
+
+  const deleteActive = async () => {
+    await deleteActiveParticipation();
+  };
 
   if (loading) {
     return (
@@ -644,7 +663,9 @@ export default function ChallengeDetailsPage() {
                   className="w-full bg-foreground/40 ring-1 ring-background/10 rounded-xl px-3 py-2 text-sm focus:outline-none"
                   placeholder="https://..."
                 />
-                <div className="text-xs text-foreground/50 mt-2">Laisse vide pour afficher l’image du jeu par défaut.</div>
+                <div className="text-xs text-foreground/50 mt-2">
+                  Laisse vide pour afficher l’image du jeu par défaut.
+                </div>
               </div>
             ) : null}
 
@@ -668,7 +689,9 @@ export default function ChallengeDetailsPage() {
                       className="flex-1 bg-(--background-header)/40 ring-1 ring-background/10 rounded-xl px-3 py-2 text-sm focus:outline-none resize-none min-h-[44px]"
                       placeholder="Description (max 100 chars)"
                     />
-                    <div className="text-xs text-foreground/50 w-12 text-right pt-2">{(descriptionPoints[0] ?? '').length}/100</div>
+                    <div className="text-xs text-foreground/50 w-12 text-right pt-2">
+                      {(descriptionPoints[0] ?? '').length}/100
+                    </div>
                   </div>
                 )}
               </div>
@@ -682,7 +705,11 @@ export default function ChallengeDetailsPage() {
                 </div>
 
                 {isEditing ? (
-                  <button type="button" onClick={() => addBullet('details')} className="text-sm text-foreground/70 hover:text-foreground">
+                  <button
+                    type="button"
+                    onClick={() => addBullet('details')}
+                    className="text-sm text-foreground/70 hover:text-foreground"
+                  >
                     + Add
                   </button>
                 ) : null}
@@ -732,12 +759,18 @@ export default function ChallengeDetailsPage() {
                   <p className="text-center">Connection required to participate</p>
                   <nav className="flex justify-center mb-8">
                     <Link href="/login-register/login">
-                      <button type="button" className="bg-(--button-area) p-3 rounded-3xl mr-8 mt-6 cursor-pointer">
+                      <button
+                        type="button"
+                        className="bg-(--button-area) p-3 rounded-3xl mr-8 mt-6 cursor-pointer"
+                      >
                         Login
                       </button>
                     </Link>
                     <Link href="/login-register/register">
-                      <button type="button" className="bg-(--button-select) p-3 rounded-3xl  mt-6 cursor-pointer">
+                      <button
+                        type="button"
+                        className="bg-(--button-select) p-3 rounded-3xl  mt-6 cursor-pointer"
+                      >
                         Register
                       </button>
                     </Link>
@@ -812,7 +845,9 @@ export default function ChallengeDetailsPage() {
             <button
               type="button"
               className="px-6 py-2 rounded-full bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm font-semibold"
-              onClick={() => setVisibleCount((v) => Math.min(v + defaultVisible, participations.length))}
+              onClick={() =>
+                setVisibleCount((v) => Math.min(v + defaultVisible, participations.length))
+              }
             >
               View more
             </button>
@@ -824,12 +859,16 @@ export default function ChallengeDetailsPage() {
           <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4"
             onMouseDown={(e) => {
-              if (e.target === e.currentTarget) { closeModal(); }
+              if (e.target === e.currentTarget) {
+                closeModal();
+              }
             }}
           >
             <div className="w-full max-w-[430px] md:max-w-xl rounded-3xl bg-slate-900 ring-1 ring-background/10 shadow-[0_20px_60px_rgba(0,0,0,0.65)] overflow-hidden">
               <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between">
-                <div className="font-semibold">{modalMode === 'create' ? 'New participation' : 'Participation'}</div>
+                <div className="font-semibold">
+                  {modalMode === 'create' ? 'New participation' : 'Participation'}
+                </div>
 
                 {modalMode !== 'create' && isOwnActiveParticipation ? (
                   <button
