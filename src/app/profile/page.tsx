@@ -1,18 +1,53 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
+function useProfile() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}auth/me`, {
+      credentials: 'include'
+    })
+      .then((res) =>
+        res.ok ? res.json() : Promise.reject('Erreur lors de la récupération du profil')
+      )
+      .then((data) => {
+        setUser(data.user);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setUser(null);
+        setError(err);
+        setLoading(false);
+      });
+  }, []);
+
+  return { user, loading, error };
+}
+
 export default function ProfilePage() {
+  const { user, loading, error: profileError } = useProfile();
   const [showAllChallenges, setShowAllChallenges] = useState(false);
   const [showAllParticipations, setShowAllParticipations] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [username, setUsername] = useState('JohnDoe123');
-  const [email, setEmail] = useState('john.doe@example.com');
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+
+  // Met à jour les champs username/email quand user est chargé
+  useEffect(() => {
+    if (user) {
+      setUsername(user.username || '');
+      setEmail(user.email || '');
+    }
+  }, [user]);
 
   const handleSave = () => {
     // Vérifier que les mots de passe correspondent
@@ -36,14 +71,36 @@ export default function ProfilePage() {
     setError('');
   };
 
+  if (loading) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-[var(--background)] text-[var(--foreground)]">
+        <div className="text-2xl font-bold animate-pulse">Chargement du profil...</div>
+      </main>
+    );
+  }
+
+  if (profileError) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-[var(--background)] text-[var(--foreground)]">
+        <div className="bg-red-900/50 border border-red-500 rounded-lg p-6">
+          <p className="text-red-300 text-lg font-semibold">Erreur lors du chargement du profil.</p>
+          <p className="text-red-200 text-sm mt-2">{String(profileError)}</p>
+        </div>
+      </main>
+    );
+  }
+
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
       {/* Hero Banner - Version ultra minimaliste */}
-      <div className="relative mx-5 my-8 max-w-5xl lg:mx-auto border-b border-white/10 pb-6">
+      <div
+        className="relative mx-5 my-8 max-w-5xl lg:mx-auto border-b pb-6"
+        style={{ borderColor: 'rgba(237,237,237,0.1)' }}
+      >
         <div className="flex items-center gap-4">
-          <div className="h-12 w-1 rounded-full bg-purple-600" />
+          <div className="h-12 w-1 rounded-full" style={{ background: 'var(--button-select)' }} />
           <div>
-            <h1 className="text-5xl md:text-6xl font-black">{username}</h1>
+            <h1 className="text-5xl md:text-6xl font-black text-[var(--foreground)]">{username}</h1>
           </div>
         </div>
       </div>
@@ -51,28 +108,28 @@ export default function ProfilePage() {
       {/* Stats Bar */}
       <div className="max-w-5xl mx-5 lg:mx-auto my-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="rounded-xl bg-slate-900/70 ring-1 ring-purple-500/50 shadow-lg p-4 hover:ring-purple-500 transition-all">
-            <p className="text-sm text-white/60 mb-1">Challenges</p>
-            <p className="text-4xl font-black text-purple-400">5</p>
+          <div className="rounded-xl bg-(--button-area) ring-1 ring-(--button-select) shadow-lg p-4 hover:ring-(--button-select) transition-all">
+            <p className="text-sm mb-1">Challenges</p>
+            <p className="text-4xl font-black text-(--button-select)">5</p>
           </div>
-          <div className="rounded-xl bg-slate-900/70 ring-1 ring-purple-500/50 shadow-lg p-4 hover:ring-purple-500 transition-all">
-            <p className="text-sm text-white/60 mb-1">Participations</p>
-            <p className="text-4xl font-black text-purple-400">5</p>
+          <div className="rounded-xl bg-(--button-area) ring-1 ring-(--button-select) shadow-lg p-4 hover:ring-(--button-select) transition-all">
+            <p className="text-sm mb-1">Participations</p>
+            <p className="text-4xl font-black text-(--button-select)">5</p>
           </div>
-          <div className="rounded-xl bg-slate-900/70 ring-1 ring-purple-500/50 shadow-lg p-4 hover:ring-purple-500 transition-all">
-            <p className="text-sm text-white/60 mb-1">Total Likes</p>
-            <p className="text-4xl font-black text-purple-400">183</p>
+          <div className="rounded-xl bg-(--button-area) ring-1 ring-(--button-select) shadow-lg p-4 hover:ring-(--button-select) transition-all">
+            <p className="text-sm mb-1">Total Likes</p>
+            <p className="text-4xl font-black text-(--button-select)">183</p>
           </div>
-          <div className="rounded-xl bg-slate-900/70 ring-1 ring-purple-500/50 shadow-lg p-4 hover:ring-purple-500 transition-all">
-            <p className="text-sm text-white/60 mb-1">Global Rank</p>
-            <p className="text-4xl font-black text-purple-400">#156</p>
+          <div className="rounded-xl bg-(--button-area) ring-1 ring-(--button-select) shadow-lg p-4 hover:ring-(--button-select) transition-all">
+            <p className="text-sm mb-1">Global Rank</p>
+            <p className="text-4xl font-black text-(--button-select)">#156</p>
           </div>
         </div>
       </div>
 
       {/* Profile Information */}
       <div className="max-w-5xl mx-5 lg:mx-auto my-8">
-        <div className="rounded-2xl bg-slate-900/70 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden p-6">
+        <div className="rounded-2xl bg-(--button-area) ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden p-6">
           <div className="flex justify-between items-start">
             {/* Left side - User Info */}
             <div className="space-y-4">
@@ -83,7 +140,7 @@ export default function ProfilePage() {
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="w-full mt-1 text-lg font-semibold bg-slate-800 border border-slate-600 rounded px-3 py-2 focus:outline-none focus:border-purple-500"
+                    className="w-full mt-1 text-lg font-semibold bg-slate-400 border border-slate-600 rounded px-3 py-2 focus:outline-none focus:border-purple-500"
                   />
                 ) : (
                   <p className="text-lg font-semibold">{username}</p>
@@ -96,7 +153,7 @@ export default function ProfilePage() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full mt-1 text-lg bg-slate-800 border border-slate-600 rounded px-3 py-2 focus:outline-none focus:border-purple-500"
+                    className="w-full mt-1 text-lg bg-slate-400 border border-slate-600 rounded px-3 py-2 focus:outline-none focus:border-purple-500"
                   />
                 ) : (
                   <p className="text-lg">{email}</p>
@@ -105,13 +162,19 @@ export default function ProfilePage() {
               <div>
                 <span className="text-sm">Password:</span>
                 {isEditing ? (
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter new password"
-                    className="w-full mt-1 text-lg bg-slate-800 border border-slate-600 rounded px-3 py-2 focus:outline-none focus:border-purple-500"
-                  />
+                  <>
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Enter new password"
+                      className="w-full mt-1 text-lg bg-slate-400 border border-slate-600 rounded px-3 py-2 focus:outline-none focus:border-purple-500"
+                    />
+                    <p className="text-xs text-red-400 mt-1">
+                      Password must be at least 8 characters, contain an uppercase letter and a
+                      special character.
+                    </p>
+                  </>
                 ) : (
                   <p className="text-lg">••••••••</p>
                 )}
@@ -124,7 +187,7 @@ export default function ProfilePage() {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Confirm new password"
-                    className="w-full mt-1 text-lg bg-slate-800 border border-slate-600 rounded px-3 py-2 focus:outline-none focus:border-purple-500"
+                    className="w-full mt-1 text-lg bg-slate-400 border border-slate-600 rounded px-3 py-2 focus:outline-none focus:border-purple-500"
                   />
                 </div>
               )}
@@ -172,7 +235,7 @@ export default function ProfilePage() {
       {/* Challenges and Participations */}
       <div className="max-w-5xl mx-5 lg:mx-auto my-8 grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         {/* My Last Challenges */}
-        <div className="rounded-2xl bg-slate-900/70 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden p-6">
+        <div className="rounded-2xl bg-(--button-area) ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden p-6">
           <h2 className="text-2xl font-bold mb-6">My Last Created Challenges</h2>
           <div className="space-y-4">
             {/* Challenge 1 */}
@@ -325,7 +388,7 @@ export default function ProfilePage() {
         </div>
 
         {/* My Last Participations */}
-        <div className="rounded-2xl bg-slate-900/70 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden p-6">
+        <div className="rounded-2xl bg-(--button-area) ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden p-6">
           <h2 className="text-2xl font-bold mb-6">My Last Participations</h2>
           <div className="space-y-4">
             {/* Participation 1 */}
