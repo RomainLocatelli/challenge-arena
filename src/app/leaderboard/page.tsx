@@ -32,7 +32,7 @@ export default function Leaderboard() {
 
   useEffect(() => {
     async function getLeaderboard() {
-      const registerUrl = `${process.env.API_URL}leaderboard`;
+      const registerUrl = `${process.env.API_URL}/leaderboard`;
       const response = await fetch(registerUrl, {
         credentials: 'include'
       });
@@ -178,8 +178,8 @@ export default function Leaderboard() {
         >
           <p>{rankText}</p>
           <div className="flex">
-            <p className="mr-5 text-gray-400 italic">-</p>
-            <p className="ml-5 text-gray-400">-</p>
+            <p className="mr-5 text-(--leadboard-me) italic">-</p>
+            <p className="ml-5 text-(--leadboard-me)">-</p>
           </div>
         </li>
       );
@@ -221,7 +221,7 @@ export default function Leaderboard() {
   return (
     <main className="min-h-screen">
       {/* Hero Banner */}
-      <div className="relative mx-5 my-8 rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 max-w-5xl lg:mx-auto">
+      <div className="relative mx-5 my-8 rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-br from-foreground via-(--button-select) to-foreground max-w-5xl lg:mx-auto">
         {/* Image centrée sans étirement */}
         <div className="flex items-center justify-center py-6 lg:py-12 px-4">
           <Image
@@ -235,7 +235,7 @@ export default function Leaderboard() {
         </div>
         {/* Titre par-dessus */}
         <div className="absolute top-15 md:top-32 lg:top-50 right-5 md:right-30 lg:right-40 flex justify-center z-10 px-4">
-          <h1 className="text-sm md:text-3xl lg:text-5xl font-black text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)] bg-black/40 px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 rounded-full backdrop-blur-sm">
+          <h1 className="text-sm md:text-3xl lg:text-5xl font-black text-background drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)] bg-foreground/40 px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 rounded-full backdrop-blur-sm">
             LEADERBOARD
           </h1>
         </div>
@@ -277,7 +277,7 @@ export default function Leaderboard() {
 
         <div className="lg:flex">
           {/* Mobile: show selected leaderboard */}
-          <ul className="flex justify-center flex-col lg:hidden ml-5 mr-5 text-black bg-(--button-area) p-3 mb-5 rounded-b-3xl">
+          <ul className="flex justify-center flex-col lg:hidden ml-5 mr-5  bg-(--button-area) p-3 mb-5 rounded-b-3xl">
             {renderLeaderboard(currentLeaderboardData)}
           </ul>
 
@@ -286,7 +286,7 @@ export default function Leaderboard() {
             {renderLeaderboard(normalizeLeaderboardData(usersLikedLeaderboard))}
           </ul>
 
-          <ul className="hidden lg:flex lg:justify-center lg:w-full lg:flex-col lg:mr-5 lg:text-black lg:bg-(--button-area) lg:p-3 lg:mb-5 lg:ml-15 lg:rounded-b-3xl">
+          <ul className="hidden lg:flex lg:justify-center lg:w-full lg:flex-col lg:mr-5  lg:bg-(--button-area) lg:p-3 lg:mb-5 lg:ml-15 lg:rounded-b-3xl">
             {renderLeaderboard(normalizeLeaderboardData(participationLeaderboard))}
           </ul>
         </div>

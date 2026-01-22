@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useEffect, useMemo, useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 
 // hook responsive
 function useMediaQuery(query: string) {
@@ -14,8 +14,8 @@ function useMediaQuery(query: string) {
     const onChange = () => setMatches(mq.matches);
 
     onChange();
-    mq.addEventListener?.("change", onChange);
-    return () => mq.removeEventListener?.("change", onChange);
+    mq.addEventListener?.('change', onChange);
+    return () => mq.removeEventListener?.('change', onChange);
   }, [query]);
 
   return matches;
@@ -54,21 +54,21 @@ export default function GamePage() {
   const params = useParams() as { slug?: string } | undefined;
   const slug = params?.slug;
 
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [pageBlockStart, setPageBlockStart] = useState(2);
 
   const [games, setGames] = useState<Game[]>([]);
   const [challenges, setChallenges] = useState<Challenge[]>([]);
 
-  const ismd = useMediaQuery("(min-width: 768px)");
+  const ismd = useMediaQuery('(min-width: 768px)');
   const itemsPerPage = ismd ? 6 : 4;
 
   // Fetch games (for selected game card)
   useEffect(() => {
     async function fetchGames() {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
-      const res = await fetch(`${baseUrl}games`);
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+      const res = await fetch(`${baseUrl}/games`);
       const data = await res.json();
       setGames(data.games || []);
     }
@@ -78,13 +78,13 @@ export default function GamePage() {
   // Fetch challenges
   useEffect(() => {
     async function fetchChallenges() {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
-      const res = await fetch(`${baseUrl}challenges`);
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+      const res = await fetch(`${baseUrl}/challenges`);
       const data = await res.json();
 
       const list = (data.challenges || data || []).map((c: Partial<Challenge>) => ({
         ...c,
-        voteCount: (c as any).voteCount ?? 0,
+        voteCount: (c as any).voteCount ?? 0
       })) as Challenge[];
 
       setChallenges(list);
@@ -102,7 +102,7 @@ export default function GamePage() {
 
   // Reset when slug changes
   useEffect(() => {
-    setSearchQuery("");
+    setSearchQuery('');
     setCurrentPage(1);
     setPageBlockStart(2);
   }, [slug]);
@@ -122,7 +122,7 @@ export default function GamePage() {
         return true;
       }
 
-      const gameTitle = c.game?.title ?? "";
+      const gameTitle = c.game?.title ?? '';
       return c.title.toLowerCase().includes(q) || gameTitle.toLowerCase().includes(q);
     });
   }, [searchQuery, challenges, slug]);
@@ -166,13 +166,12 @@ export default function GamePage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex flex-col">
+    <div className="min-h-screen  flex flex-col">
       <main className="px-4 md:px-8 py-6 max-w-7xl mx-auto w-full">
-        
         {/* Selected Game card */}
         {selectedGame ? (
           <div className="mb-4 max-w-md md:max-w-2xl mx-auto">
-            <div className="relative w-full h-44 md:h-56 overflow-hidden rounded-2xl bg-slate-900 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.45)]">
+            <div className="relative w-full h-44 md:h-56 overflow-hidden rounded-2xl bg-(--background-header) ring-1 ring-background shadow-[0_10px_30px_rgba(0,0,0,0.45)]">
               <Image
                 src={selectedGame.imageUrl}
                 alt={selectedGame.title}
@@ -180,8 +179,10 @@ export default function GamePage() {
                 sizes="(max-width: 768px) 100vw, 768px"
                 className="object-contain p-4"
               />
-              <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
-                <div className="text-lg font-semibold">{selectedGame.title}</div>
+              <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-foreground/60 to-transparent">
+                <div className="text-lg font-semibold text-center text-(--button-select)">
+                  {selectedGame.title}
+                </div>
               </div>
             </div>
           </div>
@@ -190,9 +191,15 @@ export default function GamePage() {
         {/* Search Bar */}
         <div className="mb-6">
           <div className="relative max-w-md md:max-w-2xl mx-auto">
-            <div className="absolute inset-0 rounded-full bg-(--searchbar-color) ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.45)]" />
+            <div className="absolute inset-0 rounded-full bg-(--searchbar-color) ring-1 ring-background/10 shadow-[0_10px_30px_rgba(0,0,0,0.45)]" />
             <div className="absolute left-3 top-1/2 -translate-y-1/2 z-10 h-12 w-12 flex items-center justify-center shadow">
-              <Image src="/loupe.png" width={100} height={100} alt="Search Icon" className="opacity-80" />
+              <Image
+                src="/loupe.png"
+                width={100}
+                height={100}
+                alt="Search Icon"
+                className="opacity-80"
+              />
             </div>
 
             <input
@@ -204,7 +211,7 @@ export default function GamePage() {
                 setCurrentPage(1);
                 setPageBlockStart(2);
               }}
-              className="relative w-full rounded-full bg-transparent py-3 pl-14 pr-4 text-white text-center text-xl placeholder:text-white/50 focus:outline-none"
+              className="relative w-full rounded-full bg-transparent py-3 pl-14 pr-4  text-center text-xl  focus:outline-none"
             />
           </div>
         </div>
@@ -213,11 +220,13 @@ export default function GamePage() {
         <div className="mb-8">
           <div className="mx-auto max-w-md md:max-w-4xl">
             <div className="mb-6 flex items-center justify-between gap-4">
-              <h2 className="text-xl font-bold border-l-4 border-purple-600 pl-3">Challenges</h2>
+              <h2 className="text-xl font-bold border-l-4 border-(--button-select) pl-3">
+                Challenges
+              </h2>
 
               <Link
                 href="/challenges/create"
-                className="px-4 py-2 rounded-xl bg-amber-600/80 hover:bg-amber-600 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                className="px-4 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
               >
                 Create a challenge
               </Link>
@@ -228,27 +237,26 @@ export default function GamePage() {
               {paginatedChallenges.map((c) => (
                 <div
                   key={c.id}
-                  className="rounded-2xl bg-slate-900/70 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden"
+                  className="rounded-2xl bg-(--background-header)/70 ring-1 ring-background/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden"
                 >
                   <div className="p-5 flex flex-col h-full">
-                    
                     {/* Tag / game */}
-                    <div className="text-xs font-semibold tracking-widest text-purple-300/90 mb-2">
-                      {(c.game?.title ?? selectedGame?.title ?? "").toUpperCase()}
+                    <div className="text-xs font-semibold tracking-widest text-(--button-select)/90 mb-2">
+                      {(c.game?.title ?? selectedGame?.title ?? '').toUpperCase()}
                     </div>
 
                     <div className="text-2xl font-semibold leading-tight mb-2">{c.title}</div>
-                    <div className="text-white/70 leading-relaxed mb-4">{c.description}</div>
+                    <div className="text-foreground/70 leading-relaxed mb-4">{c.description}</div>
 
                     <div className="mt-auto flex items-center justify-between pt-2">
-                      <div className="flex items-center gap-3 text-white/70">
+                      <div className="flex items-center gap-3 text-foreground/70">
                         <span className="relative w-8 h-8 shrink-0">
                           <Image
-                            src={c.hasLiked ? "/like 1.png" : "/like 0.png"}
-                            alt={c.hasLiked ? "Liked" : "Not liked"}
+                            src={c.hasLiked ? '/like 1.png' : '/like 0.png'}
+                            alt={c.hasLiked ? 'Liked' : 'Not liked'}
                             fill
                             sizes="32px"
-                            style={{ objectFit: "contain" }}
+                            style={{ objectFit: 'contain' }}
                           />
                         </span>
                         <div className="flex items-baseline gap-1">
@@ -259,7 +267,7 @@ export default function GamePage() {
 
                       <Link
                         href={`/challenges/${c.slug ?? c.id}`}
-                        className="px-4 py-2 rounded-xl bg-amber-600/80 hover:bg-amber-600 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                        className="px-4 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
                       >
                         Details
                       </Link>
@@ -273,14 +281,16 @@ export default function GamePage() {
 
         {/* Empty state */}
         {filteredChallenges.length === 0 && (
-          <p className="mt-6 text-center text-white">No challenge for this game yet</p>
+          <p className="mt-6 text-center">No challenge for this game yet</p>
         )}
 
         {/* Pagination */}
         <div className="flex justify-center gap-2 mb-12">
           <button
             className={`w-8 h-8 rounded-full flex items-center justify-center ${
-              currentPage === 1 ? "bg-purple-600" : "bg-slate-800 hover:bg-slate-700"
+              currentPage === 1
+                ? 'bg-(--button-select)'
+                : 'bg-(--button-area) hover:bg-(--searchbar-color)'
             }`}
             onClick={() => goToPage(1)}
           >
@@ -293,7 +303,9 @@ export default function GamePage() {
               <button
                 key={page}
                 className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  currentPage === page ? "bg-purple-600" : "bg-slate-800 hover:bg-slate-700"
+                  currentPage === page
+                    ? 'bg-(--button-select)'
+                    : 'bg-(--button-area) hover:bg-(--searchbar-color)'
                 }`}
                 onClick={() => goToPage(page)}
               >
@@ -304,7 +316,7 @@ export default function GamePage() {
           {totalPages > pageBlockStart + 3 && (
             <button
               type="button"
-              className="w-8 h-8 bg-slate-800 hover:bg-slate-700 rounded-full flex items-center justify-center"
+              className="w-8 h-8 bg-(--button-area) bg-(--searchbar-color)rounded-full flex items-center justify-center"
               onClick={nextBlock}
               aria-label="Afficher les pages suivantes"
             >

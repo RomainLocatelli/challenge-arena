@@ -2,8 +2,10 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/app/context/AuthContext';
+import { LogoutButton } from './Logout';
+import ThemeToggle from './light-dark-button';
 
 export default function BurgerMenu() {
   const [isClose, setIsClose] = useState(false);
@@ -13,18 +15,6 @@ export default function BurgerMenu() {
   const pathname = usePathname();
   const pathActive = (path: string) => pathname === path;
   const { user } = useAuth();
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-
-  async function logOut() {
-    try {
-      await fetch(`${apiUrl}auth/logout`, {
-        method: 'POST',
-        credentials: 'include'
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  }
 
   return (
     <nav className="text-right pr-3 pt-4 relative z-50">
@@ -74,7 +64,7 @@ export default function BurgerMenu() {
             <li
               className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/login-register/login') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
             >
-              <Link href="/login-register/login'">Login</Link>
+              <Link href="/login-register/login">Login</Link>
             </li>
           )}
           {user ? (
@@ -95,12 +85,16 @@ export default function BurgerMenu() {
           >
             <Link href="/support">Support</Link>
           </li>
-
-          <li className={'m-1.5 pl-1.5 pr-1.5'}>
-            <button type="button" onClick={logOut}>
-              Disconnect
-            </button>
+          <li>
+            <ThemeToggle />
           </li>
+          {user ? (
+            <li className={'m-1.5 pl-1.5 pr-1.5'}>
+              <LogoutButton />
+            </li>
+          ) : (
+            <p></p>
+          )}
         </ul>
       )}
     </nav>
