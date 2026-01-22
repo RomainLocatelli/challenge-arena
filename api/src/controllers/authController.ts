@@ -59,7 +59,6 @@ export const meController = async (req: Request, res: Response, next: NextFuncti
   try {
     // Le userId est ajouté par le middleware auth
     const userId = req.userId;
-    console.log('userId check is here ===> ', userId);
 
     if (!userId) {
       throw new Error('User ID not found in request');
@@ -67,7 +66,6 @@ export const meController = async (req: Request, res: Response, next: NextFuncti
 
     // Récupérer l'utilisateur depuis la DB
     const user = await authService.getUserById(userId);
-    console.log('user authcontroller check is here ===> ', user);
 
     res.status(200).json({
       message: 'User retrieved successfully',

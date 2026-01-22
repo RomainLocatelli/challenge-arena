@@ -259,7 +259,10 @@ export async function fetchReportedParticipations(): Promise<ReportedParticipati
 /**
  * Approuver un contenu (supprime les signalements)
  */
-export async function approveContent(targetType: 'CHALLENGE' | 'PARTICIPATION', targetId: string): Promise<void> {
+export async function approveContent(
+  targetType: 'CHALLENGE' | 'PARTICIPATION',
+  targetId: string
+): Promise<void> {
   try {
     const res = await fetch(`${API_URL}/moderation/approve`, {
       method: 'POST',

@@ -26,11 +26,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
+  const API_URL = process.env.API_INTERN_URL || '';
 
   let user = null;
   const cookieStore = await cookies();
-  console.log(cookieStore);
 
   try {
     const cookieHeader = cookieStore
@@ -47,7 +46,6 @@ export default async function RootLayout({
 
     const data = await res.json();
     user = data.user;
-    console.log(user);
   } catch (err) {
     //  silent
   }
