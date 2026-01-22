@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export default function Footer() {
   return (
-    <footer className="bg-(--background-header)  py-8 px-6">
+    <footer className="bg-(--background-header) py-8 px-6">
       <div className="m-0 w-full">
         {/* Logo et titre */}
         <Link href="/" className="flex items-center gap-2 mb-8">
@@ -21,25 +21,25 @@ export default function Footer() {
 
         {/* Liens du footer */}
         <div className="grid grid-cols-2 md:flex md:justify-end md:gap-8 gap-4 mb-8">
-          <Link href="/about" className=" hover:text-(--button-select) transition-colors">
+          <Link href="/about" className="hover:text-(--button-select) transition-colors">
             About Us
           </Link>
-          <Link href="/leaderboards" className=" hover:text-(--button-select) transition-colors">
+          <Link href="/leaderboards" className="hover:text-(--button-select) transition-colors">
             Leaderboards
           </Link>
           <Link
             href="/terms-of-service"
-            className=" hover:text-(--button-select) transition-colors"
+            className="hover:text-(--button-select) transition-colors"
           >
             Terms of Service
           </Link>
-          <Link href="/privacy-policy" className=" hover:text-(--button-select) transition-colors">
+          <Link href="/privacy-policy" className="hover:text-(--button-select) transition-colors">
             Privacy Policy
           </Link>
-          <Link href="/legal-notice" className=" hover:text-(--button-select) transition-colors">
+          <Link href="/legal-notice" className="hover:text-(--button-select) transition-colors">
             Legal Notice
           </Link>
-          <Link href="/support" className=" hover:text-(--button-select) transition-colors">
+          <Link href="/support" className="hover:text-(--button-select) transition-colors">
             Support
           </Link>
         </div>
