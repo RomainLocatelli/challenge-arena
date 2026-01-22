@@ -149,7 +149,7 @@ export default function GamesPage() {
               {paginatedGames.map((game) => (
                 <Link
                   key={game.id}
-                  href={`/games/${game.id}`}
+                  href={`/games/${game.slug}`}
                   className="group overflow-hidden rounded-4xl bg-(--button-area) transition hover:ring-2 hover:ring-(--button-select) delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 "
                 >
                   <div className="relative aspect-square w-full overflow-hidden flex-none ">

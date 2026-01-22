@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from './context/AuthContext';
 
 export default function Home() {
-  type Game = { id: string; title: string; imageUrl: string };
+  type Game = { id: string; title: string; imageUrl: string; slug: string };
   type Challenge = {
     createdAt: string;
     createdBy: string;
@@ -55,7 +55,7 @@ export default function Home() {
           return (
             <Link
               key={game.id}
-              href={`/games/${game.id}`}
+              href={`/games/${game.slug}`}
               className="bg-(--button-area) hover:outline-double  outline-(--button-select) shrink-0 rounded-4xl snap-centertransition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 mt-5 ml-5 mr-5"
             >
               <Image
