@@ -68,7 +68,7 @@ export default function ChallengesPage() {
   useEffect(() => {
     async function fetchGames() {
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-      const res = await fetch(`${baseUrl}games`);
+      const res = await fetch(`${baseUrl}/games`);
       const data = await res.json();
       setGames(data.games || []);
     }
@@ -79,7 +79,7 @@ export default function ChallengesPage() {
   useEffect(() => {
     async function fetchChallenges() {
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-      const res = await fetch(`${baseUrl}challenges`);
+      const res = await fetch(`${baseUrl}/challenges`);
       const data = await res.json();
 
       // on s'assure que voteCount existe
