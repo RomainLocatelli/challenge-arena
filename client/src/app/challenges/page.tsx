@@ -57,6 +57,12 @@ export default function ChallengesPage() {
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [games, setGames] = useState<Game[]>([]);
   const [selectedGameId, setSelectedGameId] = useState<string | null>(null);
+  const [filterModalArea, setFilterModalArea] = useState<boolean>(false);
+
+  const [orderFilterSearchbar, setOrderFilterSearchBar] = useState<'ASC' | 'DESC'>('ASC');
+  const [filterSelectorChoice, setFilterSelectorChoice] = useState<
+    'Popularity' | 'Date added' | 'Alphabetical'
+  >('Date added');
 
   const ismd = useMediaQuery('(min-width: 768px)');
   const itemsPerPage = ismd ? 6 : 4;
@@ -94,17 +100,17 @@ export default function ChallengesPage() {
     fetchChallenges();
   }, []);
 
-function extractShortDescription(raw: string) {
-  const text = (raw ?? '').replace(/\r\n/g, '\n').trim();
+  function extractShortDescription(raw: string) {
+    const text = (raw ?? '').replace(/\r\n/g, '\n').trim();
 
-  // coupe dès qu’on voit une ligne "Details" (avec ou sans :)
-  const idx = text.search(/\n\s*details\s*:?\s*\n/i);
+    // coupe dès qu’on voit une ligne "Details" (avec ou sans :)
+    const idx = text.search(/\n\s*details\s*:?\s*\n/i);
 
-  if (idx === -1) {
-    return text;
+    if (idx === -1) {
+      return text;
+    }
+    return text.slice(0, idx).trim();
   }
-  return text.slice(0, idx).trim();
-}
 
   /* ======================
      FILTERING
@@ -158,6 +164,12 @@ function extractShortDescription(raw: string) {
     setCurrentPage((p) => (p === 1 ? Math.min(pageBlockStart + 4, totalPages) : p));
   };
 
+  function filterOrderingChallenges(challenges: Challenge, orderFilterSearchbar, filterSelectorChoice) {
+    if (filterSelectorChoice === 'popularity') {
+      orderFilterSearchbar === 'ASC' ? () : ()
+    }
+  }
+
   /* ======================
      RENDER
   ====================== */
@@ -190,7 +202,79 @@ function extractShortDescription(raw: string) {
               }}
               className="relative w-full rounded-full bg-transparent py-3 pl-14 pr-4  text-center text-xl  focus:outline-none"
             />
+            <button
+              type="button"
+              onClick={() => {
+                setFilterModalArea(!filterModalArea);
+              }}
+              className="absolute bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) rounded-full top-1/2 right-3 -translate-y-1/2 z-8 h-10 w-10 flex items-center justify-center shadow"
+            >
+              <Image
+                src="/filter.png"
+                width={100}
+                height={100}
+                alt="Search Icon"
+                className="opacity-80"
+              />
+            </button>
           </div>
+          {/* Modal filter menu */}
+          {filterModalArea ? (
+            <div className="absolute flex  bg-(--modal-filter-searchebar) p-5 rounded-4xl left-1/5 lg:left-1/3 lg:right-1/3">
+              <p className="mr-3">Filter :</p>
+              <div className="gap-2 m-2 flex flex-col ">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOrderFilterSearchBar('ASC');
+                  }}
+                  className="bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) rounded-4xl p-1"
+                >
+                  ASC ⬆️
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOrderFilterSearchBar('DESC');
+                  }}
+                  className="bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) rounded-4xl p-1"
+                >
+                  DESC ⬇️
+                </button>
+              </div>
+              <div className="gap-2 m-2 flex flex-col">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFilterSelectorChoice('Popularity');
+                  }}
+                  className="bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) rounded-4xl p-1"
+                >
+                  Popularity
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFilterSelectorChoice('Date added');
+                  }}
+                  className="bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) rounded-4xl p-1"
+                >
+                  Date added
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFilterSelectorChoice('Alphabetical');
+                  }}
+                  className="bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) rounded-4xl p-1"
+                >
+                  Alphabetical
+                </button>
+              </div>
+            </div>
+          ) : (
+            <p></p>
+          )}
         </div>
 
         {/* Challenges Section */}
