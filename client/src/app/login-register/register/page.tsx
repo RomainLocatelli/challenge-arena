@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 type Register = {
   username: string;
@@ -7,19 +7,29 @@ type Register = {
   password: string;
 };
 
+// Règles de validation
+const passwordRules = [
+  { label: 'at least 8 characters', test: (pwd: string) => pwd.length >= 8 },
+  { label: 'one uppercase', test: (pwd: string) => /[A-Z]/.test(pwd) },
+  { label: 'one special character', test: (pwd: string) => /[!@#$%^&*(),.?":{}|<>]/.test(pwd) }
+];
+
 export default function AuthRegister() {
-  const [userNickname, setNickname] = useState('');
+  const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [passwordValidation, setPasswordValidation] = useState([false, false, false]);
 
-  const registerUrl = process.env.API_URL || '';
+  const registerUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
-  // Azertyui0&
-  // Stwompy
-  // stwompyproutprout@gmail.com
+  // Validation en temps réel
+  useEffect(() => {
+    const validation = passwordRules.map(rule => rule.test(userPassword));
+    setPasswordValidation(validation);
+  }, [userPassword]);
 
   async function postForm(url: string, values: Register) {
     try {
@@ -34,22 +44,22 @@ export default function AuthRegister() {
         return setErrorMessage('Email or username is already registered');
       }
       if (response.status >= 300) {
-        setErrorMessage('An error happened, thank you to try later');
+        setErrorMessage('An error happened, please try again later');
       } else {
-        setSuccessMessage('Resgistration successful, time to challenge yourself');
+        setSuccessMessage('Registration successful, time to challenge yourself!');
       }
     } catch (e) {
-      setErrorMessage('An error happened, thank you to try later');
+      setErrorMessage('An error happened, please try again later');
     }
   }
 
   function handleAction() {
     if (userPassword !== passwordConfirm) {
-      return setErrorMessage('Password does not match');
+      return setErrorMessage('Passwords do not match');
     }
     const formValues = {
       email: userEmail,
-      username: userNickname,
+      username: userName,
       password: userPassword
     };
     postForm(registerUrl, formValues);
@@ -62,50 +72,76 @@ export default function AuthRegister() {
         <h2 className="text-xl text-center lg:mt-40 mt-15">{successMessage}</h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 lg:auto-rows-[80px] auto-rows-fr gap-4 mb-5 mt-5 ml-10 mr-10 lg:mr-60 lg:ml-60">
           <div className="flex flex-col p-3 pl-7 pr-7 bg-(--button-area) rounded-3xl focus-within:bg-(--button-select) lg:mr-10">
-            <label htmlFor="nickname">Your nickname</label>
+            <label htmlFor="userName">Your username</label>
             <input
               type="text"
-              value={userNickname}
-              placeholder="Your nickname"
-              onChange={(e) => setNickname(e.target.value)}
-              id="nickname"
-              className=""
+              value={userName}
+              placeholder="QuentinBG"
+              onChange={(e) => setUserName(e.target.value)}
+              id="userName"
+              className="placeholder:text-foreground/40"
             />
           </div>
+          
           <div className="flex flex-col p-3 pl-7 pr-7 bg-(--button-area) rounded-3xl focus-within:bg-(--button-select) lg:ml-10">
             <label htmlFor="email">Your email address</label>
             <input
               type="email"
               value={userEmail}
-              placeholder="Your email address"
+              placeholder="quentin@exemple.com"
               onChange={(e) => setUserEmail(e.target.value)}
               id="email"
-              className=""
+              className="placeholder:text-foreground/40"
             />
           </div>
-          <div className="flex flex-col p-3 pl-7 pr-7 bg-(--button-area) rounded-3xl focus-within:bg-(--button-select) lg:mr-10">
+
+          <div className="flex flex-col p-3 pl-7 pr-7 lg:pb-20 bg-(--button-area) rounded-3xl focus-within:bg-(--button-select) lg:mr-10">
             <label htmlFor="password">Your password</label>
             <input
               type="password"
               value={userPassword}
-              placeholder="Your password"
+              placeholder="Enter your password"
               onChange={(e) => setPassword(e.target.value)}
               id="password"
-              className=""
+              className="placeholder:text-foreground/40"
             />
+            
+            {/* Affichage des règles colorées */}
+            {userPassword.length > 0 ? (
+              <p className="text-sm mt-2">
+                Must have:{' '}
+                {passwordRules.map((rule, index) => (
+                  <span
+                    key={index}
+                    className={`transition-colors ${
+                      passwordValidation[index] ? 'text-green-500' : 'text-red-500'
+                    }`}
+                  >
+                    {rule.label}
+                    {index < passwordRules.length - 1 && ', '}
+                  </span>
+                ))}
+              </p>
+            ) : (
+              <p className="text-sm mt-2 opacity-70">
+                Must have: at least 8 characters, one uppercase, one special character
+              </p>
+            )}
           </div>
+
           <div className="flex flex-col p-3 pl-7 pr-7 bg-(--button-area) rounded-3xl focus-within:bg-(--button-select) lg:ml-10">
             <label htmlFor="passwordConfirmation">Confirm your password</label>
             <input
               type="password"
               value={passwordConfirm}
-              placeholder="Confirm password"
+              placeholder="Re-enter your password"
               onChange={(e) => setPasswordConfirm(e.target.value)}
               id="passwordConfirmation"
-              className=""
+              className="placeholder:text-foreground/40"
             />
           </div>
         </div>
+
         <div className="flex justify-center flex-col items-center">
           <button
             type="submit"
@@ -113,7 +149,7 @@ export default function AuthRegister() {
           >
             Submit
           </button>
-          {errorMessage && <p>{errorMessage}</p>}
+          {errorMessage && <p className="text-red-500">{errorMessage}</p>}
         </div>
       </form>
     </main>
