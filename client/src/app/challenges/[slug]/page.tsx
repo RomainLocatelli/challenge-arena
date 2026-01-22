@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo, useState, useEffect } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useAuth } from '@/app/context/AuthContext';
+import { useAuth } from '@/app/context/AuthContext'; // Remplacer avec le bon chemin
 
 
 // hook responsive
@@ -25,27 +25,28 @@ type Participation = {
   userId: string;
   name: string;
   description: string;
-  scoreLabel: string;
-  link?: string;
+  scoreLabel: string; 
+  link?: string; 
   hasLiked?: boolean;
   likes: number;
 };
 
-type Challenge = {
+type ChallengeDetails = {
   id: string;
   slug: string;
   title: string;
-  gameId: string;
-  gameTitle: string;
-  createdBy: string;
+  description: string;
+  details?: string[]; 
+  scoreFormat: string;
   createdAt: string;
   updatedAt: string;
-  image?: string;
+  createdBy: string; 
+  gameId: string;
+  gameTitle: string;
   gameImage: string;
-  description: string[];
-  details: string[];
   hasLiked?: boolean;
   likes: number;
+
   participations: Participation[];
 };
 
@@ -60,7 +61,7 @@ const clamp100 = (s: string) => {
 
 export default function ChallengeDetailsPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, token } = useAuth() as any; // token si ton AuthContext l’expose
   const params = useParams<{ slug: string }>();
   const slug = params?.slug;
   const searchParams = useSearchParams();
@@ -68,140 +69,234 @@ export default function ChallengeDetailsPage() {
   const isMd = useMediaQuery('(min-width: 768px)');
   const defaultVisible = isMd ? 4 : 3;
 
+  // core state
+  const [challenge, setChallenge] = useState<ChallengeDetails | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  // UI state 
+  const [challengeHasLiked, setChallengeHasLiked] = useState(false);
+  const [challengeLikes, setChallengeLikes] = useState(0);
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [title, setTitle] = useState('');
+  const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
+
+  const [descriptionPoints, setDescriptionPoints] = useState<string[]>([]);
+  const [detailsPoints, setDetailsPoints] = useState<string[]>([]);
+
+  const [participations, setParticipations] = useState<Participation[]>([]);
+  const [visibleCount, setVisibleCount] = useState(defaultVisible);
+
+  // Modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<'create' | 'view' | 'edit'>('view');
+  const [activeParticipationId, setActiveParticipationId] = useState<string | null>(null);
+
+  // Champs du formulaire (create / edit)
+  const [pDesc, setPDesc] = useState('');
+  const [pLink, setPLink] = useState('');
+
+  // Fetch challenge
+  useEffect(() => {
+    if (!slug) {
+      return;
+    }
+
+    let cancelled = false;
+
+    (async () => {
+      try {
+        setLoading(true);
+        setLoadError(null);
+
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+        const res = await fetch(`${baseUrl}challenges/${slug}`, {
+          cache: 'no-store'
+        });
+
+        if (!res.ok) {
+          const msg = await res.text().catch(() => '');
+          throw new Error(msg || `Failed to load challenge (${res.status})`);
+        }
+
+        const data = await res.json();
+
+        const raw = (data?.challenge ?? data) as any;
+
+        // Normalisation 
+        const normalized: ChallengeDetails = {
+          id: raw.id,
+          slug: raw.slug,
+          title: raw.title ?? '',
+          description: raw.description ?? '',
+          details: Array.isArray(raw.details) ? raw.details : [],
+          scoreFormat: raw.scoreFormat ?? '',
+          createdAt: raw.createdAt ?? '',
+          updatedAt: raw.updatedAt ?? '',
+
+          createdBy:
+            raw.createdBy?.username ??
+            raw.createdBy?.name ??
+            raw.createdBy ??
+            '—',
+
+          gameId: raw.gameId ?? raw.game?.id ?? '',
+          gameTitle: raw.game?.title ?? raw.gameTitle ?? '',
+          gameImage: raw.game?.imageUrl ?? raw.gameImage ?? '',
+
+          likes: raw.voteCount ?? raw.likes ?? 0,
+          hasLiked: Boolean(raw.hasLiked),
+
+          participations: (raw.participations ?? []).map((p: any) => ({
+            id: p.id,
+            userId: p.userId,
+            name: p.user?.username ?? p.user?.name ?? p.username ?? '—',
+            description: p.description ?? '',
+            scoreLabel: p.scoreLabel ?? '-', // pas en seed -> placeholder
+            link: p.submissionUrl ?? p.link ?? undefined,
+            likes: p.voteCount ?? p.likes ?? 0,
+            hasLiked: Boolean(p.hasLiked)
+          }))
+        };
+
+        if (!cancelled) {
+          setChallenge(normalized);
+        }
+      } catch (e: any) {
+        if (!cancelled) {
+          setLoadError(e?.message ?? 'Failed to load');
+          setChallenge(null);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [slug]);
+
+  useEffect(() => {
+    if (!challenge) {
+      return;
+    }
+
+    setChallengeHasLiked(Boolean(challenge.hasLiked));
+    setChallengeLikes(challenge.likes);
+
+    setIsEditing(false);
+    setTitle(challenge.title);
+    setImageUrl(undefined); // API n’a pas image custom dans la seed
+    setDescriptionPoints([challenge.description]);
+    setDetailsPoints(challenge.details ?? []);
+    setParticipations(challenge.participations ?? []);
+  }, [challenge]);
+
   useEffect(() => {
     setVisibleCount(defaultVisible);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMd]);
 
-  // TODO: remplacer par un fetch BDD (slug)
-  const challengeFromDb: Challenge = useMemo(
-    () => ({
-      id: 'hollow-knight-steel-soul-no-spells',
-      slug: slug ?? 'hollow-knight-steel-soul-no-spells',
-      title: 'Steel Soul: No Spells',
-      gameId: 'hollow-knight',
-      gameTitle: 'Hollow Knight',
-      createdBy: 'NailMaster',
-      image: undefined,
-      gameImage: '/real-rat.png',
-      description: [
-        'Vaincre un boss majeur en mode Steel Soul.',
-        'Aucun sort autorisé (Vengeful Spirit, Desolate Dive, Howling Wraiths...).',
-        'Le run doit être en solo, sans mods.'
-      ],
-      details: [
-        'Lancer une nouvelle partie en Steel Soul.',
-        'Choisir un boss majeur (Hornet, Soul Master, Mantis Lords, etc.).',
-        'Interdiction d’utiliser tout sort pendant le combat.',
-        'Les charms sont autorisés (sauf si tu veux ajouter une variante).',
-        'Valider avec une preuve vidéo complète du combat.'
-      ],
-      hasLiked: true,
-      likes: 353,
-      participations: [
-        {
-          id: 'p1',
-          userId: 'user_2',
-          name: 'Léo V.',
-          scoreLabel: 'Boss: Soul Master • Temps: 2:41',
-          description: 'Vaincu Soul Master en Steel Soul, vidéo complète disponible.',
-          link: 'https://youtube.com/watch?v=hollowknight_run_241',
-          hasLiked: false,
-          likes: 14
-        },
-        {
-          id: 'p2',
-          userId: 'user_3',
-          name: 'Mina R.',
-          scoreLabel: 'Boss: Mantis Lords • Temps: 3:18',
-          description: 'Mantis Lords sans sorts, run enregistré.',
-          link: 'https://youtube.com/watch?v=mantis_no_spells_318',
-          hasLiked: true,
-          likes: 25
-        },
-        {
-          id: 'p3',
-          userId: 'user_4',
-          name: 'Yanis K.',
-          scoreLabel: 'Boss: Hornet (Greenpath) • Temps: 1:57',
-          description: 'Hornet down, proof video included.',
-          link: 'https://youtube.com/watch?v=hornet_steel_soul_157',
-          hasLiked: false,
-          likes: 8
-        },
-        {
-          id: 'p4',
-          userId: 'user_5',
-          name: 'Chloé D.',
-          scoreLabel: 'Boss: Broken Vessel • Temps: 4:06',
-          description: 'Broken Vessel kill without spells.',
-          link: 'https://youtube.com/watch?v=brokenvessel_nospells_406',
-          hasLiked: false,
-          likes: 3
-        },
-        {
-          id: 'p5',
-          userId: 'user_6',
-          name: 'Samir B.',
-          scoreLabel: 'Boss: Dung Defender • Temps: 2:12',
-          description: 'Dung Defender run, no spells used.',
-          link: 'https://youtube.com/watch?v=dungdefender_212',
-          hasLiked: true,
-          likes: 21
-        }
-      ]
-    }),
-    [slug]
-  );
+  const activeParticipation = useMemo(() => {
+    if (!activeParticipationId) {
+      return null;
+    }
+    return participations.find((p) => p.id === activeParticipationId) ?? null;
+  }, [activeParticipationId, participations]);
 
-  // Like toggle
-  const [challengeHasLiked, setChallengeHasLiked] = useState(!!challengeFromDb.hasLiked);
-  const [challengeLikes, setChallengeLikes] = useState(challengeFromDb.likes);
+  const currentUserId = user?.id ?? ''; // à revoir avec l'auth
+  const isOwnActiveParticipation = Boolean(
+    activeParticipation && activeParticipation.userId === currentUserId
+  );
 
   useEffect(() => {
-    setChallengeHasLiked(!!challengeFromDb.hasLiked);
-    setChallengeLikes(challengeFromDb.likes);
-  }, [challengeFromDb.hasLiked, challengeFromDb.likes]);
+    const participationId = searchParams.get('participationId');
+    if (!participationId) {
+      return;
+    }
 
-  // Mode édition
-  const [isEditing, setIsEditing] = useState(false);
-  const [title, setTitle] = useState(challengeFromDb.title);
-  const [imageUrl, setImageUrl] = useState<string | undefined>(challengeFromDb.image);
-  const [descriptionPoints, setDescriptionPoints] = useState<string[]>(challengeFromDb.description);
-  const [detailsPoints, setDetailsPoints] = useState<string[]>(challengeFromDb.details);
-  const [participations, setParticipations] = useState<Participation[]>(
-    challengeFromDb.participations
-  );
+    const p = participations.find((x) => x.id === participationId);
+    if (!p) {
+      return;
+    }
 
-  // Nombre de participations visibles
-  const [visibleCount, setVisibleCount] = useState(defaultVisible);
+    setModalMode('view');
+    setActiveParticipationId(participationId);
+    setPDesc(p.description ?? '');
+    setPLink(p.link ?? '');
+    setIsModalOpen(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, participations]);
 
-  const headerImage = imageUrl?.trim() ? imageUrl : challengeFromDb.gameImage;
+  // Helpers UI
+  const headerImage = imageUrl?.trim()
+    ? imageUrl
+    : challenge?.gameImage?.trim()
+      ? challenge.gameImage
+      : '/real-rat.png';
 
-  const formatLikes = (n: number) => {
-    return `${n}`;
-  };
+  const formatLikes = (n: number) => `${n}`;
 
-  const removeParticipation = (id: string) => {
-    setParticipations((prev) => prev.filter((p) => p.id !== id));
-    // TODO BDD: delete participation by id
+  const displayedParticipations = participations.slice(0, visibleCount);
+  const canViewMore = visibleCount < participations.length;
+
+  const authHeaders = (): Record<string, string> => {
+    if (!token) { return {} as Record<string, string>; }
+    return { Authorization: `Bearer ${token}` };
   };
 
   const saveEdits = async () => {
-    // TODO BDD: update challenge (title, imageUrl, descriptionPoints, detailsPoints)
-    setDescriptionPoints((prev) => prev.map(clamp100));
+    if (!challenge) { return; }
+
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+    const payload = {
+      title: title.trim(),
+      description: clamp100(descriptionPoints[0] ?? ''),
+      details: detailsPoints
+    };
+
+    const res = await fetch(`${baseUrl}challenges/${challenge.id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeaders()
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      const msg = await res.text().catch(() => '');
+      alert(msg || 'Failed to save');
+      return;
+    }
+
+    setChallenge((prev) =>
+      prev
+        ? {
+            ...prev,
+            title: payload.title,
+            description: payload.description,
+            details: payload.details
+          }
+        : prev
+    );
+
     setIsEditing(false);
   };
 
   const cancelEdits = () => {
-    setTitle(challengeFromDb.title);
-    setImageUrl(challengeFromDb.image);
-    setDescriptionPoints(challengeFromDb.description);
-    setDetailsPoints(challengeFromDb.details);
+    if (!challenge) { return; }
+    setTitle(challenge.title);
+    setImageUrl(undefined);
+    setDescriptionPoints([challenge.description]);
+    setDetailsPoints(challenge.details ?? []);
     setIsEditing(false);
   };
 
-  // Gestion des lignes à puces
   const addBullet = (kind: 'desc' | 'details') => {
     if (kind === 'desc') {
       setDescriptionPoints((p) => [...p, '']);
@@ -225,30 +320,6 @@ export default function ChallengeDetailsPage() {
       setDetailsPoints((p) => p.filter((_, i) => i !== idx));
     }
   };
-
-  // Participations à afficher
-  const displayedParticipations = participations.slice(0, visibleCount);
-  const canViewMore = visibleCount < participations.length;
-
-  const currentUserId = 'user_1'; // TODO: remplacer par user session
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState<'create' | 'view' | 'edit'>('view');
-  const [activeParticipationId, setActiveParticipationId] = useState<string | null>(null);
-
-  // Champs du formulaire (create / edit)
-  const [pDesc, setPDesc] = useState('');
-  const [pLink, setPLink] = useState('');
-
-  const activeParticipation = useMemo(() => {
-    if (!activeParticipationId) {
-      return null;
-    }
-    return participations.find((p) => p.id === activeParticipationId) ?? null;
-  }, [activeParticipationId, participations]);
-
-  const isOwnActiveParticipation =
-    !!activeParticipation && activeParticipation.userId === currentUserId;
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -275,61 +346,75 @@ export default function ChallengeDetailsPage() {
     setIsModalOpen(true);
   };
 
-  // Ouvrir automatiquement le modal si participationId est dans l'URL
-  useEffect(() => {
-    const participationId = searchParams.get('participationId');
-    if (participationId) {
-      const participation = participations.find((p) => p.id === participationId);
-      if (participation) {
-        openViewModal(participationId);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
-
   const openEditModalForActive = () => {
-    if (!activeParticipation) {
-      return;
-    }
+    if (!activeParticipation) { return; }
     setModalMode('edit');
     setPDesc(activeParticipation.description ?? '');
     setPLink(activeParticipation.link ?? '');
   };
 
+  // Ces 3 actions nécessitent des routes côté Express (participations)
   const submitCreate = async () => {
+    if (!challenge) { return; }
     const desc = pDesc.trim();
     const link = pLink.trim();
+    if (!desc) { return; }
 
-    if (!desc) {
+    // POST /challenges/:id/participations  
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+    const res = await fetch(`${baseUrl}challenges/${challenge.id}/participations`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeaders()
+      },
+      body: JSON.stringify({ description: desc, submissionUrl: link || null })
+    });
+
+    if (!res.ok) {
+      const msg = await res.text().catch(() => '');
+      alert(msg || 'Failed to create participation');
       return;
     }
 
+    const data = await res.json().catch(() => null);
+    const created = (data?.participation ?? data) as any;
+
     const newP: Participation = {
-      id: `p_${Date.now()}`,
-      userId: currentUserId,
-      name: 'Username',
-      scoreLabel: 'Score -',
-      description: desc,
-      link: link || undefined,
+      id: created?.id ?? `p_${Date.now()}`,
+      userId: created?.userId ?? currentUserId,
+      name: created?.user?.username ?? user?.username ?? 'Username',
+      scoreLabel: '-',
+      description: created?.description ?? desc,
+      link: created?.submissionUrl ?? (link || undefined),
       hasLiked: false,
       likes: 0
     };
 
     setParticipations((prev) => [newP, ...prev]);
-
-    // TODO BDD: insert participation (challengeFromDb.id, userId, desc, link)
     closeModal();
   };
 
   const saveEdit = async () => {
-    if (!activeParticipation) {
-      return;
-    }
-
+    if (!activeParticipation) { return; }
     const desc = pDesc.trim();
     const link = pLink.trim();
+    if (!desc) { return; }
 
-    if (!desc) {
+    // PATCH /participations/:id
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+    const res = await fetch(`${baseUrl}participations/${activeParticipation.id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeaders()
+      },
+      body: JSON.stringify({ description: desc, submissionUrl: link || null })
+    });
+
+    if (!res.ok) {
+      const msg = await res.text().catch(() => '');
+      alert(msg || 'Failed to update participation');
       return;
     }
 
@@ -339,35 +424,140 @@ export default function ChallengeDetailsPage() {
       )
     );
 
-    // TODO BDD: update participation (activeParticipation.id)
     setModalMode('view');
   };
 
   const deleteActiveParticipation = async () => {
-    if (!activeParticipation) {
+    if (!activeParticipation) { return; }
+
+    // DELETE /participations/:id
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+    const res = await fetch(`${baseUrl}participations/${activeParticipation.id}`, {
+      method: 'DELETE',
+      headers: { ...authHeaders() }
+    });
+
+    if (!res.ok) {
+      const msg = await res.text().catch(() => '');
+      alert(msg || 'Failed to delete participation');
       return;
     }
 
     setParticipations((prev) => prev.filter((x) => x.id !== activeParticipation.id));
-
-    // TODO BDD: delete participation (activeParticipation.id)
     closeModal();
   };
+
+  // Like challenge 
+    const toggleChallengeLike = async () => {
+      if (!challenge) { return; }
+  
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+      const next = !challengeHasLiked;
+  
+      setChallengeHasLiked(next);
+      setChallengeLikes((n) => n + (next ? 1 : -1));
+  
+      const res = await fetch(`${baseUrl}challenges/${challenge.id}/votes`, {
+        method: next ? 'POST' : 'DELETE',
+        headers: { ...authHeaders() }
+      });
+  
+      if (!res.ok) {
+        setChallengeHasLiked(!next);
+        setChallengeLikes((n) => n + (next ? -1 : 1));
+      }
+    };
+  
+    const toggleParticipationLike = async (p: Participation) => {
+      if (!challenge) { return; }
+  
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+      const next = !p.hasLiked;
+  
+      setParticipations((prev) =>
+        prev.map((x) =>
+          x.id === p.id ? { ...x, hasLiked: next, likes: x.likes + (next ? 1 : -1) } : x
+        )
+      );
+  
+      const res = await fetch(`${baseUrl}participations/${p.id}/votes`, {
+        method: next ? 'POST' : 'DELETE',
+        headers: { ...authHeaders() }
+      });
+  
+      if (!res.ok) {
+        setParticipations((prev) =>
+          prev.map((x) =>
+            x.id === p.id ? { ...x, hasLiked: !next, likes: x.likes + (next ? -1 : 1) } : x
+          )
+        );
+      }
+    };
+  
+    const onToggleChallengeLike = () => {
+      toggleChallengeLike();
+    };
+  
+    const onToggleParticipationLike = (pId: string) => {
+      const p = participations.find((x) => x.id === pId);
+      if (!p) { return; }
+      toggleParticipationLike(p);
+    };
+  
+    const removeParticipation = async (id: string) => {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+      const res = await fetch(`${baseUrl}participations/${id}`, {
+        method: 'DELETE',
+        headers: { ...authHeaders() }
+      });
+  
+      if (!res.ok) {
+        const msg = await res.text().catch(() => '');
+        alert(msg || 'Failed to delete participation');
+        return;
+      }
+  
+      setParticipations((prev) => prev.filter((x) => x.id !== id));
+      if (activeParticipationId === id) {
+        closeModal();
+      }
+    };
+  
+    const deleteActive = async () => {
+      await deleteActiveParticipation();
+    };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
+        <div className="text-white/70">Loading...</div>
+      </div>
+    );
+  }
+
+  if (loadError || !challenge) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-6">
+        <div className="text-center">
+          <div className="text-white font-semibold">Challenge not found</div>
+          <div className="text-white/60 mt-2">
+            {loadError ? loadError : 'No data returned from API.'}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen ">
       <main className="mx-auto w-full max-w-[430px] md:max-w-5xl px-4 md:px-8 py-5 md:py-8">
-        {/* Card principale */}
         <div className="rounded-3xl bg-(--background-header)/70 ring-1 ring-background/10 shadow-[0_20px_60px_rgba(0,0,0,0.55)] overflow-hidden">
-          {/* Header */}
           <div className="relative h-32 md:h-48 lg:h-64 w-full bg-(--button-area)">
             <Image src={headerImage} alt={title} fill sizes="430px" className="object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-foreground/65 via-foreground/15 to-transparent" />
           </div>
 
-          {/* Contenu */}
           <div className="p-5 md:p-8">
-            {/* Title + like */}
             <div className="flex items-start justify-between gap-3">
               {!isEditing ? (
                 <h1 className="text-2xl md:text-4xl font-semibold leading-tight">{title}</h1>
@@ -383,13 +573,7 @@ export default function ChallengeDetailsPage() {
               <div className="flex flex-col items-center leading-none">
                 <button
                   type="button"
-                  onClick={() => {
-                    setChallengeHasLiked((prev) => {
-                      const next = !prev;
-                      setChallengeLikes((likes) => likes + (next ? -1 : 1));
-                      return next;
-                    });
-                  }}
+                  onClick={onToggleChallengeLike}
                   className="relative w-10 h-10 shrink-0 hover:opacity-90"
                   aria-pressed={challengeHasLiked}
                   aria-label={challengeHasLiked ? 'Unlike challenge' : 'Like challenge'}
@@ -406,21 +590,20 @@ export default function ChallengeDetailsPage() {
               </div>
             </div>
 
-            {/* Meta + Modify */}
             <div className="mt-3 flex items-start justify-between gap-3">
               <div className="text-foreground/80">
                 <div className="text-sm">
                   <span className="text-foreground/60">Game :</span>{' '}
                   <Link
-                    href={`/games/${challengeFromDb.gameId}`}
+                    href={`/games/${challenge.gameId}`}
                     className="text-xs font-semibold tracking-widest text-(--button-select)/90 mb-2 hover:underline"
                   >
-                    {challengeFromDb.gameTitle}
+                    {challenge.gameTitle}
                   </Link>
                 </div>
                 <div className="text-sm">
                   <span className="text-foreground/60">Created by</span>{' '}
-                  <span className="font-semibold">{challengeFromDb.createdBy}</span>
+                  <span className="font-semibold">{challenge.createdBy}</span>
                 </div>
               </div>
 
@@ -452,7 +635,6 @@ export default function ChallengeDetailsPage() {
               )}
             </div>
 
-            {/* Image edit */}
             {isEditing ? (
               <div className="mt-4">
                 <div className="text-sm font-semibold text-foreground/80 mb-2">Image URL</div>
@@ -462,13 +644,10 @@ export default function ChallengeDetailsPage() {
                   className="w-full bg-foreground/40 ring-1 ring-background/10 rounded-xl px-3 py-2 text-sm focus:outline-none"
                   placeholder="https://..."
                 />
-                <div className="text-xs text-foreground/50 mt-2">
-                  Laisse vide pour afficher l’image du jeu par défaut.
-                </div>
+                <div className="text-xs text-foreground/50 mt-2">Laisse vide pour afficher l’image du jeu par défaut.</div>
               </div>
             ) : null}
 
-            {/* Description */}
             <div className="mt-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -489,15 +668,12 @@ export default function ChallengeDetailsPage() {
                       className="flex-1 bg-(--background-header)/40 ring-1 ring-background/10 rounded-xl px-3 py-2 text-sm focus:outline-none resize-none min-h-[44px]"
                       placeholder="Description (max 100 chars)"
                     />
-                    <div className="text-xs text-foreground/50 w-12 text-right pt-2">
-                      {(descriptionPoints[0] ?? '').length}/100
-                    </div>
+                    <div className="text-xs text-foreground/50 w-12 text-right pt-2">{(descriptionPoints[0] ?? '').length}/100</div>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Challenge Details */}
             <div className="mt-5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -506,11 +682,7 @@ export default function ChallengeDetailsPage() {
                 </div>
 
                 {isEditing ? (
-                  <button
-                    type="button"
-                    onClick={() => addBullet('details')}
-                    className="text-sm text-foreground/70 hover:text-foreground"
-                  >
+                  <button type="button" onClick={() => addBullet('details')} className="text-sm text-foreground/70 hover:text-foreground">
                     + Add
                   </button>
                 ) : null}
@@ -546,15 +718,12 @@ export default function ChallengeDetailsPage() {
               </div>
             </div>
 
-            {/* Participate */}
             <div className="mt-6 flex justify-center md:justify-end">
               {user ? (
                 <button
                   type="button"
                   className="px-10 py-3 rounded-full bg-purple-600 hover:bg-purple-500 font-semibold shadow-[0_10px_25px_rgba(0,0,0,0.45)]"
-                  onClick={() => {
-                    openCreateModal();
-                  }}
+                  onClick={openCreateModal}
                 >
                   Participate
                 </button>
@@ -563,18 +732,12 @@ export default function ChallengeDetailsPage() {
                   <p className="text-center">Connection required to participate</p>
                   <nav className="flex justify-center mb-8">
                     <Link href="/login-register/login">
-                      <button
-                        type="button"
-                        className="bg-(--button-area) p-3 rounded-3xl mr-8 mt-6 cursor-pointer"
-                      >
+                      <button type="button" className="bg-(--button-area) p-3 rounded-3xl mr-8 mt-6 cursor-pointer">
                         Login
                       </button>
                     </Link>
                     <Link href="/login-register/register">
-                      <button
-                        type="button"
-                        className="bg-(--button-select) p-3 rounded-3xl  mt-6 cursor-pointer"
-                      >
+                      <button type="button" className="bg-(--button-select) p-3 rounded-3xl  mt-6 cursor-pointer">
                         Register
                       </button>
                     </Link>
@@ -604,31 +767,15 @@ export default function ChallengeDetailsPage() {
                   ) : null}
                 </div>
 
-                {/* Likes + en mode Modify : bouton suppression participation */}
                 <div className="flex items-center gap-2 shrink-0">
                   <div
                     onClick={(e) => e.stopPropagation()}
-                    onMouseDown={(e) => e.stopPropagation()} // utile sur mobile
+                    onMouseDown={(e) => e.stopPropagation()}
                     className="flex flex-col items-center leading-none"
                   >
                     <button
                       type="button"
-                      onClick={() => {
-                        setParticipations((prev) =>
-                          prev.map((x) => {
-                            if (x.id !== p.id) {
-                              return x;
-                            }
-                            const currentlyLiked = Boolean(x.hasLiked);
-                            const nextHasLiked = !currentlyLiked;
-                            return {
-                              ...x,
-                              hasLiked: nextHasLiked,
-                              likes: currentlyLiked ? x.likes + 1 : x.likes - 1
-                            };
-                          })
-                        );
-                      }}
+                      onClick={() => onToggleParticipationLike(p.id)}
                       className="relative w-8 h-8 hover:opacity-90"
                       aria-pressed={!!p.hasLiked}
                       aria-label={p.hasLiked ? 'Unlike participation' : 'Like participation'}
@@ -643,7 +790,6 @@ export default function ChallengeDetailsPage() {
                     </button>
                     <div className="mt-1 text-xs text-white/70">{formatLikes(p.likes)}</div>
 
-                    {/* En mode Modify : bouton suppression participation */}
                     {isEditing ? (
                       <button
                         type="button"
@@ -661,45 +807,36 @@ export default function ChallengeDetailsPage() {
           ))}
         </div>
 
-        {/* View more */}
         {canViewMore ? (
           <div className="mt-5 flex justify-center pb-8">
             <button
               type="button"
               className="px-6 py-2 rounded-full bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm font-semibold"
-              onClick={() =>
-                setVisibleCount((v) => Math.min(v + defaultVisible, participations.length))
-              }
+              onClick={() => setVisibleCount((v) => Math.min(v + defaultVisible, participations.length))}
             >
               View more
             </button>
           </div>
         ) : null}
 
+        {/* Modal */}
         {isModalOpen ? (
           <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4"
             onMouseDown={(e) => {
-              // clic dehors => close
-              if (e.target === e.currentTarget) {
-                closeModal();
-              }
+              if (e.target === e.currentTarget) { closeModal(); }
             }}
           >
             <div className="w-full max-w-[430px] md:max-w-xl rounded-3xl bg-slate-900 ring-1 ring-background/10 shadow-[0_20px_60px_rgba(0,0,0,0.65)] overflow-hidden">
-              {/* Header */}
               <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between">
-                <div className="font-semibold">
-                  {modalMode === 'create' ? 'New participation' : 'Participation'}
-                </div>
+                <div className="font-semibold">{modalMode === 'create' ? 'New participation' : 'Participation'}</div>
 
-                {/* suppression en haut à droite si owner */}
                 {modalMode !== 'create' && isOwnActiveParticipation ? (
                   <button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      deleteActiveParticipation();
+                      deleteActive();
                     }}
                     className="px-3 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm"
                     aria-label="Delete participation"
@@ -718,12 +855,9 @@ export default function ChallengeDetailsPage() {
                 )}
               </div>
 
-              {/* Body */}
               <div className="p-5 space-y-4">
-                {/* Description */}
                 <div>
                   <div className="text-sm font-semibold text-white/80 mb-2">Description</div>
-
                   {modalMode === 'view' ? (
                     <div className="rounded-2xl bg-slate-950/30 ring-1 ring-background/10 p-3 text-white/85 whitespace-pre-wrap">
                       {activeParticipation?.description ?? ''}
@@ -738,10 +872,8 @@ export default function ChallengeDetailsPage() {
                   )}
                 </div>
 
-                {/* Link */}
                 <div>
                   <div className="text-sm font-semibold text-white/80 mb-2">Link</div>
-
                   {modalMode === 'view' ? (
                     <div className="rounded-2xl bg-slate-950/30 ring-1 ring-background/10 p-3 text-white/85 break-all">
                       {activeParticipation?.link ? activeParticipation.link : '—'}
@@ -757,9 +889,7 @@ export default function ChallengeDetailsPage() {
                 </div>
               </div>
 
-              {/* Footer */}
               <div className="px-5 py-4 border-t border-white/10 flex items-center justify-end gap-2">
-                {/* VIEW mode */}
                 {modalMode === 'view' ? (
                   <>
                     {isOwnActiveParticipation ? (
@@ -782,7 +912,6 @@ export default function ChallengeDetailsPage() {
                   </>
                 ) : (
                   <>
-                    {/* Create / Edit */}
                     <button
                       type="button"
                       onClick={() => {
