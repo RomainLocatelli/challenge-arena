@@ -40,7 +40,9 @@ type ChallengeDetails = {
   createdAt: string;
   updatedAt: string;
   createdBy: string;
+  createdById: string;
   gameId: string;
+  gameSlug?: string;
   gameTitle: string;
   gameImage: string;
   hasLiked?: boolean;
@@ -163,10 +165,10 @@ export default function ChallengeDetailsPage() {
           scoreFormat: raw.scoreFormat ?? '',
           createdAt: raw.createdAt ?? '',
           updatedAt: raw.updatedAt ?? '',
-
-          createdBy: raw.createdBy?.username ?? raw.createdBy?.name ?? raw.createdBy ?? '—',
-
+          createdBy: raw.createdBy?.username ?? raw.createdBy?.name ?? raw.createdBy ?? '—', 
+          createdById: raw.createdBy?.id ?? raw.createdById ?? '',
           gameId: raw.gameId ?? raw.game?.id ?? '',
+          gameSlug: raw.game?.slug ?? raw.gameSlug ?? raw.gameId ?? '',
           gameTitle: raw.game?.title ?? raw.gameTitle ?? '',
           gameImage: raw.game?.imageUrl ?? raw.gameImage ?? '',
 
@@ -243,6 +245,7 @@ setDetailsPoints(finalDetails);
   }, [activeParticipationId, participations]);
 
   const currentUserId = user?.id ?? ''; // à revoir avec l'auth
+  const isChallengeOwner = Boolean(challenge?.createdById && challenge.createdById === currentUserId);
   const isOwnActiveParticipation = Boolean(
     activeParticipation && activeParticipation.userId === currentUserId
   );
@@ -333,10 +336,12 @@ setDetailsPoints(finalDetails);
     if (!challenge) {
       return;
     }
+    const parsed = splitDescriptionAndDetails(challenge.description);
+
     setTitle(challenge.title);
     setImageUrl(undefined);
-    setDescriptionPoints([challenge.description]);
-    setDetailsPoints(challenge.details ?? []);
+    setDescriptionPoints([parsed.desc]);
+    setDetailsPoints(parsed.details);
     setIsEditing(false);
   };
 
@@ -640,7 +645,7 @@ setDetailsPoints(finalDetails);
                   aria-label={challengeHasLiked ? 'Unlike challenge' : 'Like challenge'}
                 >
                   <Image
-                    src={challengeHasLiked ? '/like 1.png' : '/like 0.png'}
+                    src={challengeHasLiked ? '/like 0.png' : '/like 1.png'}
                     alt={challengeHasLiked ? 'Liked' : 'Not liked'}
                     fill
                     sizes="40px"
@@ -656,7 +661,7 @@ setDetailsPoints(finalDetails);
                 <div className="text-sm">
                   <span className="text-foreground/60">Game :</span>{' '}
                   <Link
-                    href={`/games/${challenge.gameId}`}
+                    href={`/games/${challenge.gameSlug ?? challenge.gameId}`}
                     className="text-xs font-semibold tracking-widest text-(--button-select)/90 mb-2 hover:underline"
                   >
                     {challenge.gameTitle}
@@ -668,32 +673,34 @@ setDetailsPoints(finalDetails);
                 </div>
               </div>
 
-              {!isEditing ? (
-                <button
-                  type="button"
-                  onClick={() => setIsEditing(true)}
-                  className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
-                >
-                  Modify
-                </button>
-              ) : (
-                <div className="flex gap-2">
+              {isChallengeOwner ? (
+                !isEditing ? (
                   <button
                     type="button"
-                    onClick={cancelEdits}
-                    className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm font-semibold"
+                    onClick={() => setIsEditing(true)}
+                    className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
                   >
-                    Cancel
+                    Modify
                   </button>
-                  <button
-                    type="button"
-                    onClick={saveEdits}
-                    className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
-                  >
-                    Save
-                  </button>
-                </div>
-              )}
+                ) : (
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={cancelEdits}
+                      className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm font-semibold"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={saveEdits}
+                      className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                    >
+                      Save
+                    </button>
+                  </div>
+                )
+              ) : null}
             </div>
 
             {isEditing ? (

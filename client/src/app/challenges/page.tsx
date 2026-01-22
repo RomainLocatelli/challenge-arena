@@ -96,8 +96,6 @@ export default function ChallengesPage() {
 
 function extractShortDescription(raw: string) {
   const text = (raw ?? '').replace(/\r\n/g, '\n').trim();
-
-  // coupe dès qu’on voit une ligne "Details" (avec ou sans :)
   const idx = text.search(/\n\s*details\s*:?\s*\n/i);
 
   if (idx === -1) {
@@ -202,7 +200,7 @@ function extractShortDescription(raw: string) {
               </h2>
               {user ? (
                 <Link
-                  href="/challenges/create"
+                  href={`/games/${selectedGameId || ''}`}
                   className="px-4 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
                 >
                   Create a challenge
