@@ -71,6 +71,7 @@
   --button-game-challenge: color-mix(in srgb, var(--color-amber-600) 80%, transparent);
   --button-game-challenge-hover: var(--color-amber-600);
   --searchbar-color: #6203d721;
+  --modal-filter-searchebar: #6203d721;
   --leadboard-first: #ffd700;
   --leadboard-second: #c0c0c0;
   --leadboard-third: #cd7f32;
