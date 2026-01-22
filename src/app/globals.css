@@ -39,20 +39,20 @@
 
 @media (prefers-color-scheme: light) {
   :root {
-    --background: #f9fafb;
-    --foreground: #1a1a1a;
-    --background-header: #eef1f7;
-    --button-area: #e4e7ee;
-    --button-select: color-mix(in srgb, #8554da 80%, transparent);
+    --background: #0c1326;
+    --foreground: #ffffff;
+    --background-header: #0c1326;
+    --button-area: #1f283b;
+    --button-select: #7c39ed;
     --button-game-challenge: color-mix(in srgb, #8554da 80%, transparent);
     --button-game-challenge-hover: #8554da;
-    --searchbar-color: #6b3cf615;
-    --leadboard-first: #d4af37;
-    --leadboard-second: #9ca3af;
-    --leadboard-third: #b87333;
-    --leadboard-mix-one: #ffffff;
-    --leadboard-mix-two: #e6dcff;
-    --leadboard-me: #e5e7eb;
+    --searchbar-color: #6203d721;
+    --leadboard-first: #ffd700;
+    --leadboard-second: #c0c0c0;
+    --leadboard-third: #cd7f32;
+    --leadboard-mix-one: #1f283b;
+    --leadboard-mix-two: #b386ff;
+    --leadboard-me: #1f283b;
     --text-hover: #fff8e1;
     --error-text-message: var(--color-red-400);
     --error-area-message: color-mix(in srgb, var(--color-red-500) 10%, transparent);
@@ -65,8 +65,8 @@
   --background-header: #0c1326;
   --button-area: #1f283b;
   --button-select: #7c39ed;
-  --button-game-challenge: color-mix(in srgb, #8554da 80%, transparent);
-  --button-game-challenge-hover: #8554da;
+  --button-game-challenge: color-mix(in srgb, var(--color-amber-600) 80%, transparent);
+  --button-game-challenge-hover: var(--color-amber-600);
   --searchbar-color: #6203d721;
   --leadboard-first: #ffd700;
   --leadboard-second: #c0c0c0;
