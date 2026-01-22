@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/app/context/AuthContext';
 import { LogoutButton } from './Logout';
+import ThemeToggle from './light-dark-button';
 
 export default function BurgerMenu() {
   const [isClose, setIsClose] = useState(false);
@@ -83,6 +84,9 @@ export default function BurgerMenu() {
             className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/support') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
           >
             <Link href="/support">Support</Link>
+          </li>
+          <li>
+            <ThemeToggle />
           </li>
           {user ? (
             <li className={'m-1.5 pl-1.5 pr-1.5'}>

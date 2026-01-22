@@ -128,7 +128,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen ">
+    <div className="min-h-screen light:-bg-(--background-header)">
       {/* GamerChallenge news area */}
       <div className="relative h-40 m-5 ml-10 mr-10 rounded-4xl overflow-hidden">
         <img
