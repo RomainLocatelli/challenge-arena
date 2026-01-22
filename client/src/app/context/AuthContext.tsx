@@ -5,10 +5,8 @@ import { createContext, useContext, useEffect, useState } from 'react';
 type User = {
   id: string;
   username: string;
-  email: string;
   role: string;
 };
-
 type AuthContextType = {
   user: User | null;
   setUser: (user: User | null) => void;

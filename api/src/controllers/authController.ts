@@ -40,7 +40,7 @@ export const loginController = async (req: Request, res: Response, next: NextFun
     res.cookie('accessToken', token, {
       httpOnly: true,
       secure: false, // ← En dev, on force false pour localhost
-      sameSite: 'none', // ← Permet cross-origin
+      sameSite: 'lax', // ← Permet cross-origin
       maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
@@ -59,6 +59,7 @@ export const meController = async (req: Request, res: Response, next: NextFuncti
   try {
     // Le userId est ajouté par le middleware auth
     const userId = req.userId;
+    console.log('userId check is here ===> ', userId);
 
     if (!userId) {
       throw new Error('User ID not found in request');
@@ -66,6 +67,7 @@ export const meController = async (req: Request, res: Response, next: NextFuncti
 
     // Récupérer l'utilisateur depuis la DB
     const user = await authService.getUserById(userId);
+    console.log('user authcontroller check is here ===> ', user);
 
     res.status(200).json({
       message: 'User retrieved successfully',

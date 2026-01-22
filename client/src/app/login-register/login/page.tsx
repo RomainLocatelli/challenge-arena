@@ -37,7 +37,6 @@ export default function AuthLogin() {
       });
 
       const data = await response.json();
-
       if (!response.ok) {
         // Gérer les erreurs du backend
         setErrorMessage(data.message || 'Invalid credentials');

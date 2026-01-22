@@ -16,6 +16,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
   try {
     // Extraire le token depuis les cookies
     const token = req.cookies.accessToken;
+    console.log('token check is here ===> ', token);
 
     if (!token) {
       throw new AppError('No token provided', 401);
@@ -24,11 +25,13 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
     // Vérifier le JWT
     const secret = process.env.JWT_SECRET || 'fallback-secret';
     const decoded = jwt.verify(token, secret) as { userId: string; username: string; role: string };
+    console.log('decoded check is here ===> ', decoded);
 
     // Vérifier que l'user existe et n'est pas supprimé ou banni
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId }
     });
+    console.log('user check is here ===> ', user);
 
     if (!user || user.isDeleted) {
       throw new AppError('User account deleted or not found', 403);
@@ -40,6 +43,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 
     // Ajouter userId dans req pour l'utiliser dans les controllers
     req.userId = decoded.userId;
+    console.log('req.userId check is here ===> ', req.userId);
 
     // Passer au middleware/controller suivant
     next();
