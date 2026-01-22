@@ -30,13 +30,13 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="relative w-10 h-10 rounded-lg bg-muted hover:bg-muted/80 transition-all duration-200 flex items-center justify-center group"
+      className="relative w-full h-10 rounded-lg bg-muted hover:bg-muted/80 transition-all duration-200 flex items-center justify-center group bg-(--searchbar-color)"
       aria-label={`Passer en mode ${theme === 'light' ? 'sombre' : 'clair'}`}
     >
       {/* Icône Soleil */}
       <svg
         className={`absolute w-5 h-5 transition-all duration-300 ${
-          theme === 'dark' ? 'rotate-90 scale-0 opacity-0' : 'rotate-0 scale-100 opacity-100'
+          theme === 'dark' ? 'rotate-90 scale-0 opacity-0' : 'rotate-0 scale-100 opacity-100 '
         }`}
         fill="none"
         viewBox="0 0 24 24"
