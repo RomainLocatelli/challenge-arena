@@ -1,9 +1,9 @@
 ### Variables (à remplir après les premières requêtes)
 @baseUrl = http://localhost:3000
-@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMTliZGZlYy1mYzYwLTcyNzgtOGVkMy05NWM2ODVjNTA4ZTgiLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzY5MDAwNjYyLCJleHAiOjE3Njk2MDU0NjJ9.trKr_aWxD6B8MhbWbADkwxZavW_J_ZgwORRov2-hDqY
-@aliceToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMTliZGZlYy1mYzUxLTc3NzctODhlYi0wMDA5Yzk2YzdlMmEiLCJ1c2VybmFtZSI6ImFsaWNlIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NjkwMDA2ODksImV4cCI6MTc2OTYwNTQ4OX0.LdKwifhI8zZtAxHQ_wGssIXY_I8Al3Z2k8yUfalAnSs
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMTliZGZlYy1mYzYwLTcyNzgtOGVkMy05NWM2ODVjNTA4ZTgiLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzY5MDcwMjM3LCJleHAiOjE3Njk2NzUwMzd9.bFgd7eHDbikbEOs9a-2ea2H33HBaePir-cT2aXjh-3A
+@aliceToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMTliZGZlYy1mYzUxLTc3NzctODhlYi0wMDA5Yzk2YzdlMmEiLCJ1c2VybmFtZSI6ImFsaWNlIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NjkwNzAyNTAsImV4cCI6MTc2OTY3NTA1MH0.zDKyMcRJr2ChquI88pGjNLUSF_D6Ltl2G80gS9uyB5Y
 @challengeId = 019bdfec-fd5b-70e7-a7cc-38e585179902
-@participationId = 019bdfec-ff74-7273-b4f0-9553b9ec59fe
+@participationId = 019bdfec-ff7e-700d-ab72-84bd7dd1873e
 
 ###############################################
 # 1. AUTHENTIFICATION
@@ -35,7 +35,7 @@ Content-Type: application/json
 GET {{baseUrl}}/challenges
 
 ### 2.2 Détails d'un challenge (copie un slug depuis la réponse ci-dessus)
-GET {{baseUrl}}/challenges/apex-winstreak
+GET {{baseUrl}}/challenges/forhonor-rep70
 
 ###############################################
 # 3. SIGNALEMENT (USER NORMAL)
@@ -75,6 +75,7 @@ Authorization: Bearer {{aliceToken}}
 }
 
 ### 3.4 Signaler sans être connecté (doit échouer - 401)
+# @no-cookie-jar
 POST {{baseUrl}}/reports
 Content-Type: application/json
 
