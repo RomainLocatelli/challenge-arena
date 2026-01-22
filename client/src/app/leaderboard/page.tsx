@@ -32,7 +32,7 @@ export default function Leaderboard() {
 
   useEffect(() => {
     async function getLeaderboard() {
-      const registerUrl = `${process.env.API_URL}leaderboard`;
+      const registerUrl = `${process.env.API_URL}/leaderboard`;
       const response = await fetch(registerUrl, {
         credentials: 'include'
       });
