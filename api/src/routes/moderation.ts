@@ -4,7 +4,10 @@ import {
   getReportedParticipations,
   approveContent,
   deleteReportedChallenge,
-  deleteReportedParticipation
+  deleteReportedParticipation, 
+  getAllUsers, 
+  banUser, 
+  unbanUser
 } from '../controllers/moderationController.js';
 import { authMiddleware } from '../middlewares/auth.js';
 import { requireAdmin } from '../middlewares/requireAdmin.js';
@@ -24,5 +27,10 @@ router.post('/approve', approveContent);
 // Supprimer un contenu signalé
 router.delete('/challenge/:id', deleteReportedChallenge);
 router.delete('/participation/:id', deleteReportedParticipation);
+
+// Routes de gestion des utilisateurs
+router.get('/users', getAllUsers);
+router.patch('/users/:userId/ban', banUser);
+router.patch('/users/:userId/unban', unbanUser);
 
 export default router;

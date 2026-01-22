@@ -53,6 +53,10 @@ export const login = async (data: LoginInput) => {
     throw new AppError('Invalid email or password', 401);
   }
 
+  // j'ai ajouté ici gestion des comptes supprimé / banni
+  if (user.isDeleted) {
+    throw new AppError('User account deleted or not found', 403);
+  }
   const {
     password: _1,
     email: _2,
@@ -74,6 +78,10 @@ export const getUserById = async (userId: string) => {
   if (!user) {
     throw new AppError('User not found', 404);
   }
+
+  //   if (user.isBanned) {
+  //   throw new AppError('User account banned. Contact the support.', 403);
+  // }
 
   const {
     password: _1,

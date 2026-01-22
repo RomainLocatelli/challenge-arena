@@ -34,7 +34,7 @@ export default function GamesPage() {
   useEffect(() => {
     async function getAllGames() {
       const registerUrl = process.env.NEXT_PUBLIC_API_URL || '';
-      const response = await fetch(`${registerUrl}games`);
+      const response = await fetch(`${registerUrl}/games`);
       const replyDb = await response.json();
 
       // Extraire le tableau games de l'objet
