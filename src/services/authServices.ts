@@ -75,9 +75,13 @@ export const getUserById = async (userId: string) => {
     where: { id: userId }
   });
 
-  if (user.isBanned) {
-    throw new AppError('User account banned. Contact the support.', 403);
+  if (!user) {
+    throw new AppError('User not found', 404);
   }
+
+  //   if (user.isBanned) {
+  //   throw new AppError('User account banned. Contact the support.', 403);
+  // }
 
   const {
     password: _1,
