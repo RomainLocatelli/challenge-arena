@@ -94,6 +94,18 @@ export default function ChallengesPage() {
     fetchChallenges();
   }, []);
 
+function extractShortDescription(raw: string) {
+  const text = (raw ?? '').replace(/\r\n/g, '\n').trim();
+
+  // coupe dès qu’on voit une ligne "Details" (avec ou sans :)
+  const idx = text.search(/\n\s*details\s*:?\s*\n/i);
+
+  if (idx === -1) {
+    return text;
+  }
+  return text.slice(0, idx).trim();
+}
+
   /* ======================
      FILTERING
   ====================== */
@@ -238,7 +250,9 @@ export default function ChallengesPage() {
                       <div className="text-2xl font-semibold leading-tight mb-2">{c.title}</div>
 
                       {/* Description */}
-                      <div className="text-foreground/70 leading-relaxed mb-4">{c.description}</div>
+                      <div className="text-foreground/70 leading-relaxed mb-4">
+                        {extractShortDescription(c.description)}
+                      </div>
 
                       {/* votes + bouton */}
                       <div className="mt-auto flex items-center justify-between pt-2">
