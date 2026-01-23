@@ -16,11 +16,23 @@ export const participationSlugParamSchema = z.object({
 });
 
 export const createParticipationBodySchema = z.object({
-  submissionUrl: z.string().url('Must be a valid URL'),
+  submissionUrl: z
+    .string()
+    .trim()
+    .url('Must be a valid URL')
+    .optional()
+    .or(z.literal('')),
   description: z.string().max(500, 'Description too long').optional()
 });
 
 export const updateParticipationBodySchema = z.object({
-  submissionUrl: z.string().url('Must be a valid URL').optional(),
+  submissionUrl: z
+    .string()
+    .trim()
+    .optional()
+    .nullable()
+    .refine((v) => !v || /^https?:\/\/.+/i.test(v), {
+      message: 'Must be a valid URL'
+    }),
   description: z.string().max(500, 'Description too long').optional()
 });

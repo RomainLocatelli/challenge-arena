@@ -40,7 +40,9 @@ type ChallengeDetails = {
   createdAt: string;
   updatedAt: string;
   createdBy: string;
+  createdById: string;
   gameId: string;
+  gameSlug?: string;
   gameTitle: string;
   gameImage: string;
   hasVoted?: boolean;
@@ -56,6 +58,14 @@ const clamp100 = (s: string) => {
     return t;
   }
   return `${t.slice(0, 97)}...`;
+};
+
+const clampParticipation = (s: string | undefined | null, max = 120) => {
+  const t = (s ?? '').trim();
+  if (t.length <= max) {
+    return t;
+  }
+  return `${t.slice(0, Math.max(0, max - 3))}...`;
 };
 
 function buildChallengeDescription(desc: string, details: string[]) {
@@ -163,9 +173,10 @@ export default function ChallengeDetailsPage() {
           scoreFormat: raw.scoreFormat ?? '',
           createdAt: raw.createdAt ?? '',
           updatedAt: raw.updatedAt ?? '',
-
-          createdBy: raw.creator?.username ?? '—',
+          createdBy: raw.createdBy?.username ?? raw.createdBy?.name ?? raw.createdBy ?? '—', 
+          createdById: raw.createdBy?.id ?? raw.createdById ?? '',
           gameId: raw.gameId ?? raw.game?.id ?? '',
+          gameSlug: raw.game?.slug ?? raw.gameSlug ?? raw.gameId ?? '',
           gameTitle: raw.game?.title ?? raw.gameTitle ?? '',
           gameImage: raw.game?.imageUrl ?? raw.gameImage ?? '',
 
@@ -240,6 +251,7 @@ export default function ChallengeDetailsPage() {
   }, [activeParticipationId, participations]);
 
   const currentUserId = user?.id ?? ''; // à revoir avec l'auth
+  const isChallengeOwner = Boolean(challenge?.createdById && challenge.createdById === currentUserId);
   const isOwnActiveParticipation = Boolean(
     activeParticipation && activeParticipation.userId === currentUserId
   );
@@ -276,11 +288,16 @@ export default function ChallengeDetailsPage() {
   const canViewMore = visibleCount < participations.length;
 
   const authHeaders = (): Record<string, string> => {
-    if (!token) {
-      return {} as Record<string, string>;
+    const t =
+      token ||
+      (typeof window !== 'undefined' ? localStorage.getItem('token') : null);
+
+    if (!t) {
+      return {};
     }
-    return { Authorization: `Bearer ${token}` };
+    return { Authorization: `Bearer ${t}` };
   };
+
 
   const saveEdits = async () => {
     if (!challenge) {
@@ -326,10 +343,12 @@ export default function ChallengeDetailsPage() {
     if (!challenge) {
       return;
     }
+    const parsed = splitDescriptionAndDetails(challenge.description);
+
     setTitle(challenge.title);
     setImageUrl(undefined);
-    setDescriptionPoints([challenge.description]);
-    setDetailsPoints(challenge.details ?? []);
+    setDescriptionPoints([parsed.desc]);
+    setDetailsPoints(parsed.details);
     setIsEditing(false);
   };
 
@@ -392,50 +411,57 @@ export default function ChallengeDetailsPage() {
   };
 
   // Ces 3 actions nécessitent des routes côté Express (participations)
-  const submitCreate = async () => {
-    if (!challenge) {
-      return;
-    }
-    const desc = pDesc.trim();
-    const link = pLink.trim();
-    if (!desc) {
-      return;
-    }
+const submitCreate = async () => {
+  if (!challenge) {
+    return;
+  }
 
-    // POST /challenges/:id/participations
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-    const res = await fetch(`${baseUrl}/participation/challenges/${challenge.id}/participations`, {
-      method: 'POST',
+  const desc = pDesc.trim();
+  const link = pLink.trim();
+  const submissionUrl =
+  link && /^https?:\/\/.+/i.test(link) ? link : null;
+
+  if (!desc) {
+    alert('Description required');
+    return;
+  }
+
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+
+  const res = await fetch(`${baseUrl}/participation/challenges/${challenge.id}/participations`, {
+    method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      credentials: 'include',
-      body: JSON.stringify({ submissionUrl: link || null, description: desc })
-    });
+    credentials: 'include',
+    body: JSON.stringify({ description: desc, submissionUrl })
+});
 
-    if (!res.ok) {
-      const msg = await res.text().catch(() => '');
-      alert(msg || 'Failed to create participation');
-      return;
-    }
+  if (!res.ok) {
+    const msg = await res.text().catch(() => '');
+    alert(msg || 'Failed to create participation');
+    return;
+  }
 
-    const data = await res.json().catch(() => null);
-    const created = (data?.participation ?? data) as any;
+  const { participation } = await res.json();
 
-    const newP: Participation = {
-      id: created?.id ?? `p_${Date.now()}`,
-      userId: created?.userId ?? currentUserId,
-      name: created?.user?.username ?? user?.username ?? 'Username',
-      scoreLabel: '-',
-      description: created?.description ?? desc,
-      link: created?.submissionUrl ?? (link || undefined),
-      hasVoted: false,
-      likes: 0
-    };
+  // Ajout direct dans la liste
+  setParticipations((prev) => [
+    {
+      id: participation.id,
+      userId: participation.userId,
+      name: participation.user.username,
+      description: participation.description,
+      link: participation.submissionUrl ?? undefined,
+      scoreLabel: '-', 
+      likes: 0,
+      hasLiked: false
+    },
+    ...prev
+  ]);
 
-    setParticipations((prev) => [newP, ...prev]);
-    closeModal();
-  };
+  closeModal();
+};
 
   const saveEdit = async () => {
     if (!activeParticipation) {
@@ -478,10 +504,11 @@ export default function ChallengeDetailsPage() {
       return;
     }
 
-    // DELETE /participations/:id
+    // DELETE /participation/:id
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
     const res = await fetch(`${baseUrl}/participation/participations/${activeParticipation.id}`, {
       method: 'DELETE',
+      headers: { ...authHeaders() },
       credentials: 'include'
     });
 
@@ -510,6 +537,7 @@ export default function ChallengeDetailsPage() {
     // TODO link to uesrLiked fetch table
     const res = await fetch(`${baseUrl}/challengeVote/challenges/${challenge.id}/vote`, {
       method: next ? 'POST' : 'DELETE',
+      headers: { ...authHeaders() },
       credentials: 'include'
     });
     if (!res.ok) {
@@ -650,7 +678,7 @@ export default function ChallengeDetailsPage() {
                 <div className="text-sm">
                   <span className="text-foreground/60">Game :</span>{' '}
                   <Link
-                    href={`/games/${challenge.gameId}`}
+                    href={`/games/${challenge.gameSlug ?? challenge.gameId}`}
                     className="text-xs font-semibold tracking-widest text-(--button-select)/90 mb-2 hover:underline"
                   >
                     {challenge.gameTitle}
@@ -662,32 +690,34 @@ export default function ChallengeDetailsPage() {
                 </div>
               </div>
 
-              {!isEditing ? (
-                <button
-                  type="button"
-                  onClick={() => setIsEditing(true)}
-                  className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
-                >
-                  Modify
-                </button>
-              ) : (
-                <div className="flex gap-2">
+              {isChallengeOwner ? (
+                !isEditing ? (
                   <button
                     type="button"
-                    onClick={cancelEdits}
-                    className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm font-semibold"
+                    onClick={() => setIsEditing(true)}
+                    className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
                   >
-                    Cancel
+                    Modify
                   </button>
-                  <button
-                    type="button"
-                    onClick={saveEdits}
-                    className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
-                  >
-                    Save
-                  </button>
-                </div>
-              )}
+                ) : (
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={cancelEdits}
+                      className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm font-semibold"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={saveEdits}
+                      className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                    >
+                      Save
+                    </button>
+                  </div>
+                )
+              ) : null}
             </div>
 
             {isEditing ? (
@@ -829,6 +859,11 @@ export default function ChallengeDetailsPage() {
                 <div className="min-w-0">
                   <div className="font-semibold">{p.name}</div>
                   <div className="text-white/70 text-sm">{p.scoreLabel}</div>
+                  {p.description ? (
+                    <div className="mt-2 text-white/80 text-sm leading-snug break-words">
+                      {clampParticipation(p.description, 120)}
+                    </div>
+                  ) : null}
                   {p.link ? (
                     <div className="text-white/70 text-sm break-all">
                       <span className="text-white/60">Link :</span> {p.link}
