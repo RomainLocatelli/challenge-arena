@@ -63,48 +63,75 @@ export const getChallengeBySlug = async (
   next: NextFunction
 ) => {
   try {
-    const { slug } = req.params
+    const { slug } = req.params;
+    const userId = req.userId;
 
     const challenge = await prisma.challenge.findUnique({
       where: { slug },
       include: {
         game: true,
+        
+        creator: {
+          select: {
+            id: true,
+            username: true
+          }
+        },
+        
         participations: {
-          include: { user: true },
+          include: { 
+            user: {
+              select: {
+                id: true,
+                username: true
+              }
+            },
+            votes: userId ? {
+              where: { userId },
+              select: { userId: true }
+            } : false
+          },
           orderBy: { createdAt: 'desc' }
         },
         _count: {
           select: { votes: true }
-        }
+        },
+        votes: userId ? {
+          where: { userId },
+          select: { userId: true }
+        } : false
       }
-    })
+    });
 
     if (!challenge) {
-      throw new AppError('Challenge not found', 404)
+      throw new AppError('Challenge not found', 404);
     }
+
+    const hasVoted = challenge.votes && challenge.votes.length > 0;
 
     res.json({
       challenge: {
         ...challenge,
         voteCount: challenge._count.votes,
+        hasVoted,
+        participations: challenge.participations.map(p => ({
+          ...p,
+          hasVoted: p.votes && p.votes.length > 0,
+          votes: undefined
+        })),
+        votes: undefined,
         _count: undefined
       }
-    })
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 export const createChallenge = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { title, scoreFormat, description, gameId, gameTitle, gameSlug, gameImageUrl } = req.body;
     const userId = req.userId;
-
-    // 🔍 DEBUG : Affiche ce qui est reçu
-    // console.log('📥 Body:', req.body);
-    // console.log('🎮 gameId:', gameId, 'type:', typeof gameId);
-    // console.log('🎮 gameTitle:', gameTitle);
-    // console.log('🎮 gameSlug:', gameSlug);
 
     if (!userId) {
       throw new AppError('User not authenticated', 401);
@@ -118,8 +145,8 @@ export const createChallenge = async (req: Request, res: Response, next: NextFun
     // Générer le slug du challenge depuis le titre
     const challengeSlug = title
       .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')  // Remplace caractères spéciaux par -
-      .replace(/^-+|-+$/g, '');      // Enlève les - au début/fin
+      .replace(/[^a-z0-9]+/g, '-') // Remplace caractères spéciaux par -
+      .replace(/^-+|-+$/g, ''); // Enlève les - au début/fin
 
     // Convertir gameId en string (car RAWG renvoie un Number)
     const gameIdString = String(gameId);
@@ -134,7 +161,7 @@ export const createChallenge = async (req: Request, res: Response, next: NextFun
           id: gameIdString,
           slug: gameSlug,
           title: gameTitle,
-          imageUrl: gameImageUrl || '',
+          imageUrl: gameImageUrl || ''
         }
       });
     }
