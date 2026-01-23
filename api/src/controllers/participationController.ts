@@ -36,8 +36,8 @@ export async function createParticipation(req: Request, res: Response, next: Nex
     // Créer la participation
     const participation = await prisma.participation.create({
       data: {
-        submissionUrl,
-        description: description || '',
+        submissionUrl: submissionUrl?.trim() ? submissionUrl.trim() : '',
+        description: description?.trim() || '',
         userId,
         challengeId: id
       },
@@ -79,20 +79,21 @@ export async function updateParticipation(req: Request, res: Response, next: Nex
     }
 
     // Construire l'objet de mise à jour (seulement les champs fournis)
-    const updateData: { submissionUrl?: string; description?: string } = {};
-    if (submissionUrl !== undefined) {
-      updateData.submissionUrl = submissionUrl;
-    }
-    if (description !== undefined) {
-      updateData.description = description;
-    }
-
-    // Mettre à jour
-    const updatedParticipation = await prisma.participation.update({
-      where: { id },
-      data: updateData,
-      include: { user: true }
-    });
+        const updateData: Record<string, any> = {};
+        if (submissionUrl !== undefined) {
+          // Si la valeur est null, utiliser la forme Prisma { set: null } pour les champs nullable
+          updateData.submissionUrl = submissionUrl === null ? { set: null } : submissionUrl;
+        }
+        if (description !== undefined) {
+          updateData.description = description === null ? { set: null } : description;
+        }
+    
+        // Mettre à jour
+        const updatedParticipation = await prisma.participation.update({
+          where: { id },
+          data: updateData as any,
+          include: { user: true }
+        });
 
     // Réponse
     res.json({ participation: updatedParticipation });
