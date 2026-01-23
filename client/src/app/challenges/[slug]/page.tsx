@@ -220,12 +220,10 @@ export default function ChallengeDetailsPage() {
     const parsed = splitDescriptionAndDetails(challenge.description);
 
     const finalDetails =
-      parsed.details.length > 0
-        ? parsed.details
-        : (challenge.details ?? []).filter(Boolean);
+      parsed.details.length > 0 ? parsed.details : (challenge.details ?? []).filter(Boolean);
 
-setDescriptionPoints([parsed.desc]);
-setDetailsPoints(finalDetails);
+    setDescriptionPoints([parsed.desc]);
+    setDetailsPoints(finalDetails);
 
     setParticipations(challenge.participations ?? []);
   }, [challenge]);
@@ -293,13 +291,9 @@ setDetailsPoints(finalDetails);
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
     const payload = {
       title: title.trim(),
-      scoreFormat: challenge.scoreFormat, 
-      description: buildChallengeDescription(
-        clamp100(descriptionPoints[0] ?? ''),
-        detailsPoints
-      )
+      scoreFormat: challenge.scoreFormat,
+      description: buildChallengeDescription(clamp100(descriptionPoints[0] ?? ''), detailsPoints)
     };
-
 
     const res = await fetch(`${baseUrl}/challenges/${challenge.id}`, {
       method: 'PATCH',
@@ -411,13 +405,13 @@ setDetailsPoints(finalDetails);
 
     // POST /challenges/:id/participations
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-    const res = await fetch(`${baseUrl}/challenges/${challenge.id}/participations`, {
+    const res = await fetch(`${baseUrl}/participation/challenges/${challenge.id}/participations`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        ...authHeaders()
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ description: desc, submissionUrl: link || null })
+      credentials: 'include',
+      body: JSON.stringify({ submissionUrl: link || null, description: desc })
     });
 
     if (!res.ok) {
@@ -456,12 +450,12 @@ setDetailsPoints(finalDetails);
 
     // PATCH /participations/:id
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-    const res = await fetch(`${baseUrl}/participations/${activeParticipation.id}`, {
+    const res = await fetch(`${baseUrl}/participation/participations/${activeParticipation.id}`, {
       method: 'PATCH',
       headers: {
-        'Content-Type': 'application/json',
-        ...authHeaders()
+        'Content-Type': 'application/json'
       },
+      credentials: 'include',
       body: JSON.stringify({ description: desc, submissionUrl: link || null })
     });
 
@@ -487,9 +481,9 @@ setDetailsPoints(finalDetails);
 
     // DELETE /participations/:id
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-    const res = await fetch(`${baseUrl}/participations/${activeParticipation.id}`, {
+    const res = await fetch(`${baseUrl}/participation/participations/${activeParticipation.id}`, {
       method: 'DELETE',
-      headers: { ...authHeaders() }
+      credentials: 'include'
     });
 
     if (!res.ok) {
@@ -514,11 +508,11 @@ setDetailsPoints(finalDetails);
     setChallengeHasLiked(next);
     setChallengeLikes((n) => n + (next ? 1 : -1));
 
-    const res = await fetch(`http://api:3000/challenges/${challenge.id}/votes`, {
+    // TODO link to uesrLiked fetch table
+    const res = await fetch(`${baseUrl}/challengeVote/challenges/${challenge.id}/vote`, {
       method: next ? 'POST' : 'DELETE',
-      headers: { ...authHeaders() }
+      credentials: 'include'
     });
-
     if (!res.ok) {
       setChallengeHasLiked(!next);
       setChallengeLikes((n) => n + (next ? -1 : 1));
@@ -539,9 +533,10 @@ setDetailsPoints(finalDetails);
       )
     );
 
+    // Todo link to the bdd line exist in bdd
     const res = await fetch(`${baseUrl}/participations/${p.id}/votes`, {
       method: next ? 'POST' : 'DELETE',
-      headers: { ...authHeaders() }
+      credentials: 'include'
     });
 
     if (!res.ok) {
@@ -565,11 +560,12 @@ setDetailsPoints(finalDetails);
     toggleParticipationLike(p);
   };
 
+  // Todo remove participations does not send to the right back adress
   const removeParticipation = async (id: string) => {
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-    const res = await fetch(`${baseUrl}/participations/${id}`, {
+    const res = await fetch(`${baseUrl}/participation/participations/${id}`, {
       method: 'DELETE',
-      headers: { ...authHeaders() }
+      credentials: 'include'
     });
 
     if (!res.ok) {
