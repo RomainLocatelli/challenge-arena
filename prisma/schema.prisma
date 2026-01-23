@@ -71,7 +71,7 @@ model Challenge {
 
 model Participation {
   id            String    @id @default(uuid(7))
-  submissionUrl String    @map("submission_url")
+  submissionUrl String?    @map("submission_url")
   description   String?
   userId        String    @map("user_id")
   challengeId   String    @map("challenge_id")
