@@ -47,7 +47,6 @@ type ChallengeDetails = {
   gameImage: string;
   hasVoted?: boolean;
   likes: number;
-  hasVoted: boolean;
 
   participations: Participation[];
 };
@@ -115,7 +114,7 @@ export default function ChallengeDetailsPage() {
   const [loadError, setLoadError] = useState<string | null>(null);
 
   // UI state
-  const [challengeHasVoted, setchallengeHasVoted] = useState(false);
+  const [challengeHasLiked, setChallengeHasLiked] = useState(false);
   const [challengeLikes, setChallengeLikes] = useState(0);
 
   const [isEditing, setIsEditing] = useState(false);
@@ -174,7 +173,7 @@ export default function ChallengeDetailsPage() {
           scoreFormat: raw.scoreFormat ?? '',
           createdAt: raw.createdAt ?? '',
           updatedAt: raw.updatedAt ?? '',
-          createdBy: raw.createdBy?.username ?? raw.createdBy?.name ?? raw.createdBy ?? '—', 
+          createdBy: raw.createdBy?.username ?? raw.createdBy?.name ?? raw.createdBy ?? '—',
           createdById: raw.createdBy?.id ?? raw.createdById ?? '',
           gameId: raw.gameId ?? raw.game?.id ?? '',
           gameSlug: raw.game?.slug ?? raw.gameSlug ?? raw.gameId ?? '',
@@ -252,7 +251,9 @@ export default function ChallengeDetailsPage() {
   }, [activeParticipationId, participations]);
 
   const currentUserId = user?.id ?? ''; // à revoir avec l'auth
-  const isChallengeOwner = Boolean(challenge?.createdById && challenge.createdById === currentUserId);
+  const isChallengeOwner = Boolean(
+    challenge?.createdById && challenge.createdById === currentUserId
+  );
   const isOwnActiveParticipation = Boolean(
     activeParticipation && activeParticipation.userId === currentUserId
   );
@@ -289,16 +290,13 @@ export default function ChallengeDetailsPage() {
   const canViewMore = visibleCount < participations.length;
 
   const authHeaders = (): Record<string, string> => {
-    const t =
-      token ||
-      (typeof window !== 'undefined' ? localStorage.getItem('token') : null);
+    const t = token || (typeof window !== 'undefined' ? localStorage.getItem('token') : null);
 
     if (!t) {
       return {};
     }
     return { Authorization: `Bearer ${t}` };
   };
-
 
   const saveEdits = async () => {
     if (!challenge) {
@@ -412,57 +410,56 @@ export default function ChallengeDetailsPage() {
   };
 
   // Ces 3 actions nécessitent des routes côté Express (participations)
-const submitCreate = async () => {
-  if (!challenge) {
-    return;
-  }
+  const submitCreate = async () => {
+    if (!challenge) {
+      return;
+    }
 
-  const desc = pDesc.trim();
-  const link = pLink.trim();
-  const submissionUrl =
-  link && /^https?:\/\/.+/i.test(link) ? link : null;
+    const desc = pDesc.trim();
+    const link = pLink.trim();
+    const submissionUrl = link && /^https?:\/\/.+/i.test(link) ? link : null;
 
-  if (!desc) {
-    alert('Description required');
-    return;
-  }
+    if (!desc) {
+      alert('Description required');
+      return;
+    }
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
-  const res = await fetch(`${baseUrl}/participation/challenges/${challenge.id}/participations`, {
-    method: 'POST',
+    const res = await fetch(`${baseUrl}/participation/challenges/${challenge.id}/participations`, {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-    credentials: 'include',
-    body: JSON.stringify({ description: desc, submissionUrl })
-});
+      credentials: 'include',
+      body: JSON.stringify({ description: desc, submissionUrl })
+    });
 
-  if (!res.ok) {
-    const msg = await res.text().catch(() => '');
-    alert(msg || 'Failed to create participation');
-    return;
-  }
+    if (!res.ok) {
+      const msg = await res.text().catch(() => '');
+      alert(msg || 'Failed to create participation');
+      return;
+    }
 
-  const { participation } = await res.json();
+    const { participation } = await res.json();
 
-  // Ajout direct dans la liste
-  setParticipations((prev) => [
-    {
-      id: participation.id,
-      userId: participation.userId,
-      name: participation.user.username,
-      description: participation.description,
-      link: participation.submissionUrl ?? undefined,
-      scoreLabel: '-', 
-      likes: 0,
-      hasLiked: false
-    },
-    ...prev
-  ]);
+    // Ajout direct dans la liste
+    setParticipations((prev) => [
+      {
+        id: participation.id,
+        userId: participation.userId,
+        name: participation.user.username,
+        description: participation.description,
+        link: participation.submissionUrl ?? undefined,
+        scoreLabel: '-',
+        likes: 0,
+        hasLiked: false
+      },
+      ...prev
+    ]);
 
-  closeModal();
-};
+    closeModal();
+  };
 
   const saveEdit = async () => {
     if (!activeParticipation) {
@@ -657,12 +654,12 @@ const submitCreate = async () => {
                   type="button"
                   onClick={onToggleChallengeLike}
                   className="relative w-10 h-10 shrink-0 hover:opacity-90"
-                  aria-pressed={challengeHasVoted}
-                  aria-label={challengeHasVoted ? 'Unlike challenge' : 'Like challenge'}
-                  >
-                    <Image
-                      src={challengeHasVoted ? '/vote 1.png' : '/vote 0.png'}
-                      alt={challengeHasVoted ? 'Voted' : 'Not voted'}
+                  aria-pressed={challengeHasLiked}
+                  aria-label={challengeHasLiked ? 'Unlike challenge' : 'Like challenge'}
+                >
+                  <Image
+                    src={challengeHasLiked ? '/vote 1.png' : '/vote 0.png'}
+                    alt={challengeHasLiked ? 'Voted' : 'Not voted'}
                     fill
                     sizes="40px"
                     className="object-contain"
@@ -883,9 +880,9 @@ const submitCreate = async () => {
                       aria-pressed={!!p.hasVoted}
                       aria-label={p.hasVoted ? 'Unlike participation' : 'Like participation'}
                     >
-                    <Image
-                      src={p.hasVoted ? '/vote 1.png' : '/vote 0.png'}
-                      alt={p.hasVoted ? 'Voted' : 'Not voted'}
+                      <Image
+                        src={p.hasVoted ? '/vote 1.png' : '/vote 0.png'}
+                        alt={p.hasVoted ? 'Voted' : 'Not voted'}
                         fill
                         sizes="32px"
                         className="object-contain"
