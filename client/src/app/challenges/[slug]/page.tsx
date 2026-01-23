@@ -173,7 +173,7 @@ export default function ChallengeDetailsPage() {
           scoreFormat: raw.scoreFormat ?? '',
           createdAt: raw.createdAt ?? '',
           updatedAt: raw.updatedAt ?? '',
-          createdBy: raw.createdBy?.username ?? raw.createdBy?.name ?? raw.createdBy ?? '—',
+          createdBy: raw.creator?.username ?? '—',
           createdById: raw.createdBy?.id ?? raw.createdById ?? '',
           gameId: raw.gameId ?? raw.game?.id ?? '',
           gameSlug: raw.game?.slug ?? raw.gameSlug ?? raw.gameId ?? '',
