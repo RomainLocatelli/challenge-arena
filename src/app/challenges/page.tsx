@@ -62,7 +62,7 @@ export default function ChallengesPage() {
   const itemsPerPage = ismd ? 6 : 4;
 
   /* ======================
-     API CALLS
+    API CALLS
   ====================== */
 
   useEffect(() => {
@@ -102,10 +102,10 @@ function extractShortDescription(raw: string) {
     return text;
   }
   return text.slice(0, idx).trim();
-}
+  }
 
   /* ======================
-     FILTERING
+    FILTERING
   ====================== */
 
   const filteredChallenges = useMemo(() => {
@@ -126,7 +126,7 @@ function extractShortDescription(raw: string) {
   }, [searchQuery, selectedGameId, challenges]);
 
   /* ======================
-     PAGINATION
+    PAGINATION
   ====================== */
 
   const totalPages = Math.max(1, Math.ceil(filteredChallenges.length / itemsPerPage));
@@ -157,12 +157,13 @@ function extractShortDescription(raw: string) {
   };
 
   /* ======================
-     RENDER
+    RENDER
   ====================== */
 
   return (
     <div className="min-h-screen flex flex-col">
       <main className="px-4 md:px-8 py-6 max-w-7xl mx-auto w-full">
+
         {/* Search Bar */}
         <div className="mb-6">
           <div className="relative max-w-md md:max-w-2xl mx-auto">
@@ -200,7 +201,7 @@ function extractShortDescription(raw: string) {
               </h2>
               {user ? (
                 <Link
-                  href={`/games/${selectedGameId || ''}`}
+                  href="/challenges/create"
                   className="px-4 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
                 >
                   Create a challenge
@@ -273,8 +274,9 @@ function extractShortDescription(raw: string) {
                         </div>
 
                         <Link
-                          href={`/challenges/${c.slug ?? c.id}`}
-                          className="px-4 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                          href={c.slug ? `/challenges/${c.slug}` : '#'}
+                          aria-disabled={!c.slug}
+                          className={`px-4 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)] ${!c.slug ? 'opacity-50 pointer-events-none' : ''}`}
                         >
                           Details
                         </Link>
@@ -295,6 +297,7 @@ function extractShortDescription(raw: string) {
 
         {/* Pages */}
         <div className="flex justify-center gap-2 mb-12">
+
           {/* Page 1 toujours visible */}
           <button
             className={`w-8 h-8 rounded-full flex items-center justify-center ${

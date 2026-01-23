@@ -60,6 +60,14 @@ const clamp100 = (s: string) => {
   return `${t.slice(0, 97)}...`;
 };
 
+const clampParticipation = (s: string | undefined | null, max = 120) => {
+  const t = (s ?? '').trim();
+  if (t.length <= max) {
+    return t;
+  }
+  return `${t.slice(0, Math.max(0, max - 3))}...`;
+};
+
 function buildChallengeDescription(desc: string, details: string[]) {
   const cleanDesc = (desc ?? '').trim();
   const cleanDetails = (details ?? []).map((d) => d.trim()).filter(Boolean);
@@ -282,11 +290,16 @@ setDetailsPoints(finalDetails);
   const canViewMore = visibleCount < participations.length;
 
   const authHeaders = (): Record<string, string> => {
-    if (!token) {
-      return {} as Record<string, string>;
+    const t =
+      token ||
+      (typeof window !== 'undefined' ? localStorage.getItem('token') : null);
+
+    if (!t) {
+      return {};
     }
-    return { Authorization: `Bearer ${token}` };
+    return { Authorization: `Bearer ${t}` };
   };
+
 
   const saveEdits = async () => {
     if (!challenge) {
@@ -404,50 +417,58 @@ setDetailsPoints(finalDetails);
   };
 
   // Ces 3 actions nécessitent des routes côté Express (participations)
-  const submitCreate = async () => {
-    if (!challenge) {
-      return;
-    }
-    const desc = pDesc.trim();
-    const link = pLink.trim();
-    if (!desc) {
-      return;
-    }
+const submitCreate = async () => {
+  if (!challenge) {
+    return;
+  }
 
-    // POST /challenges/:id/participations
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-    const res = await fetch(`${baseUrl}/challenges/${challenge.id}/participations`, {
-      method: 'POST',
+  const desc = pDesc.trim();
+  const link = pLink.trim();
+  const submissionUrl =
+  link && /^https?:\/\/.+/i.test(link) ? link : null;
+
+  if (!desc) {
+    alert('Description required');
+    return;
+  }
+
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+
+  const res = await fetch(`${baseUrl}/participation/challenges/${challenge.id}/participations`, {
+    method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         ...authHeaders()
       },
-      body: JSON.stringify({ description: desc, submissionUrl: link || null })
-    });
+    credentials: 'include',
+    body: JSON.stringify({ description: desc, submissionUrl })
+});
 
-    if (!res.ok) {
-      const msg = await res.text().catch(() => '');
-      alert(msg || 'Failed to create participation');
-      return;
-    }
+  if (!res.ok) {
+    const msg = await res.text().catch(() => '');
+    alert(msg || 'Failed to create participation');
+    return;
+  }
 
-    const data = await res.json().catch(() => null);
-    const created = (data?.participation ?? data) as any;
+  const { participation } = await res.json();
 
-    const newP: Participation = {
-      id: created?.id ?? `p_${Date.now()}`,
-      userId: created?.userId ?? currentUserId,
-      name: created?.user?.username ?? user?.username ?? 'Username',
-      scoreLabel: '-',
-      description: created?.description ?? desc,
-      link: created?.submissionUrl ?? (link || undefined),
-      hasLiked: false,
-      likes: 0
-    };
+  // Ajout direct dans la liste
+  setParticipations((prev) => [
+    {
+      id: participation.id,
+      userId: participation.userId,
+      name: participation.user.username,
+      description: participation.description,
+      link: participation.submissionUrl ?? undefined,
+      scoreLabel: '-', 
+      likes: 0,
+      hasLiked: false
+    },
+    ...prev
+  ]);
 
-    setParticipations((prev) => [newP, ...prev]);
-    closeModal();
-  };
+  closeModal();
+};
 
   const saveEdit = async () => {
     if (!activeParticipation) {
@@ -461,12 +482,13 @@ setDetailsPoints(finalDetails);
 
     // PATCH /participations/:id
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-    const res = await fetch(`${baseUrl}/participations/${activeParticipation.id}`, {
+    const res = await fetch(`${baseUrl}/participation/participations/${activeParticipation.id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
         ...authHeaders()
       },
+      credentials: 'include',
       body: JSON.stringify({ description: desc, submissionUrl: link || null })
     });
 
@@ -490,11 +512,12 @@ setDetailsPoints(finalDetails);
       return;
     }
 
-    // DELETE /participations/:id
+    // DELETE /participation/:id
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-    const res = await fetch(`${baseUrl}/participations/${activeParticipation.id}`, {
+    const res = await fetch(`${baseUrl}/participation/participations/${activeParticipation.id}`, {
       method: 'DELETE',
-      headers: { ...authHeaders() }
+      headers: { ...authHeaders() },
+      credentials: 'include'
     });
 
     if (!res.ok) {
@@ -521,7 +544,8 @@ setDetailsPoints(finalDetails);
 
     const res = await fetch(`http://api:3000/challenges/${challenge.id}/votes`, {
       method: next ? 'POST' : 'DELETE',
-      headers: { ...authHeaders() }
+      headers: { ...authHeaders() },
+      credentials: 'include'
     });
 
     if (!res.ok) {
@@ -842,6 +866,11 @@ setDetailsPoints(finalDetails);
                 <div className="min-w-0">
                   <div className="font-semibold">{p.name}</div>
                   <div className="text-white/70 text-sm">{p.scoreLabel}</div>
+                  {p.description ? (
+                    <div className="mt-2 text-white/80 text-sm leading-snug break-words">
+                      {clampParticipation(p.description, 120)}
+                    </div>
+                  ) : null}
                   {p.link ? (
                     <div className="text-white/70 text-sm break-all">
                       <span className="text-white/60">Link :</span> {p.link}
