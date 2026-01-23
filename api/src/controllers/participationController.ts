@@ -2,19 +2,19 @@ import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../../lib/prisma.js';
 import { AppError } from '../utils/AppError.js';
 import {
-  challengeIdParamSchema,
   createParticipationBodySchema,
   participationIdParamSchema,
   updateParticipationBodySchema
 } from '../schemas/participationSchemas.js';
-
 // POST
 export async function createParticipation(req: Request, res: Response, next: NextFunction) {
   try {
     // Valider challengeId
-    const { id } = challengeIdParamSchema.parse(req.params);
+
+    const { id } = participationIdParamSchema.parse(req.params);
 
     // Valider body
+
     const { submissionUrl, description } = createParticipationBodySchema.parse(req.body);
 
     // Récupérer userId
@@ -39,7 +39,7 @@ export async function createParticipation(req: Request, res: Response, next: Nex
         submissionUrl: submissionUrl?.trim() ? submissionUrl.trim() : '',
         description: description?.trim() || '',
         userId,
-        challengeId: id
+        challengeId: challenge.id
       },
       include: { user: true }
     });

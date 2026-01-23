@@ -72,25 +72,21 @@ export const login = async (data: LoginInput) => {
 // Récupérer un utilisateur par son ID
 export const getUserById = async (userId: string) => {
   const user = await prisma.user.findUnique({
-    where: { id: userId }
+    where: { id: userId },
+    select: {
+      id: true,
+      username: true,
+      email: true,
+      createdAt: true,
+      role: true,
+      isBanned: true,
+      bannedAt: true
+    }
   });
 
   if (!user) {
     throw new AppError('User not found', 404);
   }
 
-  //   if (user.isBanned) {
-  //   throw new AppError('User account banned. Contact the support.', 403);
-  // }
-
-  const {
-    password: _1,
-    email: _2,
-    isDeleted: _3,
-    deletedAt: _4,
-    createdAt: _5,
-    updatedAt: _6,
-    ...userWithoutPassword
-  } = user;
-  return userWithoutPassword;
+  return user;
 };
