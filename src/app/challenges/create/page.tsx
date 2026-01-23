@@ -35,7 +35,7 @@ export default function CreateChallengePage() {
 
   // Form states
   const [title, setTitle] = useState('');
-  const [imageUrl, setImageUrl] = useState<string>('');
+  // const [imageUrl, setImageUrl] = useState<string>('');
   const [description, setDescription] = useState('');
   const [detailsPoints, setDetailsPoints] = useState<string[]>([]);
   const [selectedGame, setSelectedGame] = useState<RawgGame | null>(null);
@@ -85,9 +85,11 @@ export default function CreateChallengePage() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  const headerImage = imageUrl.trim()
-    ? imageUrl.trim()
-    : selectedGame?.background_image || '/real-rat.png';
+  // const headerImage = imageUrl.trim()
+  //\   ? imageUrl.trim()
+  //   : selectedGame?.background_image || '/real-rat.png';
+
+    const headerImage = selectedGame?.background_image || '/real-rat.png';
 
   // Gestion des lignes à puces (details)
   const addBullet = () => setDetailsPoints((p) => [...p, '']);
@@ -98,9 +100,8 @@ export default function CreateChallengePage() {
   const canCreate = useMemo(() => {
     const t = title.trim();
     const d = description.trim();
-    const sf = scoreFormat.trim();
-    return Boolean(selectedGame) && t.length > 0 && d.length > 0 && sf.length > 0;
-  }, [selectedGame, title, description, scoreFormat]);
+    return Boolean(selectedGame) && t.length > 0 && d.length > 0;
+  }, [selectedGame, title, description]);
 
   const createChallenge = async () => {
     if (!selectedGame) return;
@@ -115,7 +116,7 @@ export default function CreateChallengePage() {
 
     const payload = {
       title: title.trim(),
-      scoreFormat: scoreFormat.trim(),
+      scoreFormat: scoreFormat.trim() || 'SCORE',
       description: fullDescription,
       gameId: selectedGame.id,
       gameTitle: selectedGame.name,
@@ -238,7 +239,7 @@ export default function CreateChallengePage() {
               </div>
             </div>
 
-            {/* Image URL */}
+            {/* Image URL 
             <div className="mt-4">
               <div className="text-sm font-semibold text-foreground/80 mb-2">Image URL</div>
               <input
@@ -251,10 +252,11 @@ export default function CreateChallengePage() {
                 Laisse vide pour afficher l'image du jeu par défaut.
               </div>
             </div>
+            */}
 
             {/* Score Format */}
             <div className="mt-4">
-              <div className="text-sm font-semibold text-foreground/80 mb-2">Score Format</div>
+              <div className="text-sm font-semibold text-foreground/80 mb-2">Score Format*</div>
               <input
                 value={scoreFormat}
                 onChange={(e) => setScoreFormat(e.target.value)}
@@ -262,7 +264,7 @@ export default function CreateChallengePage() {
                 placeholder="e.g., SCORE, TIME, KILLS, etc."
               />
               <div className="text-xs text-foreground/50 mt-2">
-                Comment sera mesuré le succès du challenge (ex: SCORE, TIME, DISTANCE...)
+                *Optionnel : Comment sera mesuré le succès du challenge (ex: SCORE, TIME, DISTANCE...)
               </div>
             </div>
 
