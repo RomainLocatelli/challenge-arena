@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/app/context/AuthContext';
 
 type RawgGame = {
   id: number;
@@ -25,63 +26,24 @@ function useMediaQuery(query: string) {
   return matches;
 }
 
-// Description avec max 100 chars
-const clamp100 = (s: string) => {
-  const t = (s ?? '').trim();
-  if (t.length <= 100) {
-    return t;
-  }
-  return `${t.slice(0, 97)}...`;
-};
-
-// OBSOLETE - Code remplacé par l'autocomplete RAWG
-// type GameOption = {
-//   id: string;
-//   title: string;
-//   imageUrl?: string;
-// };
-
 export default function CreateChallengePage() {
   const router = useRouter();
-
   const isMd = useMediaQuery('(min-width: 768px)');
 
-  // TODO: remplacer par session user
-  const currentUserName = 'NailMaster';
+  // Auth
+  const { user, token } = useAuth();
 
-  // TODO: remplacer par fetch / BDD (liste de jeux)
-  const games: GameOption[] = useMemo(
-    () => [
-      { id: 'hollow-knight', title: 'Hollow Knight', imageUrl: '/real-rat.png' },
-      { id: 'elden-ring', title: 'Elden Ring', imageUrl: '/real-rat.png' },
-      { id: 'skyrim', title: 'The Elder Scrolls V: Skyrim', imageUrl: '/real-rat.png' }
-    ],
-    []
-  );
-
-  // Etat du formulaire (mode "edit" uniquement)
+  // Form states
   const [title, setTitle] = useState('');
-  const [createdBy, setCreatedBy] = useState('NailMaster'); // TODO: session user
-  // OBSOLETE: Remplacé par selectedGame (RawgGame)
-  // const [gameId, setGameId] = useState(games[0]?.id ?? "");
   const [imageUrl, setImageUrl] = useState<string>('');
   const [description, setDescription] = useState('');
   const [detailsPoints, setDetailsPoints] = useState<string[]>([]);
-  // Autocomplete states
   const [selectedGame, setSelectedGame] = useState<RawgGame | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<RawgGame[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-
-  // Score format
   const [scoreFormat, setScoreFormat] = useState('');
-
-  // OBSOLETE: Remplacé par selectedGame state
-  // const selectedGame = useMemo(
-  //   () => games.find((g) => g.id === gameId) ?? null,
-  //   [games, gameId]
-  // );
 
   // Fonction de recherche
   const searchGames = async (query: string) => {
@@ -94,7 +56,7 @@ export default function CreateChallengePage() {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/games/search?q=${encodeURIComponent(query)}`
+        `${process.env.NEXT_PUBLIC_API_URL}/games/search?q=${encodeURIComponent(query)}`
       );
 
       if (!response.ok) throw new Error('Search failed');
@@ -123,11 +85,6 @@ export default function CreateChallengePage() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // OBSOLETE: imageUrl remplacé par background_image
-  // const headerImage = imageUrl.trim()
-  //\ ? imageUrl.trim()
-  //   : selectedGame?.imageUrl || "/real-rat.png";
-
   const headerImage = imageUrl.trim()
     ? imageUrl.trim()
     : selectedGame?.background_image || '/real-rat.png';
@@ -137,12 +94,6 @@ export default function CreateChallengePage() {
   const updateBullet = (idx: number, val: string) =>
     setDetailsPoints((p) => p.map((x, i) => (i === idx ? val : x)));
   const removeBullet = (idx: number) => setDetailsPoints((p) => p.filter((_, i) => i !== idx));
-
-  // const canCreate = useMemo(() => {
-  //   const t = title.trim();
-  //   const d = description.trim();
-  //   return Boolean(gameId) && t.length > 0 && d.length > 0;
-  // }, [gameId, title, description]);
 
   const canCreate = useMemo(() => {
     const t = title.trim();
@@ -173,12 +124,11 @@ export default function CreateChallengePage() {
     };
 
     try {
-      const response = await fetch('http://localhost:3000/challenges', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/challenges`, {
         method: 'POST',
+        credentials: 'include', // ← Ajouté pour l'auth
         headers: {
           'Content-Type': 'application/json'
-          // TODO: Ajouter le token JWT ici quand l'auth sera en place
-          // 'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(payload)
       });
@@ -191,7 +141,7 @@ export default function CreateChallengePage() {
       const data = await response.json();
 
       // Redirige vers le challenge créé
-      router.push(`/challenge/${data.challenge.slug}`);
+      router.push(`/challenges/${data.challenge.slug}`);
     } catch (error) {
       console.error('Error creating challenge:', error);
       alert('Erreur lors de la création du challenge. Vérifie la console.');
@@ -199,7 +149,7 @@ export default function CreateChallengePage() {
   };
 
   return (
-    <div className="min-h-screen  ">
+    <div className="min-h-screen">
       <main className="mx-auto w-full max-w-[430px] md:max-w-5xl px-4 md:px-8 py-5 md:py-8">
         {/* Card principale */}
         <div className="rounded-3xl bg-background/70 ring-1 ring-background/10 shadow-[0_20px_60px_rgba(0,0,0,0.55)] overflow-hidden">
@@ -283,7 +233,7 @@ export default function CreateChallengePage() {
 
                 <div className="text-sm">
                   <span className="text-foreground/60">Created by</span>{' '}
-                  <span className="font-semibold">{currentUserName}</span>
+                  <span className="font-semibold">{user?.username || 'Loading...'}</span>
                 </div>
               </div>
             </div>
@@ -298,7 +248,7 @@ export default function CreateChallengePage() {
                 placeholder="https://..."
               />
               <div className="text-xs text-background/50 mt-2">
-                Laisse vide pour afficher l’image du jeu par défaut.
+                Laisse vide pour afficher l'image du jeu par défaut.
               </div>
             </div>
 
