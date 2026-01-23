@@ -57,11 +57,7 @@ export const getChallengeById = async (req: Request, res: Response, next: NextFu
   }
 };
 
-export const getChallengeBySlug = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const getChallengeBySlug = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { slug } = req.params;
     const userId = req.userId;
@@ -70,36 +66,40 @@ export const getChallengeBySlug = async (
       where: { slug },
       include: {
         game: true,
-        
+
         creator: {
           select: {
             id: true,
             username: true
           }
         },
-        
+
         participations: {
-          include: { 
+          include: {
             user: {
               select: {
                 id: true,
                 username: true
               }
             },
-            votes: userId ? {
-              where: { userId },
-              select: { userId: true }
-            } : false
+            votes: userId
+              ? {
+                  where: { userId },
+                  select: { userId: true }
+                }
+              : false
           },
           orderBy: { createdAt: 'desc' }
         },
         _count: {
           select: { votes: true }
         },
-        votes: userId ? {
-          where: { userId },
-          select: { userId: true }
-        } : false
+        votes: userId
+          ? {
+              where: { userId },
+              select: { userId: true }
+            }
+          : false
       }
     });
 
@@ -114,7 +114,7 @@ export const getChallengeBySlug = async (
         ...challenge,
         voteCount: challenge._count.votes,
         hasVoted,
-        participations: challenge.participations.map(p => ({
+        participations: challenge.participations.map((p) => ({
           ...p,
           hasVoted: p.votes && p.votes.length > 0,
           votes: undefined
