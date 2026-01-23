@@ -71,7 +71,13 @@ export const getChallengeBySlug = async (
       include: {
         game: true,
         participations: {
-          include: { user: true },
+          include: { 
+            user: true,
+            votes: userId ? {
+              where: { userId },
+              select: { userId: true }
+            } : false
+          },
           orderBy: { createdAt: 'desc' }
         },
         _count: {
@@ -96,8 +102,13 @@ export const getChallengeBySlug = async (
       challenge: {
         ...challenge,
         voteCount: challenge._count.votes,
-        hasVoted,           // ← NOUVEAU
-        votes: undefined,   // ← NOUVEAU
+        hasVoted,
+        participations: challenge.participations.map(p => ({
+          ...p,
+          hasVoted: p.votes && p.votes.length > 0,
+          votes: undefined
+        })),
+        votes: undefined,
         _count: undefined
       }
     });

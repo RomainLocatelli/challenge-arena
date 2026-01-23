@@ -38,3 +38,31 @@ Cookie: accessToken={{token}}
 GET {{baseUrl}}/challenges/{{challengeSlug}}
 Content-Type: application/json
 Cookie: accessToken={{token}}
+
+### ===== TESTS PARTICIPATION =====
+
+@participationId = 019bdfec-ff0c-718c-8669-2cbbba281f05
+
+
+### 7. POST Vote participation (Frank)
+POST {{baseUrl}}/participationVote/participations/{{participationId}}/vote
+Content-Type: application/json
+Cookie: accessToken={{token}}
+
+
+### 8. GET Challenge APRES vote participation (hasVoted de Frank DOIT être true)
+GET {{baseUrl}}/challenges/{{challengeSlug}}
+Content-Type: application/json
+Cookie: accessToken={{token}}
+
+
+### 9. DELETE Unvote participation
+DELETE {{baseUrl}}/participationVote/participations/{{participationId}}/vote
+Content-Type: application/json
+Cookie: accessToken={{token}}
+
+
+### 10. GET Challenge APRES unvote (hasVoted de Frank DOIT être false)
+GET {{baseUrl}}/challenges/{{challengeSlug}}
+Content-Type: application/json
+Cookie: accessToken={{token}}
