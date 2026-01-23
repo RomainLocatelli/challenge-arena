@@ -7,10 +7,11 @@ import {
   deleteChallenge
 } from '../controllers/challengesController.js'
 import { authMiddleware } from '../middlewares/auth.js'
+import { optionalAuth } from '../middlewares/optionalAuth.js'
 
 const router = Router()
 
-router.get('/:slug', getChallengeBySlug)
+router.get('/:slug', optionalAuth, getChallengeBySlug)
 router.get('/', getAllChallenges)
 router.post('/', authMiddleware, createChallenge)
 router.patch('/:id', authMiddleware, updateChallenge)
