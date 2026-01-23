@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo, useState, useEffect } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useAuth } from '@/app/context/AuthContext'; // Remplacer avec le bon chemin
+import { useAuth } from '@/app/context/AuthContext';
 
 // hook responsive
 function useMediaQuery(query: string) {
@@ -41,14 +41,16 @@ type ChallengeDetails = {
   updatedAt: string;
   createdBy: string;
   createdById: string;
-  gameId: string;
   gameSlug?: string;
+  gameId: string;
   gameTitle: string;
   gameImage: string;
-  hasVoted?: boolean;
   likes: number;
-
+  hasVoted: boolean;
   participations: Participation[];
+  creator: {
+    id: string;
+  };
 };
 
 // Description avec max 100 chars
@@ -58,14 +60,6 @@ const clamp100 = (s: string) => {
     return t;
   }
   return `${t.slice(0, 97)}...`;
-};
-
-const clampParticipation = (s: string | undefined | null, max = 120) => {
-  const t = (s ?? '').trim();
-  if (t.length <= max) {
-    return t;
-  }
-  return `${t.slice(0, Math.max(0, max - 3))}...`;
 };
 
 function buildChallengeDescription(desc: string, details: string[]) {
@@ -100,7 +94,7 @@ function splitDescriptionAndDetails(raw: string): { desc: string; details: strin
 
 export default function ChallengeDetailsPage() {
   const router = useRouter();
-  const { user, token } = useAuth() as any; // token si ton AuthContext l’expose
+  const { user } = useAuth();
   const params = useParams<{ slug: string }>();
   const slug = params?.slug;
   const searchParams = useSearchParams();
@@ -114,12 +108,14 @@ export default function ChallengeDetailsPage() {
   const [loadError, setLoadError] = useState<string | null>(null);
 
   // UI state
-  const [challengeHasLiked, setChallengeHasLiked] = useState(false);
+  const [challengeHasVoted, setChallengeHasVoted] = useState(false);
   const [challengeLikes, setChallengeLikes] = useState(0);
 
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState('');
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
+
+  const [isAllowToModifyOrDelete, setIsAllowToModifyOrDelete] = useState<boolean>(false);
 
   const [descriptionPoints, setDescriptionPoints] = useState<string[]>([]);
   const [detailsPoints, setDetailsPoints] = useState<string[]>([]);
@@ -151,7 +147,8 @@ export default function ChallengeDetailsPage() {
 
         const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
         const res = await fetch(`${baseUrl}/challenges/${slug}`, {
-          cache: 'no-store'
+          cache: 'no-store',
+          credentials: 'include'
         });
 
         if (!res.ok) {
@@ -160,6 +157,7 @@ export default function ChallengeDetailsPage() {
         }
 
         const data = await res.json();
+        console.log(data);
 
         const raw = (data?.challenge ?? data) as any;
 
@@ -173,10 +171,11 @@ export default function ChallengeDetailsPage() {
           scoreFormat: raw.scoreFormat ?? '',
           createdAt: raw.createdAt ?? '',
           updatedAt: raw.updatedAt ?? '',
+
           createdBy: raw.creator?.username ?? '—',
-          createdById: raw.createdBy?.id ?? raw.createdById ?? '',
+          createdById: raw.creator?.id ?? raw.createdBy ?? '',
+
           gameId: raw.gameId ?? raw.game?.id ?? '',
-          gameSlug: raw.game?.slug ?? raw.gameSlug ?? raw.gameId ?? '',
           gameTitle: raw.game?.title ?? raw.gameTitle ?? '',
           gameImage: raw.game?.imageUrl ?? raw.gameImage ?? '',
 
@@ -220,8 +219,11 @@ export default function ChallengeDetailsPage() {
       return;
     }
 
-    setChallengeHasLiked(Boolean(challenge.hasVoted));
+    setChallengeHasVoted(Boolean(challenge.hasVoted));
     setChallengeLikes(challenge.likes);
+    setIsAllowToModifyOrDelete(user?.id === challenge.createdById);
+    console.log(user);
+    console.log(challenge);
 
     setIsEditing(false);
     setTitle(challenge.title);
@@ -251,9 +253,6 @@ export default function ChallengeDetailsPage() {
   }, [activeParticipationId, participations]);
 
   const currentUserId = user?.id ?? ''; // à revoir avec l'auth
-  const isChallengeOwner = Boolean(
-    challenge?.createdById && challenge.createdById === currentUserId
-  );
   const isOwnActiveParticipation = Boolean(
     activeParticipation && activeParticipation.userId === currentUserId
   );
@@ -288,15 +287,6 @@ export default function ChallengeDetailsPage() {
 
   const displayedParticipations = participations.slice(0, visibleCount);
   const canViewMore = visibleCount < participations.length;
-
-  const authHeaders = (): Record<string, string> => {
-    const t = token || (typeof window !== 'undefined' ? localStorage.getItem('token') : null);
-
-    if (!t) {
-      return {};
-    }
-    return { Authorization: `Bearer ${t}` };
-  };
 
   const saveEdits = async () => {
     if (!challenge) {
@@ -342,12 +332,10 @@ export default function ChallengeDetailsPage() {
     if (!challenge) {
       return;
     }
-    const parsed = splitDescriptionAndDetails(challenge.description);
-
     setTitle(challenge.title);
     setImageUrl(undefined);
-    setDescriptionPoints([parsed.desc]);
-    setDetailsPoints(parsed.details);
+    setDescriptionPoints([challenge.description]);
+    setDetailsPoints(challenge.details ?? []);
     setIsEditing(false);
   };
 
@@ -414,25 +402,21 @@ export default function ChallengeDetailsPage() {
     if (!challenge) {
       return;
     }
-
     const desc = pDesc.trim();
     const link = pLink.trim();
-    const submissionUrl = link && /^https?:\/\/.+/i.test(link) ? link : null;
-
     if (!desc) {
-      alert('Description required');
       return;
     }
 
+    // POST /challenges/:id/participations
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-
     const res = await fetch(`${baseUrl}/participation/challenges/${challenge.id}/participations`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       credentials: 'include',
-      body: JSON.stringify({ description: desc, submissionUrl })
+      body: JSON.stringify({ submissionUrl: link || null, description: desc })
     });
 
     if (!res.ok) {
@@ -441,23 +425,21 @@ export default function ChallengeDetailsPage() {
       return;
     }
 
-    const { participation } = await res.json();
+    const data = await res.json().catch(() => null);
+    const created = (data?.participation ?? data) as any;
 
-    // Ajout direct dans la liste
-    setParticipations((prev) => [
-      {
-        id: participation.id,
-        userId: participation.userId,
-        name: participation.user.username,
-        description: participation.description,
-        link: participation.submissionUrl ?? undefined,
-        scoreLabel: '-',
-        likes: 0,
-        hasLiked: false
-      },
-      ...prev
-    ]);
+    const newP: Participation = {
+      id: created?.id ?? `p_${Date.now()}`,
+      userId: created?.userId ?? currentUserId,
+      name: created?.user?.username ?? user?.username ?? 'Username',
+      scoreLabel: '-',
+      description: created?.description ?? desc,
+      link: created?.submissionUrl ?? (link || undefined),
+      hasVoted: false,
+      likes: 0
+    };
 
+    setParticipations((prev) => [newP, ...prev]);
     closeModal();
   };
 
@@ -502,11 +484,10 @@ export default function ChallengeDetailsPage() {
       return;
     }
 
-    // DELETE /participation/:id
+    // DELETE /participations/:id
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
     const res = await fetch(`${baseUrl}/participation/participations/${activeParticipation.id}`, {
       method: 'DELETE',
-      headers: { ...authHeaders() },
       credentials: 'include'
     });
 
@@ -525,19 +506,22 @@ export default function ChallengeDetailsPage() {
     if (!challenge) {
       return;
     }
+
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-    if (challengeHasLiked) {
+    if (challengeHasVoted) {
       await fetch(`${baseUrl}/challengeVote/challenges/${challenge.id}/vote`, {
         method: 'DELETE',
         credentials: 'include'
       });
-      setChallengeHasLiked(false);
+      setChallengeHasVoted(false);
+      setChallengeLikes(challengeLikes - 1);
     } else {
       await fetch(`${baseUrl}/challengeVote/challenges/${challenge.id}/vote`, {
         method: 'POST',
         credentials: 'include'
       });
-      setChallengeHasLiked(true);
+      setChallengeHasVoted(true);
+      setChallengeLikes(challengeLikes + 1);
     }
   };
 
@@ -654,12 +638,12 @@ export default function ChallengeDetailsPage() {
                   type="button"
                   onClick={onToggleChallengeLike}
                   className="relative w-10 h-10 shrink-0 hover:opacity-90"
-                  aria-pressed={challengeHasLiked}
-                  aria-label={challengeHasLiked ? 'Unlike challenge' : 'Like challenge'}
+                  aria-pressed={challengeHasVoted}
+                  aria-label={challengeHasVoted ? 'Unlike challenge' : 'Like challenge'}
                 >
                   <Image
-                    src={challengeHasLiked ? '/vote 1.png' : '/vote 0.png'}
-                    alt={challengeHasLiked ? 'Voted' : 'Not voted'}
+                    src={challengeHasVoted ? '/like 0.png' : '/like 1.png'}
+                    alt={challengeHasVoted ? 'Voted' : 'Not Voted'}
                     fill
                     sizes="40px"
                     className="object-contain"
@@ -674,7 +658,7 @@ export default function ChallengeDetailsPage() {
                 <div className="text-sm">
                   <span className="text-foreground/60">Game :</span>{' '}
                   <Link
-                    href={`/games/${challenge.gameSlug ?? challenge.gameId}`}
+                    href={`/games/${challenge.gameId}`}
                     className="text-xs font-semibold tracking-widest text-(--button-select)/90 mb-2 hover:underline"
                   >
                     {challenge.gameTitle}
@@ -686,8 +670,8 @@ export default function ChallengeDetailsPage() {
                 </div>
               </div>
 
-              {isChallengeOwner ? (
-                !isEditing ? (
+              {!isEditing ? (
+                isAllowToModifyOrDelete ? (
                   <button
                     type="button"
                     onClick={() => setIsEditing(true)}
@@ -696,24 +680,26 @@ export default function ChallengeDetailsPage() {
                     Modify
                   </button>
                 ) : (
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={cancelEdits}
-                      className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm font-semibold"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="button"
-                      onClick={saveEdits}
-                      className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
-                    >
-                      Save
-                    </button>
-                  </div>
+                  <div></div>
                 )
-              ) : null}
+              ) : (
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={cancelEdits}
+                    className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm font-semibold"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={saveEdits}
+                    className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                  >
+                    Save
+                  </button>
+                </div>
+              )}
             </div>
 
             {isEditing ? (
@@ -855,11 +841,6 @@ export default function ChallengeDetailsPage() {
                 <div className="min-w-0">
                   <div className="font-semibold">{p.name}</div>
                   <div className="text-white/70 text-sm">{p.scoreLabel}</div>
-                  {p.description ? (
-                    <div className="mt-2 text-white/80 text-sm leading-snug break-words">
-                      {clampParticipation(p.description, 120)}
-                    </div>
-                  ) : null}
                   {p.link ? (
                     <div className="text-white/70 text-sm break-all">
                       <span className="text-white/60">Link :</span> {p.link}
@@ -881,8 +862,8 @@ export default function ChallengeDetailsPage() {
                       aria-label={p.hasVoted ? 'Unlike participation' : 'Like participation'}
                     >
                       <Image
-                        src={p.hasVoted ? '/vote 1.png' : '/vote 0.png'}
-                        alt={p.hasVoted ? 'Voted' : 'Not voted'}
+                        src={p.hasVoted ? '/like 1.png' : '/like 0.png'}
+                        alt={p.hasVoted ? 'Voted' : 'Not Voted'}
                         fill
                         sizes="32px"
                         className="object-contain"
