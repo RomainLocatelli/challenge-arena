@@ -47,6 +47,7 @@ type ChallengeDetails = {
   gameImage: string;
   hasVoted?: boolean;
   likes: number;
+  hasVoted: boolean;
 
   participations: Participation[];
 };
@@ -220,7 +221,7 @@ export default function ChallengeDetailsPage() {
       return;
     }
 
-    setchallengeHasVoted(Boolean(challenge.hasVoted));
+    setChallengeHasLiked(Boolean(challenge.hasVoted));
     setChallengeLikes(challenge.likes);
 
     setIsEditing(false);
@@ -314,9 +315,9 @@ export default function ChallengeDetailsPage() {
     const res = await fetch(`${baseUrl}/challenges/${challenge.id}`, {
       method: 'PATCH',
       headers: {
-        'Content-Type': 'application/json',
-        ...authHeaders()
+        'Content-Type': 'application/json'
       },
+      credentials: 'include',
       body: JSON.stringify(payload)
     });
 
@@ -527,22 +528,19 @@ const submitCreate = async () => {
     if (!challenge) {
       return;
     }
-
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-    const next = !challengeHasVoted;
-
-    setchallengeHasVoted(next);
-    setChallengeLikes((n) => n + (next ? 1 : -1));
-
-    // TODO link to uesrLiked fetch table
-    const res = await fetch(`${baseUrl}/challengeVote/challenges/${challenge.id}/vote`, {
-      method: next ? 'POST' : 'DELETE',
-      headers: { ...authHeaders() },
-      credentials: 'include'
-    });
-    if (!res.ok) {
-      setchallengeHasVoted(!next);
-      setChallengeLikes((n) => n + (next ? -1 : 1));
+    if (challengeHasLiked) {
+      await fetch(`${baseUrl}/challengeVote/challenges/${challenge.id}/vote`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      setChallengeHasLiked(false);
+    } else {
+      await fetch(`${baseUrl}/challengeVote/challenges/${challenge.id}/vote`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+      setChallengeHasLiked(true);
     }
   };
 
@@ -561,7 +559,8 @@ const submitCreate = async () => {
     );
 
     // Todo link to the bdd line exist in bdd
-      const res = await fetch(`${baseUrl}/participationVote/participations/${p.id}/vote`, {      method: next ? 'POST' : 'DELETE',
+    const res = await fetch(`${baseUrl}/participation/participations/${p.id}/votes`, {
+      method: challenge.hasVoted ? 'POST' : 'DELETE',
       credentials: 'include'
     });
 

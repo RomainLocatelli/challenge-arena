@@ -8,13 +8,6 @@ export const challengeIdParamSchema = z.object({
   id: z.string().min(1, 'Challenge ID is  required')
 });
 
-export const challengeSlugParamSchema = z.object({
-  slug: z.string().min(1, 'Challenge ID is  required')
-});
-export const participationSlugParamSchema = z.object({
-  slug: z.string().min(1, 'ID is required')
-});
-
 export const createParticipationBodySchema = z.object({
   submissionUrl: z
     .string()
