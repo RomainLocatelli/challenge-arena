@@ -48,6 +48,43 @@ const formatVotes = (n: number) => {
   return `${n}`;
 };
 
+// Search filter function
+function filterOrderingChallenges(
+  challenges: Challenge[],
+  orderFilterSearchbar: string,
+  filterSelectorChoice: string
+) {
+  const sorted = [...challenges];
+  if (filterSelectorChoice === 'Popularity') {
+    sorted.sort((a, b) => {
+      if (orderFilterSearchbar === 'ASC') {
+        return a.voteCount - b.voteCount;
+      } else {
+        return b.voteCount - a.voteCount;
+      }
+    });
+  } else if (filterSelectorChoice === 'Date added') {
+    sorted.sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      if (orderFilterSearchbar === 'ASC') {
+        return dateB - dateA;
+      } else {
+        return dateA - dateB;
+      }
+    });
+  } else {
+    sorted.sort((a, b) => {
+      if (orderFilterSearchbar === 'ASC') {
+        return a.title.localeCompare(b.title);
+      } else {
+        return b.title.localeCompare(a.title);
+      }
+    });
+  }
+  return sorted;
+}
+
 export default function ChallengesPage() {
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
@@ -134,14 +171,22 @@ export default function ChallengesPage() {
   }, [searchQuery, selectedGameId, challenges]);
 
   /* ======================
+     SORTING
+  ====================== */
+
+  const sortedChallenges = useMemo(() => {
+    return filterOrderingChallenges(filteredChallenges, orderFilterSearchbar, filterSelectorChoice);
+  }, [filteredChallenges, orderFilterSearchbar, filterSelectorChoice]);
+
+  /* ======================
      PAGINATION
   ====================== */
 
-  const totalPages = Math.max(1, Math.ceil(filteredChallenges.length / itemsPerPage));
+  const totalPages = Math.max(1, Math.ceil(sortedChallenges.length / itemsPerPage));
   const effectivePage = Math.min(Math.max(1, currentPage), totalPages);
 
   const startIndex = (effectivePage - 1) * itemsPerPage;
-  const paginatedChallenges = filteredChallenges.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedChallenges = sortedChallenges.slice(startIndex, startIndex + itemsPerPage);
 
   const goToPage = (page: number) => {
     setCurrentPage(page);
@@ -163,12 +208,6 @@ export default function ChallengesPage() {
     setPageBlockStart((s) => Math.min(s + 4, maxStart));
     setCurrentPage((p) => (p === 1 ? Math.min(pageBlockStart + 4, totalPages) : p));
   };
-
-  function filterOrderingChallenges(challenges: Challenge, orderFilterSearchbar, filterSelectorChoice) {
-    if (filterSelectorChoice === 'popularity') {
-      orderFilterSearchbar === 'ASC' ? () : ()
-    }
-  }
 
   /* ======================
      RENDER
