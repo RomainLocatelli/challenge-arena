@@ -98,8 +98,10 @@ function extractShortDescription(raw: string) {
   const text = (raw ?? '').replace(/\r\n/g, '\n').trim();
   const idx = text.search(/\n\s*details\s*:?\s*\n/i);
 
-  if (idx === -1) {
-    return text;
+    if (idx === -1) {
+      return text;
+    }
+    return text.slice(0, idx).trim();
   }
   return text.slice(0, idx).trim();
   }

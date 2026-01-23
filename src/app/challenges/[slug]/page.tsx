@@ -26,7 +26,7 @@ type Participation = {
   description: string;
   scoreLabel: string;
   link?: string;
-  hasLiked?: boolean;
+  hasVoted?: boolean;
   likes: number;
 };
 
@@ -45,7 +45,7 @@ type ChallengeDetails = {
   gameSlug?: string;
   gameTitle: string;
   gameImage: string;
-  hasLiked?: boolean;
+  hasVoted?: boolean;
   likes: number;
 
   participations: Participation[];
@@ -114,7 +114,7 @@ export default function ChallengeDetailsPage() {
   const [loadError, setLoadError] = useState<string | null>(null);
 
   // UI state
-  const [challengeHasLiked, setChallengeHasLiked] = useState(false);
+  const [challengeHasVoted, setchallengeHasVoted] = useState(false);
   const [challengeLikes, setChallengeLikes] = useState(0);
 
   const [isEditing, setIsEditing] = useState(false);
@@ -181,7 +181,7 @@ export default function ChallengeDetailsPage() {
           gameImage: raw.game?.imageUrl ?? raw.gameImage ?? '',
 
           likes: raw.voteCount ?? raw.likes ?? 0,
-          hasLiked: Boolean(raw.hasLiked),
+          hasVoted: Boolean(raw.hasVoted),
 
           participations: (raw.participations ?? []).map((p: any) => ({
             id: p.id,
@@ -191,7 +191,7 @@ export default function ChallengeDetailsPage() {
             scoreLabel: p.scoreLabel ?? '-', // pas en seed -> placeholder
             link: p.submissionUrl ?? p.link ?? undefined,
             likes: p.voteCount ?? p.likes ?? 0,
-            hasLiked: Boolean(p.hasLiked)
+            hasVoted: Boolean(p.hasVoted)
           }))
         };
 
@@ -220,7 +220,7 @@ export default function ChallengeDetailsPage() {
       return;
     }
 
-    setChallengeHasLiked(Boolean(challenge.hasLiked));
+    setchallengeHasVoted(Boolean(challenge.hasVoted));
     setChallengeLikes(challenge.likes);
 
     setIsEditing(false);
@@ -230,12 +230,10 @@ export default function ChallengeDetailsPage() {
     const parsed = splitDescriptionAndDetails(challenge.description);
 
     const finalDetails =
-      parsed.details.length > 0
-        ? parsed.details
-        : (challenge.details ?? []).filter(Boolean);
+      parsed.details.length > 0 ? parsed.details : (challenge.details ?? []).filter(Boolean);
 
-setDescriptionPoints([parsed.desc]);
-setDetailsPoints(finalDetails);
+    setDescriptionPoints([parsed.desc]);
+    setDetailsPoints(finalDetails);
 
     setParticipations(challenge.participations ?? []);
   }, [challenge]);
@@ -309,13 +307,9 @@ setDetailsPoints(finalDetails);
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
     const payload = {
       title: title.trim(),
-      scoreFormat: challenge.scoreFormat, 
-      description: buildChallengeDescription(
-        clamp100(descriptionPoints[0] ?? ''),
-        detailsPoints
-      )
+      scoreFormat: challenge.scoreFormat,
+      description: buildChallengeDescription(clamp100(descriptionPoints[0] ?? ''), detailsPoints)
     };
-
 
     const res = await fetch(`${baseUrl}/challenges/${challenge.id}`, {
       method: 'PATCH',
@@ -437,8 +431,7 @@ const submitCreate = async () => {
   const res = await fetch(`${baseUrl}/participation/challenges/${challenge.id}/participations`, {
     method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        ...authHeaders()
+        'Content-Type': 'application/json'
       },
     credentials: 'include',
     body: JSON.stringify({ description: desc, submissionUrl })
@@ -485,8 +478,7 @@ const submitCreate = async () => {
     const res = await fetch(`${baseUrl}/participation/participations/${activeParticipation.id}`, {
       method: 'PATCH',
       headers: {
-        'Content-Type': 'application/json',
-        ...authHeaders()
+        'Content-Type': 'application/json'
       },
       credentials: 'include',
       body: JSON.stringify({ description: desc, submissionUrl: link || null })
@@ -537,19 +529,19 @@ const submitCreate = async () => {
     }
 
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-    const next = !challengeHasLiked;
+    const next = !challengeHasVoted;
 
-    setChallengeHasLiked(next);
+    setchallengeHasVoted(next);
     setChallengeLikes((n) => n + (next ? 1 : -1));
 
-    const res = await fetch(`http://api:3000/challenges/${challenge.id}/votes`, {
+    // TODO link to uesrLiked fetch table
+    const res = await fetch(`${baseUrl}/challengeVote/challenges/${challenge.id}/vote`, {
       method: next ? 'POST' : 'DELETE',
       headers: { ...authHeaders() },
       credentials: 'include'
     });
-
     if (!res.ok) {
-      setChallengeHasLiked(!next);
+      setchallengeHasVoted(!next);
       setChallengeLikes((n) => n + (next ? -1 : 1));
     }
   };
@@ -560,23 +552,23 @@ const submitCreate = async () => {
     }
 
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-    const next = !p.hasLiked;
+    const next = !p.hasVoted;
 
     setParticipations((prev) =>
       prev.map((x) =>
-        x.id === p.id ? { ...x, hasLiked: next, likes: x.likes + (next ? 1 : -1) } : x
+        x.id === p.id ? { ...x, hasVoted: next, likes: x.likes + (next ? 1 : -1) } : x
       )
     );
 
-    const res = await fetch(`${baseUrl}/participations/${p.id}/votes`, {
-      method: next ? 'POST' : 'DELETE',
-      headers: { ...authHeaders() }
+    // Todo link to the bdd line exist in bdd
+      const res = await fetch(`${baseUrl}/participationVote/participations/${p.id}/vote`, {      method: next ? 'POST' : 'DELETE',
+      credentials: 'include'
     });
 
     if (!res.ok) {
       setParticipations((prev) =>
         prev.map((x) =>
-          x.id === p.id ? { ...x, hasLiked: !next, likes: x.likes + (next ? -1 : 1) } : x
+          x.id === p.id ? { ...x, hasVoted: !next, likes: x.likes + (next ? -1 : 1) } : x
         )
       );
     }
@@ -594,11 +586,12 @@ const submitCreate = async () => {
     toggleParticipationLike(p);
   };
 
+  // Todo remove participations does not send to the right back adress
   const removeParticipation = async (id: string) => {
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-    const res = await fetch(`${baseUrl}/participations/${id}`, {
+    const res = await fetch(`${baseUrl}/participation/participations/${id}`, {
       method: 'DELETE',
-      headers: { ...authHeaders() }
+      credentials: 'include'
     });
 
     if (!res.ok) {
@@ -665,12 +658,12 @@ const submitCreate = async () => {
                   type="button"
                   onClick={onToggleChallengeLike}
                   className="relative w-10 h-10 shrink-0 hover:opacity-90"
-                  aria-pressed={challengeHasLiked}
-                  aria-label={challengeHasLiked ? 'Unlike challenge' : 'Like challenge'}
-                >
-                  <Image
-                    src={challengeHasLiked ? '/like 0.png' : '/like 1.png'}
-                    alt={challengeHasLiked ? 'Liked' : 'Not liked'}
+                  aria-pressed={challengeHasVoted}
+                  aria-label={challengeHasVoted ? 'Unlike challenge' : 'Like challenge'}
+                  >
+                    <Image
+                      src={challengeHasVoted ? '/vote 1.png' : '/vote 0.png'}
+                      alt={challengeHasVoted ? 'Voted' : 'Not voted'}
                     fill
                     sizes="40px"
                     className="object-contain"
@@ -888,12 +881,12 @@ const submitCreate = async () => {
                       type="button"
                       onClick={() => onToggleParticipationLike(p.id)}
                       className="relative w-8 h-8 hover:opacity-90"
-                      aria-pressed={!!p.hasLiked}
-                      aria-label={p.hasLiked ? 'Unlike participation' : 'Like participation'}
+                      aria-pressed={!!p.hasVoted}
+                      aria-label={p.hasVoted ? 'Unlike participation' : 'Like participation'}
                     >
-                      <Image
-                        src={p.hasLiked ? '/like 1.png' : '/like 0.png'}
-                        alt={p.hasLiked ? 'Liked' : 'Not liked'}
+                    <Image
+                      src={p.hasVoted ? '/vote 1.png' : '/vote 0.png'}
+                      alt={p.hasVoted ? 'Voted' : 'Not voted'}
                         fill
                         sizes="32px"
                         className="object-contain"
