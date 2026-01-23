@@ -48,43 +48,6 @@ const formatVotes = (n: number) => {
   return `${n}`;
 };
 
-// Search filter function
-function filterOrderingChallenges(
-  challenges: Challenge[],
-  orderFilterSearchbar: string,
-  filterSelectorChoice: string
-) {
-  const sorted = [...challenges];
-  if (filterSelectorChoice === 'Popularity') {
-    sorted.sort((a, b) => {
-      if (orderFilterSearchbar === 'ASC') {
-        return a.voteCount - b.voteCount;
-      } else {
-        return b.voteCount - a.voteCount;
-      }
-    });
-  } else if (filterSelectorChoice === 'Date added') {
-    sorted.sort((a, b) => {
-      const dateA = new Date(a.createdAt).getTime();
-      const dateB = new Date(b.createdAt).getTime();
-      if (orderFilterSearchbar === 'ASC') {
-        return dateB - dateA;
-      } else {
-        return dateA - dateB;
-      }
-    });
-  } else {
-    sorted.sort((a, b) => {
-      if (orderFilterSearchbar === 'ASC') {
-        return a.title.localeCompare(b.title);
-      } else {
-        return b.title.localeCompare(a.title);
-      }
-    });
-  }
-  return sorted;
-}
-
 export default function ChallengesPage() {
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
@@ -94,18 +57,12 @@ export default function ChallengesPage() {
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [games, setGames] = useState<Game[]>([]);
   const [selectedGameId, setSelectedGameId] = useState<string | null>(null);
-  const [filterModalArea, setFilterModalArea] = useState<boolean>(false);
-
-  const [orderFilterSearchbar, setOrderFilterSearchBar] = useState<'ASC' | 'DESC'>('ASC');
-  const [filterSelectorChoice, setFilterSelectorChoice] = useState<
-    'Popularity' | 'Date added' | 'Alphabetical'
-  >('Date added');
 
   const ismd = useMediaQuery('(min-width: 768px)');
   const itemsPerPage = ismd ? 6 : 4;
 
   /* ======================
-     API CALLS
+    API CALLS
   ====================== */
 
   useEffect(() => {
@@ -137,20 +94,20 @@ export default function ChallengesPage() {
     fetchChallenges();
   }, []);
 
-  function extractShortDescription(raw: string) {
-    const text = (raw ?? '').replace(/\r\n/g, '\n').trim();
-
-    // coupe dès qu’on voit une ligne "Details" (avec ou sans :)
-    const idx = text.search(/\n\s*details\s*:?\s*\n/i);
+function extractShortDescription(raw: string) {
+  const text = (raw ?? '').replace(/\r\n/g, '\n').trim();
+  const idx = text.search(/\n\s*details\s*:?\s*\n/i);
 
     if (idx === -1) {
       return text;
     }
     return text.slice(0, idx).trim();
   }
+  return text.slice(0, idx).trim();
+  }
 
   /* ======================
-     FILTERING
+    FILTERING
   ====================== */
 
   const filteredChallenges = useMemo(() => {
@@ -171,22 +128,14 @@ export default function ChallengesPage() {
   }, [searchQuery, selectedGameId, challenges]);
 
   /* ======================
-     SORTING
+    PAGINATION
   ====================== */
 
-  const sortedChallenges = useMemo(() => {
-    return filterOrderingChallenges(filteredChallenges, orderFilterSearchbar, filterSelectorChoice);
-  }, [filteredChallenges, orderFilterSearchbar, filterSelectorChoice]);
-
-  /* ======================
-     PAGINATION
-  ====================== */
-
-  const totalPages = Math.max(1, Math.ceil(sortedChallenges.length / itemsPerPage));
+  const totalPages = Math.max(1, Math.ceil(filteredChallenges.length / itemsPerPage));
   const effectivePage = Math.min(Math.max(1, currentPage), totalPages);
 
   const startIndex = (effectivePage - 1) * itemsPerPage;
-  const paginatedChallenges = sortedChallenges.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedChallenges = filteredChallenges.slice(startIndex, startIndex + itemsPerPage);
 
   const goToPage = (page: number) => {
     setCurrentPage(page);
@@ -210,12 +159,13 @@ export default function ChallengesPage() {
   };
 
   /* ======================
-     RENDER
+    RENDER
   ====================== */
 
   return (
     <div className="min-h-screen flex flex-col">
       <main className="px-4 md:px-8 py-6 max-w-7xl mx-auto w-full">
+
         {/* Search Bar */}
         <div className="mb-6">
           <div className="relative max-w-md md:max-w-2xl mx-auto">
@@ -241,79 +191,7 @@ export default function ChallengesPage() {
               }}
               className="relative w-full rounded-full bg-transparent py-3 pl-14 pr-4  text-center text-xl  focus:outline-none"
             />
-            <button
-              type="button"
-              onClick={() => {
-                setFilterModalArea(!filterModalArea);
-              }}
-              className="absolute bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) rounded-full top-1/2 right-3 -translate-y-1/2 z-8 h-10 w-10 flex items-center justify-center shadow"
-            >
-              <Image
-                src="/filter.png"
-                width={100}
-                height={100}
-                alt="Search Icon"
-                className="opacity-80"
-              />
-            </button>
           </div>
-          {/* Modal filter menu */}
-          {filterModalArea ? (
-            <div className="absolute flex  bg-(--modal-filter-searchebar) p-5 rounded-4xl left-1/5 lg:left-1/3 lg:right-1/3">
-              <p className="mr-3">Filter :</p>
-              <div className="gap-2 m-2 flex flex-col ">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setOrderFilterSearchBar('ASC');
-                  }}
-                  className="bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) rounded-4xl p-1"
-                >
-                  ASC ⬆️
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setOrderFilterSearchBar('DESC');
-                  }}
-                  className="bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) rounded-4xl p-1"
-                >
-                  DESC ⬇️
-                </button>
-              </div>
-              <div className="gap-2 m-2 flex flex-col">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setFilterSelectorChoice('Popularity');
-                  }}
-                  className="bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) rounded-4xl p-1"
-                >
-                  Popularity
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setFilterSelectorChoice('Date added');
-                  }}
-                  className="bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) rounded-4xl p-1"
-                >
-                  Date added
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setFilterSelectorChoice('Alphabetical');
-                  }}
-                  className="bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) rounded-4xl p-1"
-                >
-                  Alphabetical
-                </button>
-              </div>
-            </div>
-          ) : (
-            <p></p>
-          )}
         </div>
 
         {/* Challenges Section */}
@@ -398,8 +276,9 @@ export default function ChallengesPage() {
                         </div>
 
                         <Link
-                          href={`/challenges/${c.slug ?? c.id}`}
-                          className="px-4 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                          href={c.slug ? `/challenges/${c.slug}` : '#'}
+                          aria-disabled={!c.slug}
+                          className={`px-4 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)] ${!c.slug ? 'opacity-50 pointer-events-none' : ''}`}
                         >
                           Details
                         </Link>
@@ -420,6 +299,7 @@ export default function ChallengesPage() {
 
         {/* Pages */}
         <div className="flex justify-center gap-2 mb-12">
+
           {/* Page 1 toujours visible */}
           <button
             className={`w-8 h-8 rounded-full flex items-center justify-center ${
