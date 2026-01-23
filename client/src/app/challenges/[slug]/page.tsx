@@ -164,8 +164,7 @@ export default function ChallengeDetailsPage() {
           createdAt: raw.createdAt ?? '',
           updatedAt: raw.updatedAt ?? '',
 
-          createdBy: raw.createdBy?.username ?? raw.createdBy?.name ?? raw.createdBy ?? '—',
-
+          createdBy: raw.creator?.username ?? '—',
           gameId: raw.gameId ?? raw.game?.id ?? '',
           gameTitle: raw.game?.title ?? raw.gameTitle ?? '',
           gameImage: raw.game?.imageUrl ?? raw.gameImage ?? '',
