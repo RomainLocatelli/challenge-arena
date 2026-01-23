@@ -26,7 +26,7 @@ type Participation = {
   description: string;
   scoreLabel: string;
   link?: string;
-  hasLiked?: boolean;
+  hasVoted?: boolean;
   likes: number;
 };
 
@@ -40,10 +40,12 @@ type ChallengeDetails = {
   createdAt: string;
   updatedAt: string;
   createdBy: string;
+  createdById: string;
   gameId: string;
+  gameSlug?: string;
   gameTitle: string;
   gameImage: string;
-  hasLiked?: boolean;
+  hasVoted?: boolean;
   likes: number;
   hasVoted: boolean;
 
@@ -57,6 +59,14 @@ const clamp100 = (s: string) => {
     return t;
   }
   return `${t.slice(0, 97)}...`;
+};
+
+const clampParticipation = (s: string | undefined | null, max = 120) => {
+  const t = (s ?? '').trim();
+  if (t.length <= max) {
+    return t;
+  }
+  return `${t.slice(0, Math.max(0, max - 3))}...`;
 };
 
 function buildChallengeDescription(desc: string, details: string[]) {
@@ -105,7 +115,7 @@ export default function ChallengeDetailsPage() {
   const [loadError, setLoadError] = useState<string | null>(null);
 
   // UI state
-  const [challengeHasLiked, setChallengeHasLiked] = useState(false);
+  const [challengeHasVoted, setchallengeHasVoted] = useState(false);
   const [challengeLikes, setChallengeLikes] = useState(0);
 
   const [isEditing, setIsEditing] = useState(false);
@@ -164,15 +174,15 @@ export default function ChallengeDetailsPage() {
           scoreFormat: raw.scoreFormat ?? '',
           createdAt: raw.createdAt ?? '',
           updatedAt: raw.updatedAt ?? '',
-
-          createdBy: raw.createdBy?.username ?? raw.createdBy?.name ?? raw.createdBy ?? '—',
-
+          createdBy: raw.createdBy?.username ?? raw.createdBy?.name ?? raw.createdBy ?? '—', 
+          createdById: raw.createdBy?.id ?? raw.createdById ?? '',
           gameId: raw.gameId ?? raw.game?.id ?? '',
+          gameSlug: raw.game?.slug ?? raw.gameSlug ?? raw.gameId ?? '',
           gameTitle: raw.game?.title ?? raw.gameTitle ?? '',
           gameImage: raw.game?.imageUrl ?? raw.gameImage ?? '',
 
           likes: raw.voteCount ?? raw.likes ?? 0,
-          hasLiked: Boolean(raw.hasLiked),
+          hasVoted: Boolean(raw.hasVoted),
 
           participations: (raw.participations ?? []).map((p: any) => ({
             id: p.id,
@@ -182,7 +192,7 @@ export default function ChallengeDetailsPage() {
             scoreLabel: p.scoreLabel ?? '-', // pas en seed -> placeholder
             link: p.submissionUrl ?? p.link ?? undefined,
             likes: p.voteCount ?? p.likes ?? 0,
-            hasLiked: Boolean(p.hasLiked)
+            hasVoted: Boolean(p.hasVoted)
           }))
         };
 
@@ -242,6 +252,7 @@ export default function ChallengeDetailsPage() {
   }, [activeParticipationId, participations]);
 
   const currentUserId = user?.id ?? ''; // à revoir avec l'auth
+  const isChallengeOwner = Boolean(challenge?.createdById && challenge.createdById === currentUserId);
   const isOwnActiveParticipation = Boolean(
     activeParticipation && activeParticipation.userId === currentUserId
   );
@@ -278,11 +289,16 @@ export default function ChallengeDetailsPage() {
   const canViewMore = visibleCount < participations.length;
 
   const authHeaders = (): Record<string, string> => {
-    if (!token) {
-      return {} as Record<string, string>;
+    const t =
+      token ||
+      (typeof window !== 'undefined' ? localStorage.getItem('token') : null);
+
+    if (!t) {
+      return {};
     }
-    return { Authorization: `Bearer ${token}` };
+    return { Authorization: `Bearer ${t}` };
   };
+
 
   const saveEdits = async () => {
     if (!challenge) {
@@ -328,10 +344,12 @@ export default function ChallengeDetailsPage() {
     if (!challenge) {
       return;
     }
+    const parsed = splitDescriptionAndDetails(challenge.description);
+
     setTitle(challenge.title);
     setImageUrl(undefined);
-    setDescriptionPoints([challenge.description]);
-    setDetailsPoints(challenge.details ?? []);
+    setDescriptionPoints([parsed.desc]);
+    setDetailsPoints(parsed.details);
     setIsEditing(false);
   };
 
@@ -394,50 +412,57 @@ export default function ChallengeDetailsPage() {
   };
 
   // Ces 3 actions nécessitent des routes côté Express (participations)
-  const submitCreate = async () => {
-    if (!challenge) {
-      return;
-    }
-    const desc = pDesc.trim();
-    const link = pLink.trim();
-    if (!desc) {
-      return;
-    }
+const submitCreate = async () => {
+  if (!challenge) {
+    return;
+  }
 
-    // POST /challenges/:id/participations
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-    const res = await fetch(`${baseUrl}/participation/challenges/${challenge.id}/participations`, {
-      method: 'POST',
+  const desc = pDesc.trim();
+  const link = pLink.trim();
+  const submissionUrl =
+  link && /^https?:\/\/.+/i.test(link) ? link : null;
+
+  if (!desc) {
+    alert('Description required');
+    return;
+  }
+
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+
+  const res = await fetch(`${baseUrl}/participation/challenges/${challenge.id}/participations`, {
+    method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      credentials: 'include',
-      body: JSON.stringify({ submissionUrl: link || null, description: desc })
-    });
+    credentials: 'include',
+    body: JSON.stringify({ description: desc, submissionUrl })
+});
 
-    if (!res.ok) {
-      const msg = await res.text().catch(() => '');
-      alert(msg || 'Failed to create participation');
-      return;
-    }
+  if (!res.ok) {
+    const msg = await res.text().catch(() => '');
+    alert(msg || 'Failed to create participation');
+    return;
+  }
 
-    const data = await res.json().catch(() => null);
-    const created = (data?.participation ?? data) as any;
+  const { participation } = await res.json();
 
-    const newP: Participation = {
-      id: created?.id ?? `p_${Date.now()}`,
-      userId: created?.userId ?? currentUserId,
-      name: created?.user?.username ?? user?.username ?? 'Username',
-      scoreLabel: '-',
-      description: created?.description ?? desc,
-      link: created?.submissionUrl ?? (link || undefined),
-      hasLiked: false,
-      likes: 0
-    };
+  // Ajout direct dans la liste
+  setParticipations((prev) => [
+    {
+      id: participation.id,
+      userId: participation.userId,
+      name: participation.user.username,
+      description: participation.description,
+      link: participation.submissionUrl ?? undefined,
+      scoreLabel: '-', 
+      likes: 0,
+      hasLiked: false
+    },
+    ...prev
+  ]);
 
-    setParticipations((prev) => [newP, ...prev]);
-    closeModal();
-  };
+  closeModal();
+};
 
   const saveEdit = async () => {
     if (!activeParticipation) {
@@ -480,10 +505,11 @@ export default function ChallengeDetailsPage() {
       return;
     }
 
-    // DELETE /participations/:id
+    // DELETE /participation/:id
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
     const res = await fetch(`${baseUrl}/participation/participations/${activeParticipation.id}`, {
       method: 'DELETE',
+      headers: { ...authHeaders() },
       credentials: 'include'
     });
 
@@ -524,11 +550,11 @@ export default function ChallengeDetailsPage() {
     }
 
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-    const next = !p.hasLiked;
+    const next = !p.hasVoted;
 
     setParticipations((prev) =>
       prev.map((x) =>
-        x.id === p.id ? { ...x, hasLiked: next, likes: x.likes + (next ? 1 : -1) } : x
+        x.id === p.id ? { ...x, hasVoted: next, likes: x.likes + (next ? 1 : -1) } : x
       )
     );
 
@@ -541,7 +567,7 @@ export default function ChallengeDetailsPage() {
     if (!res.ok) {
       setParticipations((prev) =>
         prev.map((x) =>
-          x.id === p.id ? { ...x, hasLiked: !next, likes: x.likes + (next ? -1 : 1) } : x
+          x.id === p.id ? { ...x, hasVoted: !next, likes: x.likes + (next ? -1 : 1) } : x
         )
       );
     }
@@ -631,12 +657,12 @@ export default function ChallengeDetailsPage() {
                   type="button"
                   onClick={onToggleChallengeLike}
                   className="relative w-10 h-10 shrink-0 hover:opacity-90"
-                  aria-pressed={challengeHasLiked}
-                  aria-label={challengeHasLiked ? 'Unlike challenge' : 'Like challenge'}
-                >
-                  <Image
-                    src={challengeHasLiked ? '/like 1.png' : '/like 0.png'}
-                    alt={challengeHasLiked ? 'Liked' : 'Not liked'}
+                  aria-pressed={challengeHasVoted}
+                  aria-label={challengeHasVoted ? 'Unlike challenge' : 'Like challenge'}
+                  >
+                    <Image
+                      src={challengeHasVoted ? '/vote 1.png' : '/vote 0.png'}
+                      alt={challengeHasVoted ? 'Voted' : 'Not voted'}
                     fill
                     sizes="40px"
                     className="object-contain"
@@ -651,7 +677,7 @@ export default function ChallengeDetailsPage() {
                 <div className="text-sm">
                   <span className="text-foreground/60">Game :</span>{' '}
                   <Link
-                    href={`/games/${challenge.gameId}`}
+                    href={`/games/${challenge.gameSlug ?? challenge.gameId}`}
                     className="text-xs font-semibold tracking-widest text-(--button-select)/90 mb-2 hover:underline"
                   >
                     {challenge.gameTitle}
@@ -663,32 +689,34 @@ export default function ChallengeDetailsPage() {
                 </div>
               </div>
 
-              {!isEditing ? (
-                <button
-                  type="button"
-                  onClick={() => setIsEditing(true)}
-                  className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
-                >
-                  Modify
-                </button>
-              ) : (
-                <div className="flex gap-2">
+              {isChallengeOwner ? (
+                !isEditing ? (
                   <button
                     type="button"
-                    onClick={cancelEdits}
-                    className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm font-semibold"
+                    onClick={() => setIsEditing(true)}
+                    className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
                   >
-                    Cancel
+                    Modify
                   </button>
-                  <button
-                    type="button"
-                    onClick={saveEdits}
-                    className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
-                  >
-                    Save
-                  </button>
-                </div>
-              )}
+                ) : (
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={cancelEdits}
+                      className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm font-semibold"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={saveEdits}
+                      className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                    >
+                      Save
+                    </button>
+                  </div>
+                )
+              ) : null}
             </div>
 
             {isEditing ? (
@@ -830,6 +858,11 @@ export default function ChallengeDetailsPage() {
                 <div className="min-w-0">
                   <div className="font-semibold">{p.name}</div>
                   <div className="text-white/70 text-sm">{p.scoreLabel}</div>
+                  {p.description ? (
+                    <div className="mt-2 text-white/80 text-sm leading-snug break-words">
+                      {clampParticipation(p.description, 120)}
+                    </div>
+                  ) : null}
                   {p.link ? (
                     <div className="text-white/70 text-sm break-all">
                       <span className="text-white/60">Link :</span> {p.link}
@@ -847,12 +880,12 @@ export default function ChallengeDetailsPage() {
                       type="button"
                       onClick={() => onToggleParticipationLike(p.id)}
                       className="relative w-8 h-8 hover:opacity-90"
-                      aria-pressed={!!p.hasLiked}
-                      aria-label={p.hasLiked ? 'Unlike participation' : 'Like participation'}
+                      aria-pressed={!!p.hasVoted}
+                      aria-label={p.hasVoted ? 'Unlike participation' : 'Like participation'}
                     >
-                      <Image
-                        src={p.hasLiked ? '/like 1.png' : '/like 0.png'}
-                        alt={p.hasLiked ? 'Liked' : 'Not liked'}
+                    <Image
+                      src={p.hasVoted ? '/vote 1.png' : '/vote 0.png'}
+                      alt={p.hasVoted ? 'Voted' : 'Not voted'}
                         fill
                         sizes="32px"
                         className="object-contain"
