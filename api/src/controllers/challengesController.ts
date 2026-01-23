@@ -63,7 +63,8 @@ export const getChallengeBySlug = async (
   next: NextFunction
 ) => {
   try {
-    const { slug } = req.params
+    const { slug } = req.params;
+    const userId = req.userId; // ← NOUVEAU
 
     const challenge = await prisma.challenge.findUnique({
       where: { slug },
@@ -75,25 +76,35 @@ export const getChallengeBySlug = async (
         },
         _count: {
           select: { votes: true }
-        }
+        },
+        // NOUVEAU
+        votes: userId ? {
+          where: { userId },
+          select: { userId: true }
+        } : false
       }
-    })
+    });
 
     if (!challenge) {
-      throw new AppError('Challenge not found', 404)
+      throw new AppError('Challenge not found', 404);
     }
+
+    // NOUVEAU
+    const hasVoted = challenge.votes && challenge.votes.length > 0;
 
     res.json({
       challenge: {
         ...challenge,
         voteCount: challenge._count.votes,
+        hasVoted,           // ← NOUVEAU
+        votes: undefined,   // ← NOUVEAU
         _count: undefined
       }
-    })
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 export const createChallenge = async (req: Request, res: Response, next: NextFunction) => {
   try {
