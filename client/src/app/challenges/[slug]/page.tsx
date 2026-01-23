@@ -26,7 +26,7 @@ type Participation = {
   description: string;
   scoreLabel: string;
   link?: string;
-  hasLiked?: boolean;
+  hasVoted?: boolean;
   likes: number;
 };
 
@@ -43,7 +43,7 @@ type ChallengeDetails = {
   gameId: string;
   gameTitle: string;
   gameImage: string;
-  hasLiked?: boolean;
+  hasVoted?: boolean;
   likes: number;
 
   participations: Participation[];
@@ -104,7 +104,7 @@ export default function ChallengeDetailsPage() {
   const [loadError, setLoadError] = useState<string | null>(null);
 
   // UI state
-  const [challengeHasLiked, setChallengeHasLiked] = useState(false);
+  const [challengeHasVoted, setchallengeHasVoted] = useState(false);
   const [challengeLikes, setChallengeLikes] = useState(0);
 
   const [isEditing, setIsEditing] = useState(false);
@@ -170,7 +170,7 @@ export default function ChallengeDetailsPage() {
           gameImage: raw.game?.imageUrl ?? raw.gameImage ?? '',
 
           likes: raw.voteCount ?? raw.likes ?? 0,
-          hasLiked: Boolean(raw.hasLiked),
+          hasVoted: Boolean(raw.hasVoted),
 
           participations: (raw.participations ?? []).map((p: any) => ({
             id: p.id,
@@ -180,7 +180,7 @@ export default function ChallengeDetailsPage() {
             scoreLabel: p.scoreLabel ?? '-', // pas en seed -> placeholder
             link: p.submissionUrl ?? p.link ?? undefined,
             likes: p.voteCount ?? p.likes ?? 0,
-            hasLiked: Boolean(p.hasLiked)
+            hasVoted: Boolean(p.hasVoted)
           }))
         };
 
@@ -209,7 +209,7 @@ export default function ChallengeDetailsPage() {
       return;
     }
 
-    setChallengeHasLiked(Boolean(challenge.hasLiked));
+    setchallengeHasVoted(Boolean(challenge.hasVoted));
     setChallengeLikes(challenge.likes);
 
     setIsEditing(false);
@@ -429,7 +429,7 @@ export default function ChallengeDetailsPage() {
       scoreLabel: '-',
       description: created?.description ?? desc,
       link: created?.submissionUrl ?? (link || undefined),
-      hasLiked: false,
+      hasVoted: false,
       likes: 0
     };
 
@@ -502,9 +502,9 @@ export default function ChallengeDetailsPage() {
     }
 
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-    const next = !challengeHasLiked;
+    const next = !challengeHasVoted;
 
-    setChallengeHasLiked(next);
+    setchallengeHasVoted(next);
     setChallengeLikes((n) => n + (next ? 1 : -1));
 
     // TODO link to uesrLiked fetch table
@@ -513,7 +513,7 @@ export default function ChallengeDetailsPage() {
       credentials: 'include'
     });
     if (!res.ok) {
-      setChallengeHasLiked(!next);
+      setchallengeHasVoted(!next);
       setChallengeLikes((n) => n + (next ? -1 : 1));
     }
   };
@@ -524,24 +524,23 @@ export default function ChallengeDetailsPage() {
     }
 
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-    const next = !p.hasLiked;
+    const next = !p.hasVoted;
 
     setParticipations((prev) =>
       prev.map((x) =>
-        x.id === p.id ? { ...x, hasLiked: next, likes: x.likes + (next ? 1 : -1) } : x
+        x.id === p.id ? { ...x, hasVoted: next, likes: x.likes + (next ? 1 : -1) } : x
       )
     );
 
     // Todo link to the bdd line exist in bdd
-    const res = await fetch(`${baseUrl}/participations/${p.id}/votes`, {
-      method: next ? 'POST' : 'DELETE',
+      const res = await fetch(`${baseUrl}/participationVote/participations/${p.id}/vote`, {      method: next ? 'POST' : 'DELETE',
       credentials: 'include'
     });
 
     if (!res.ok) {
       setParticipations((prev) =>
         prev.map((x) =>
-          x.id === p.id ? { ...x, hasLiked: !next, likes: x.likes + (next ? -1 : 1) } : x
+          x.id === p.id ? { ...x, hasVoted: !next, likes: x.likes + (next ? -1 : 1) } : x
         )
       );
     }
@@ -631,12 +630,12 @@ export default function ChallengeDetailsPage() {
                   type="button"
                   onClick={onToggleChallengeLike}
                   className="relative w-10 h-10 shrink-0 hover:opacity-90"
-                  aria-pressed={challengeHasLiked}
-                  aria-label={challengeHasLiked ? 'Unlike challenge' : 'Like challenge'}
-                >
-                  <Image
-                    src={challengeHasLiked ? '/like 1.png' : '/like 0.png'}
-                    alt={challengeHasLiked ? 'Liked' : 'Not liked'}
+                  aria-pressed={challengeHasVoted}
+                  aria-label={challengeHasVoted ? 'Unlike challenge' : 'Like challenge'}
+                  >
+                    <Image
+                      src={challengeHasVoted ? '/vote 1.png' : '/vote 0.png'}
+                      alt={challengeHasVoted ? 'Voted' : 'Not voted'}
                     fill
                     sizes="40px"
                     className="object-contain"
@@ -847,12 +846,12 @@ export default function ChallengeDetailsPage() {
                       type="button"
                       onClick={() => onToggleParticipationLike(p.id)}
                       className="relative w-8 h-8 hover:opacity-90"
-                      aria-pressed={!!p.hasLiked}
-                      aria-label={p.hasLiked ? 'Unlike participation' : 'Like participation'}
+                      aria-pressed={!!p.hasVoted}
+                      aria-label={p.hasVoted ? 'Unlike participation' : 'Like participation'}
                     >
-                      <Image
-                        src={p.hasLiked ? '/like 1.png' : '/like 0.png'}
-                        alt={p.hasLiked ? 'Liked' : 'Not liked'}
+                    <Image
+                      src={p.hasVoted ? '/vote 1.png' : '/vote 0.png'}
+                      alt={p.hasVoted ? 'Voted' : 'Not voted'}
                         fill
                         sizes="32px"
                         className="object-contain"
