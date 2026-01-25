@@ -269,7 +269,7 @@ export default function ChallengesPage() {
                   }}
                   className="bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) rounded-4xl p-1"
                 >
-                  ASC ⬆️
+                  Ascending ⬆️
                 </button>
                 <button
                   type="button"
@@ -278,7 +278,7 @@ export default function ChallengesPage() {
                   }}
                   className="bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) rounded-4xl p-1"
                 >
-                  DESC ⬇️
+                  Descending ⬇️
                 </button>
               </div>
               <div className="gap-2 m-2 flex flex-col">
