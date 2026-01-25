@@ -157,7 +157,6 @@ export default function ChallengeDetailsPage() {
         }
 
         const data = await res.json();
-        console.log(data);
 
         const raw = (data?.challenge ?? data) as any;
 
@@ -221,9 +220,8 @@ export default function ChallengeDetailsPage() {
 
     setChallengeHasVoted(Boolean(challenge.hasVoted));
     setChallengeLikes(challenge.likes);
+
     setIsAllowToModifyOrDelete(user?.id === challenge.createdById);
-    console.log(user);
-    console.log(challenge);
 
     setIsEditing(false);
     setTitle(challenge.title);
@@ -531,26 +529,49 @@ export default function ChallengeDetailsPage() {
     }
 
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-    const next = !p.hasVoted;
 
-    setParticipations((prev) =>
-      prev.map((x) =>
-        x.id === p.id ? { ...x, hasVoted: next, likes: x.likes + (next ? 1 : -1) } : x
-      )
-    );
+    try {
+      if (p.hasVoted) {
+        // Unlike
+        await fetch(`${baseUrl}/participationVote/participations/${p.id}/vote`, {
+          method: 'DELETE',
+          credentials: 'include'
+        });
 
-    // Todo link to the bdd line exist in bdd
-    const res = await fetch(`${baseUrl}/participation/participations/${p.id}/votes`, {
-      method: challenge.hasVoted ? 'POST' : 'DELETE',
-      credentials: 'include'
-    });
+        // ✅ Met à jour SEULEMENT cette participation
+        setParticipations((prev) =>
+          prev.map((participation) =>
+            participation.id === p.id
+              ? {
+                  ...participation,
+                  hasVoted: false,
+                  likes: Math.max(0, participation.likes - 1)
+                }
+              : participation
+          )
+        );
+      } else {
+        // Like
+        await fetch(`${baseUrl}/participationVote/participations/${p.id}/vote`, {
+          method: 'POST',
+          credentials: 'include'
+        });
 
-    if (!res.ok) {
-      setParticipations((prev) =>
-        prev.map((x) =>
-          x.id === p.id ? { ...x, hasVoted: !next, likes: x.likes + (next ? -1 : 1) } : x
-        )
-      );
+        // ✅ Met à jour SEULEMENT cette participation
+        setParticipations((prev) =>
+          prev.map((participation) =>
+            participation.id === p.id
+              ? {
+                  ...participation,
+                  hasVoted: true,
+                  likes: participation.likes + 1
+                }
+              : participation
+          )
+        );
+      }
+    } catch (error) {
+      console.error('Error toggling participation vote:', error);
     }
   };
 
@@ -862,7 +883,7 @@ export default function ChallengeDetailsPage() {
                       aria-label={p.hasVoted ? 'Unlike participation' : 'Like participation'}
                     >
                       <Image
-                        src={p.hasVoted ? '/like 1.png' : '/like 0.png'}
+                        src={p.hasVoted ? '/like 0.png' : '/like 1.png'}
                         alt={p.hasVoted ? 'Voted' : 'Not Voted'}
                         fill
                         sizes="32px"
