@@ -99,10 +99,10 @@ export default function ProfilePage() {
     return (
       <main className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-2xl mb-4">Tu n'es pas connecté</p>
+          <p className="text-2xl mb-4">Tu n&apos;es pas connecté</p>
           <Link
             href="/login"
-            className="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-lg inline-block"
+            className="bg-(--button-game-challenge) hover:(--button-game-challenge-hover) px-6 py-3 rounded-lg inline-block"
           >
             Se connecter
           </Link>
@@ -177,9 +177,9 @@ export default function ProfilePage() {
   return (
     <main className="min-h-screen">
       {/* Hero Banner */}
-      <div className="relative mx-5 my-8 max-w-5xl lg:mx-auto border-b border-white/10 pb-6">
+      <div className="relative mx-5 my-8 max-w-5xl lg:mx-auto border-b border-foreground/10 pb-6">
         <div className="flex items-center gap-4">
-          <div className="h-12 w-1 rounded-full bg-purple-600" />
+          <div className="h-12 w-1 rounded-full bg-(--button-select)" />
           <div>
             <h1 className="text-5xl md:text-6xl font-black">{user.username}</h1>
           </div>
@@ -189,21 +189,25 @@ export default function ProfilePage() {
       {/* Stats Bar */}
       <div className="max-w-5xl mx-5 lg:mx-auto my-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="rounded-xl bg-(--button-area) ring-1 ring-purple-500/50 shadow-lg p-4 hover:ring-purple-500 transition-all">
+          <div className="rounded-xl bg-(--button-area) ring-1 ring-(--button-select)/50 shadow-lg p-4 hover:ring-(--button-select) transition-all">
             <p className="text-sm mb-1">Challenges</p>
-            <p className="text-4xl font-black text-purple-400">{stats?.totalChallenges || 0}</p>
+            <p className="text-4xl font-black text-(--button-select)">
+              {stats?.totalChallenges || 0}
+            </p>
           </div>
-          <div className="rounded-xl bg-(--button-area) ring-1 ring-purple-500/50 shadow-lg p-4 hover:ring-purple-500 transition-all">
+          <div className="rounded-xl bg-(--button-area) ring-1 ring-(--button-select)/50 shadow-lg p-4 hover:ring-(--button-select) transition-all">
             <p className="text-sm mb-1">Participations</p>
-            <p className="text-4xl font-black text-purple-400">{stats?.totalParticipations || 0}</p>
+            <p className="text-4xl font-black text-(--button-select)">
+              {stats?.totalParticipations || 0}
+            </p>
           </div>
-          <div className="rounded-xl bg-(--button-area) ring-1 ring-purple-500/50 shadow-lg p-4 hover:ring-purple-500 transition-all">
+          <div className="rounded-xl bg-(--button-area) ring-1 ring-(--button-select)/50 shadow-lg p-4 hover:ring-(--button-select) transition-all">
             <p className="text-sm mb-1">Total Likes</p>
-            <p className="text-4xl font-black text-purple-400">{stats?.totalLikes || 0}</p>
+            <p className="text-4xl font-black text-(--button-select)">{stats?.totalLikes || 0}</p>
           </div>
-          <div className="rounded-xl bg-(--button-area) ring-1 ring-purple-500/50 shadow-lg p-4 hover:ring-purple-500 transition-all">
+          <div className="rounded-xl bg-(--button-area) ring-1 ring-(--button-select)/50 shadow-lg p-4 hover:ring-(--button-select) transition-all">
             <p className="text-sm mb-1">Global Rank</p>
-            <p className="text-4xl font-black text-purple-400">#{stats?.rank || 'N/A'}</p>
+            <p className="text-4xl font-black text-(--button-select)">#{stats?.rank || 'N/A'}</p>
           </div>
         </div>
       </div>
@@ -211,7 +215,7 @@ export default function ProfilePage() {
       {/* Profile Information */}
       <div className="max-w-5xl mx-5 lg:mx-auto my-8">
         <div
-          className={`relative rounded-2xl bg-(--button-area) ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden p-6 ${isEditing ? 'pb-20' : ''}`}
+          className={`relative rounded-2xl bg-(--button-area) ring-1 ring-foreground/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden p-6 ${isEditing ? 'pb-20' : ''}`}
         >
           <div className="flex justify-between items-start">
             <div className="space-y-4 w-full max-w-md">
@@ -222,7 +226,7 @@ export default function ProfilePage() {
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="w-full mt-1 text-lg font-semibold bg-slate-400 border border-slate-600 rounded px-3 py-2 focus:outline-none focus:border-purple-500"
+                    className="w-full mt-1 text-lg font-semibold bg-(--profile-modify-text-area) border border-(--header-button-area) rounded px-3 py-2 focus:outline-none focus:border-(--button-game-challenge-hover)"
                   />
                 ) : (
                   <p className="text-lg font-semibold mt-1">{user.username}</p>
@@ -236,7 +240,7 @@ export default function ProfilePage() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full mt-1 text-lg bg-slate-400 border border-slate-600 rounded px-3 py-2 focus:outline-none focus:border-purple-500"
+                    className="w-full mt-1 text-lg bg-(--profile-modify-text-area) border border-(--header-button-area) rounded px-3 py-2 focus:outline-none focus:border-(--button-game-challenge-hover)"
                   />
                 ) : (
                   <p className="text-lg mt-1 break-all">{user.email}</p>
@@ -252,7 +256,7 @@ export default function ProfilePage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter new password"
-                      className="w-full mt-1 text-lg bg-slate-400 border border-slate-600 rounded px-3 py-2 focus:outline-none focus:border-purple-500"
+                      className="w-full mt-1 text-lg bg-(--profile-modify-text-area) border border-(--header-button-area) rounded px-3 py-2 focus:outline-none focus:border-(--button-game-challenge-hover)"
                     />
                     <p className="text-xs text-red-600 mt-1">
                       Password must be at least 8 characters, contain an uppercase letter and a
@@ -272,7 +276,7 @@ export default function ProfilePage() {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Confirm new password"
-                    className="w-full mt-1 text-lg bg-slate-400 border border-slate-600 rounded px-3 py-2 focus:outline-none focus:border-purple-500"
+                    className="w-full mt-1 text-lg bg-(--profile-modify-text-area) border border-(--header-button-area) rounded px-3 py-2 focus:outline-none focus:border-(--button-game-challenge-hover)"
                   />
                 </div>
               )}
@@ -296,14 +300,14 @@ export default function ProfilePage() {
                 <button
                   onClick={handleSave}
                   disabled={isSaving}
-                  className="bg-green-600 hover:bg-green-700 font-semibold px-6 py-3 rounded-lg transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-(--profile-save-button) hover:bg-(--profile-save-button)/70 font-semibold px-6 py-3 rounded-lg transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSaving ? 'Saving...' : 'Save'}
                 </button>
                 <button
                   onClick={handleCancel}
                   disabled={isSaving}
-                  className="bg-gray-400 hover:bg-gray-700 font-semibold px-6 py-3 rounded-lg transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-foreground/60 hover:bg-(--header-button-area) font-semibold px-6 py-3 rounded-lg transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cancel
                 </button>
@@ -311,7 +315,7 @@ export default function ProfilePage() {
             ) : (
               <button
                 onClick={() => setIsEditing(true)}
-                className="bg-purple-600 hover:bg-purple-700 font-semibold px-6 py-3 rounded-lg transition-colors shadow-lg ml-4"
+                className="bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) font-semibold px-6 py-3 rounded-lg transition-colors shadow-lg ml-4"
               >
                 Modify
               </button>
@@ -319,8 +323,8 @@ export default function ProfilePage() {
           </div>
 
           {isEditing && formError && (
-            <div className="bg-red-900/50 border border-red-500 rounded-lg p-4 mt-4">
-              <p className="text-red-300 text-sm">{formError}</p>
+            <div className="bg-(--error-area-message) border border-(--error-border-message) rounded-lg p-4 mt-4">
+              <p className="text-(--error-text-message) text-sm">{formError}</p>
             </div>
           )}
 
@@ -328,7 +332,7 @@ export default function ProfilePage() {
             <div className="absolute left-6 bottom-6">
               <button
                 onClick={handleDeleteProfile}
-                className="bg-red-700 hover:bg-red-800 font-semibold px-6 py-3 rounded-lg transition-colors shadow-lg"
+                className="bg-(--danger-button) hover:bg-(--danger-button)/50 font-semibold px-6 py-3 rounded-lg transition-colors shadow-lg"
               >
                 Delete Profile
               </button>
@@ -340,17 +344,17 @@ export default function ProfilePage() {
       {/* Challenges and Participations */}
       <div className="max-w-5xl mx-5 lg:mx-auto my-8 grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         {/* My Last Challenges */}
-        <div className="rounded-2xl bg-(--button-area) ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden p-6">
+        <div className="rounded-2xl bg-(--button-area) ring-1 ring-foreground/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden p-6">
           <h2 className="text-2xl font-bold mb-6">My Last Created Challenges</h2>
           <div className="space-y-4">
             {challenges.length === 0 ? (
-              <p className="text-center text-gray-400 py-8">No challenges created yet</p>
+              <p className="text-center text-foreground/50 py-8">No challenges created yet</p>
             ) : (
               <>
                 {challenges.slice(0, showAllChallenges ? challenges.length : 1).map((challenge) => (
                   <div
                     key={challenge.id}
-                    className="rounded-2xl bg-(--button-area) ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden"
+                    className="rounded-2xl bg-(--button-area) ring-1 ring-foreground/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden"
                   >
                     <div className="p-5 flex flex-col h-full">
                       <div className="text-xs font-semibold tracking-widest mb-2">
@@ -374,7 +378,7 @@ export default function ProfilePage() {
                         </div>
                         <Link
                           href={`/challenges/${challenge.slug}`}
-                          className="px-4 py-2 rounded-xl bg-amber-600/80 hover:bg-amber-600 text-sm font-semibold"
+                          className="px-4 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold"
                         >
                           Details
                         </Link>
@@ -389,7 +393,7 @@ export default function ProfilePage() {
           {challenges.length > 1 && (
             <button
               onClick={() => setShowAllChallenges(!showAllChallenges)}
-              className="mt-4 w-full bg-purple-600 hover:bg-purple-700 font-semibold px-4 py-2 rounded-lg transition-colors"
+              className="mt-4 w-full bg-(--button-select) hover:bg-(--button-select)/50 font-semibold px-4 py-2 rounded-lg transition-colors"
             >
               {showAllChallenges ? 'Show Less' : `View All (${challenges.length})`}
             </button>
@@ -397,11 +401,11 @@ export default function ProfilePage() {
         </div>
 
         {/* My Last Participations */}
-        <div className="rounded-2xl bg-(--button-area) ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden p-6">
+        <div className="rounded-2xl bg-(--button-area) ring-1 ring-foreground/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden p-6">
           <h2 className="text-2xl font-bold mb-6">My Last Participations</h2>
           <div className="space-y-4">
             {participations.length === 0 ? (
-              <p className="text-center text-gray-400 py-8">No participations yet</p>
+              <p className="text-center text-background/50 py-8">No participations yet</p>
             ) : (
               <>
                 {participations
@@ -409,7 +413,7 @@ export default function ProfilePage() {
                   .map((participation) => (
                     <div
                       key={participation.id}
-                      className="rounded-2xl bg-(--button-area) ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden"
+                      className="rounded-2xl bg-(--button-area) ring-1 ring-foreground/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden"
                     >
                       <div className="p-5 flex flex-col h-full">
                         <div className="text-xs font-semibold tracking-widest mb-2">
@@ -435,7 +439,7 @@ export default function ProfilePage() {
                           </div>
                           <Link
                             href={`/challenges/${participation.challenge?.slug}?participationId=${participation.id}`}
-                            className="px-4 py-2 rounded-xl bg-amber-600/80 hover:bg-amber-600 text-sm font-semibold"
+                            className="px-4 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold"
                           >
                             Details
                           </Link>
@@ -450,7 +454,7 @@ export default function ProfilePage() {
           {participations.length > 1 && (
             <button
               onClick={() => setShowAllParticipations(!showAllParticipations)}
-              className="mt-4 w-full bg-purple-600 hover:bg-purple-700 font-semibold px-4 py-2 rounded-lg transition-colors"
+              className="mt-4 w-full bg-(--button-select) hover:bg-(--button-select)/50 font-semibold px-4 py-2 rounded-lg transition-colors"
             >
               {showAllParticipations ? 'Show Less' : `View All (${participations.length})`}
             </button>
