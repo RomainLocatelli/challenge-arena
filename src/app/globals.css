@@ -11,12 +11,14 @@
   --button-game-challenge: color-mix(in srgb, #8554da 80%, transparent);
   --button-game-challenge-hover: #8554da;
   --searchbar-color: #6b3cf615;
+  --modal-filter-searchebar: #6b3cf615;
+  --challenge-slug-detail-card: var(--color-slate-950);
   --leadboard-first: #d4af37;
   --leadboard-second: #9ca3af;
   --leadboard-third: #b87333;
   --leadboard-mix-one: #ffffff;
   --leadboard-mix-two: #e6dcff;
-  --leadboard-me: #e5e7eb;
+  --leadboard-me: #97b0e4;
   --text-hover: #fff8e1;
   --error-text-message: var(--color-red-400);
   --error-area-message: color-mix(in srgb, var(--color-red-500) 10%, transparent);
@@ -49,6 +51,7 @@
     --button-game-challenge: color-mix(in srgb, #8554da 80%, transparent);
     --button-game-challenge-hover: #8554da;
     --searchbar-color: #6203d721;
+    --modal-filter-searchebar: #6203d721;
     --leadboard-first: #ffd700;
     --leadboard-second: #c0c0c0;
     --leadboard-third: #cd7f32;
@@ -77,7 +80,7 @@
   --leadboard-third: #cd7f32;
   --leadboard-mix-one: #1f283b;
   --leadboard-mix-two: #b386ff;
-  --leadboard-me: #1f283b;
+  --leadboard-me: #223764;
   --text-hover: #fff8e1;
   --error-text-message: var(--color-red-400);
   --error-area-message: color-mix(in srgb, var(--color-red-500) 10%, transparent);
