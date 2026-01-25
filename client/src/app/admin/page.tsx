@@ -182,24 +182,26 @@ export default function AdminPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
-        <p className="text-red-400">Error : {error}</p>
+      <div className="min-h-screen  flex items-center justify-center">
+        <p className="text-(--error-text-message)">Error : {error}</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
+    <div className="min-h-screen  ">
       <main className="px-4 md:px-8 py-6 max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6 border-l-4 border-purple-600 pl-3">Moderation</h1>
+        <h1 className="text-3xl font-bold mb-6 border-l-4 border-(--button-select) pl-3">
+          Moderation
+        </h1>
 
         <div className="flex gap-2 mb-6">
           <button
             onClick={() => setActiveTab('users')}
             className={`px-4 py-2 rounded-lg font-semibold transition ${
               activeTab === 'users'
-                ? 'bg-purple-600 text-white'
-                : 'bg-slate-800 text-white/70 hover:bg-slate-700'
+                ? 'bg-(--button-select) '
+                : 'bg-(--background-header) text-foreground/70 hover:bg-(--background-header)/50'
             }`}
           >
             Users ({users.length})
@@ -208,8 +210,8 @@ export default function AdminPage() {
             onClick={() => setActiveTab('challenges')}
             className={`px-4 py-2 rounded-lg font-semibold transition ${
               activeTab === 'challenges'
-                ? 'bg-purple-600 text-white'
-                : 'bg-slate-800 text-white/70 hover:bg-slate-700'
+                ? 'bg-(--button-select) '
+                : 'bg-(--background-header) text-foreground/70 hover:bg-(--background-header)/50'
             }`}
           >
             Reported Challenges ({challenges.length})
@@ -218,15 +220,15 @@ export default function AdminPage() {
             onClick={() => setActiveTab('participations')}
             className={`px-4 py-2 rounded-lg font-semibold transition ${
               activeTab === 'participations'
-                ? 'bg-purple-600 text-white'
-                : 'bg-slate-800 text-white/70 hover:bg-slate-700'
+                ? 'bg-(--button-select) '
+                : 'bg-(--background-header) text-foreground/70 hover:bg-(--background-header)/50'
             }`}
           >
             Reported Participations ({participations.length})
           </button>
         </div>
 
-        <div className="bg-slate-900/70 rounded-2xl ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden">
+        <div className="bg-(--background-header)/90 rounded-2xl ring-1 ring-background/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden">
           {activeTab === 'users' && (
             <UsersTab
               users={users}
@@ -285,7 +287,7 @@ function UsersTab({
   return (
     <div className="overflow-x-auto">
       <table className="w-full">
-        <thead className="bg-slate-800/50">
+        <thead className="bg-(--background-header)/50">
           <tr>
             <th className="px-4 py-3 text-left text-sm font-semibold">Username</th>
             <th className="px-4 py-3 text-left text-sm font-semibold">Email</th>
@@ -298,19 +300,19 @@ function UsersTab({
         </thead>
         <tbody>
           {users.map((u) => (
-            <tr key={u.id} className="border-t border-slate-800/50">
+            <tr key={u.id} className="border-t border-(--background-header)50">
               <td className="px-4 py-3">
-                <span className={u.isDeleted || u.isBanned ? 'text-red-400' : ''}>
+                <span className={u.isDeleted || u.isBanned ? 'text-(--error-text-message)' : ''}>
                   {getUserDisplayName(u)}
                 </span>
               </td>
-              <td className="px-4 py-3 text-sm text-white/70">{u.email}</td>
+              <td className="px-4 py-3 text-sm text-foreground/70">{u.email}</td>
               <td className="px-4 py-3">
                 <span
                   className={`px-2 py-1 rounded text-xs font-semibold ${
                     u.role === 'ADMIN'
-                      ? 'bg-purple-600/20 text-purple-300'
-                      : 'bg-slate-700/50 text-white/70'
+                      ? 'bg-(--button-select)/20 text-(--button-select)'
+                      : 'bg-(--header-button-area) text-foreground/70'
                   }`}
                 >
                   {u.role}
@@ -318,15 +320,15 @@ function UsersTab({
               </td>
               <td className="px-4 py-3">
                 {u.isBanned ? (
-                  <span className="text-red-400 text-sm">Banned</span>
+                  <span className="text-(--error-text-message) text-sm">Banned</span>
                 ) : u.isDeleted ? (
-                  <span className="text-gray-500 text-sm">Deleted</span>
+                  <span className="text-foreground/50 text-sm">Deleted</span>
                 ) : (
-                  <span className="text-green-400 text-sm">Active</span>
+                  <span className="text-(--profile-save-button) text-sm">Active</span>
                 )}
               </td>
-              <td className="px-4 py-3 text-sm text-white/70">{u._count.createdChallenges}</td>
-              <td className="px-4 py-3 text-sm text-white/70">{u._count.participations}</td>
+              <td className="px-4 py-3 text-sm text-foreground/70">{u._count.createdChallenges}</td>
+              <td className="px-4 py-3 text-sm text-foreground/70">{u._count.participations}</td>
               <td className="px-4 py-3">
                 {u.role !== 'ADMIN' && (
                   <>
@@ -334,7 +336,7 @@ function UsersTab({
                       <button
                         onClick={() => onUnban(u.id)}
                         disabled={actionLoading === u.id}
-                        className="px-3 py-1 rounded-lg bg-green-600/80 hover:bg-green-600 text-xs font-semibold disabled:opacity-50"
+                        className="px-3 py-1 rounded-lg bg-(--profile-save-button)/80 hover:bg-(--profile-save-button) text-xs font-semibold disabled:opacity-50"
                       >
                         {actionLoading === u.id ? '...' : 'Unban'}
                       </button>
@@ -342,7 +344,7 @@ function UsersTab({
                       <button
                         onClick={() => onBan(u.id)}
                         disabled={actionLoading === u.id || u.isDeleted}
-                        className="px-3 py-1 rounded-lg bg-red-600/80 hover:bg-red-600 text-xs font-semibold disabled:opacity-50"
+                        className="px-3 py-1 rounded-lg bg-(--danger-button)/80 hover:bg-(--danger-button) text-xs font-semibold disabled:opacity-50"
                       >
                         {actionLoading === u.id ? '...' : 'Ban'}
                       </button>
@@ -376,7 +378,7 @@ function ChallengesTab({
   }
 
   if (challenges.length === 0) {
-    return <div className="p-6 text-center text-white/70">No reported challenges</div>;
+    return <div className="p-6 text-center text-foreground/70">No reported challenges</div>;
   }
 
   return (
@@ -386,31 +388,31 @@ function ChallengesTab({
           <div className="flex justify-between items-start mb-3">
             <div>
               <p className="text-sm">
-                <span className="text-white font-semibold">Creator : </span>{' '}
-                <span className="text-white/70">{c.creator.username}</span>
+                <span className=" font-semibold">Creator : </span>{' '}
+                <span className="text-foreground/70">{c.creator.username}</span>
               </p>
               <p className="text-sm">
-                <span className="text-white font-semibold">Title : </span>{' '}
-                <span className="text-white/70">{c.title}</span>
+                <span className=" font-semibold">Title : </span>{' '}
+                <span className="text-foreground/70">{c.title}</span>
               </p>
               <p className="text-sm">
-                <span className="text-white font-semibold">Description : </span>{' '}
-                <span className="text-white/70">{c.description}</span>
+                <span className=" font-semibold">Description : </span>{' '}
+                <span className="text-foreground/70">{c.description}</span>
               </p>
               <p className="text-sm">
-                <span className="text-white font-semibold">Game : </span>{' '}
-                <span className="text-white/70">{c.game.title}</span>
+                <span className=" font-semibold">Game : </span>{' '}
+                <span className="text-foreground/70">{c.game.title}</span>
               </p>
               <p className="text-sm">
-                <span className="text-white font-semibold">Participations : </span>{' '}
-                <span className="text-white/70">{c._count.participations}</span>
+                <span className=" font-semibold">Participations : </span>{' '}
+                <span className="text-foreground/70">{c._count.participations}</span>
               </p>
               <p className="text-sm">
-                <span className="text-white font-semibold">Votes : </span>{' '}
-                <span className="text-white/70">{c._count.votes}</span>
+                <span className=" font-semibold">Votes : </span>{' '}
+                <span className="text-foreground/70">{c._count.votes}</span>
               </p>
             </div>
-            <span className="px-2 py-1 bg-red-600/20 text-red-300 rounded text-xs font-semibold">
+            <span className="px-2 py-1 bg-(--error-area-message) text-(--error-text-message) rounded text-xs font-semibold">
               {c.reportCount} report{c.reportCount > 1 ? 's' : ''}
             </span>
           </div>
@@ -418,7 +420,7 @@ function ChallengesTab({
           <div className="mb-3 space-y-2">
             <p className="text-sm font-semibold">Reports :</p>
             {c.reports.slice(0, 3).map((r) => (
-              <div key={r.id} className="text-sm text-white/70 pl-4">
+              <div key={r.id} className="text-sm text-foreground/70 pl-4">
                 {r.reason} (by {r.user.username})
               </div>
             ))}
@@ -428,14 +430,14 @@ function ChallengesTab({
             <button
               onClick={() => onApprove(c.id)}
               disabled={actionLoading === c.id}
-              className="px-3 py-1 rounded-lg bg-green-600/80 hover:bg-green-600 text-xs font-semibold disabled:opacity-50"
+              className="px-3 py-1 rounded-lg bg-(--profile-save-button)/80 hover:bg-(--profile-save-button) text-xs font-semibold disabled:opacity-50"
             >
               {actionLoading === c.id ? '...' : 'Approve'}
             </button>
             <button
               onClick={() => onDelete(c.id)}
               disabled={actionLoading === c.id}
-              className="px-3 py-1 rounded-lg bg-red-600/80 hover:bg-red-600 text-xs font-semibold disabled:opacity-50"
+              className="px-3 py-1 rounded-lg bg-(--danger-button)/80 hover:bg-(--danger-button) text-xs font-semibold disabled:opacity-50"
             >
               {actionLoading === c.id ? '...' : 'Delete'}
             </button>
@@ -464,43 +466,46 @@ function ParticipationsTab({
   }
 
   if (participations.length === 0) {
-    return <div className="p-6 text-center text-white/70">No reported participations</div>;
+    return <div className="p-6 text-center text-foreground/70">No reported participations</div>;
   }
 
   return (
     <div className="p-4 space-y-4">
       {participations.map((p) => (
-        <div key={p.id} className="bg-slate-800/50 rounded-lg p-4 border border-slate-700">
+        <div
+          key={p.id}
+          className="bg-(--background-header)/50 rounded-lg p-4 border border-(--header-button-area)"
+        >
           <div className="flex justify-between items-start mb-3">
             <div>
               <p className="text-sm">
-                <span className="text-white font-semibold">Author :</span>{' '}
-                <span className="text-white/70">{p.user.username}</span>
+                <span className=" font-semibold">Author :</span>{' '}
+                <span className="text-foreground/70">{p.user.username}</span>
               </p>
               <p className="text-sm">
-                <span className="text-white font-semibold">Challenge :</span>{' '}
-                <span className="text-white/70">{p.challenge.title}</span>
+                <span className=" font-semibold">Challenge :</span>{' '}
+                <span className="text-foreground/70">{p.challenge.title}</span>
               </p>
               {p.description && (
                 <p className="text-sm">
-                  <span className="text-white font-semibold">Description :</span>{' '}
-                  <span className="text-white/70">{p.description}</span>
+                  <span className=" font-semibold">Description :</span>{' '}
+                  <span className="text-foreground/70">{p.description}</span>
                 </p>
               )}
               <a
                 href={p.submissionUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm text-purple-400 hover:underline"
+                className="text-sm text-(--button-select)/60 hover:underline"
               >
                 View submission
               </a>
               <p className="text-sm">
-                <span className="text-white font-semibold">Votes :</span>{' '}
-                <span className="text-white/70">{p._count.votes}</span>
+                <span className=" font-semibold">Votes :</span>{' '}
+                <span className="text-foreground/70">{p._count.votes}</span>
               </p>
             </div>
-            <span className="px-2 py-1 bg-red-600/20 text-red-300 rounded text-xs font-semibold">
+            <span className="px-2 py-1 bg-(--error-text-message)/30 text-(--error-text-message) rounded text-xs font-semibold">
               {p.reportCount} report{p.reportCount > 1 ? 's' : ''}
             </span>
           </div>
@@ -508,7 +513,7 @@ function ParticipationsTab({
           <div className="mb-3 space-y-2">
             <p className="text-sm font-semibold">Reports :</p>
             {p.reports.slice(0, 3).map((r) => (
-              <div key={r.id} className="text-sm text-white/70 pl-4">
+              <div key={r.id} className="text-sm text-foreground/70 pl-4">
                 {r.reason} (by {r.user.username})
               </div>
             ))}
@@ -518,14 +523,14 @@ function ParticipationsTab({
             <button
               onClick={() => onApprove(p.id)}
               disabled={actionLoading === p.id}
-              className="px-3 py-1 rounded-lg bg-green-600/80 hover:bg-green-600 text-xs font-semibold disabled:opacity-50"
+              className="px-3 py-1 rounded-lg bg-(--profile-save-button)/80 hover:bg-(--profile-save-button) text-xs font-semibold disabled:opacity-50"
             >
               {actionLoading === p.id ? '...' : 'Approve'}
             </button>
             <button
               onClick={() => onDelete(p.id)}
               disabled={actionLoading === p.id}
-              className="px-3 py-1 rounded-lg bg-red-600/80 hover:bg-red-600 text-xs font-semibold disabled:opacity-50"
+              className="px-3 py-1 rounded-lg bg-(--danger-button)/80 hover:bg-(--danger-button) text-xs font-semibold disabled:opacity-50"
             >
               {actionLoading === p.id ? '...' : 'Delete'}
             </button>
