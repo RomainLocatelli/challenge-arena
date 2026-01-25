@@ -14,6 +14,7 @@
   --modal-filter-searchebar: #6b3cf615;
   --profile-modify-text-area: var(--color-slate-400);
   --profile-save-button: var(--color-green-600);
+  --danger-button: var(--color-red-700);
   --challenge-slug-detail-card: var(--color-slate-950);
   --leadboard-first: #d4af37;
   --leadboard-second: #9ca3af;
@@ -56,6 +57,7 @@
     --modal-filter-searchebar: #6203d721;
     --profile-modify-text-area: var(--color-slate-400);
     --profile-save-button: var(--color-green-600);
+    --danger-button: var(--color-red-700);
     --leadboard-first: #ffd700;
     --leadboard-second: #c0c0c0;
     --leadboard-third: #cd7f32;
