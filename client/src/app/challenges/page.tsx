@@ -259,7 +259,7 @@ export default function ChallengesPage() {
           </div>
           {/* Modal filter menu */}
           {filterModalArea ? (
-            <div className="absolute flex  bg-(--modal-filter-searchebar) p-5 rounded-4xl left-1/5 lg:left-1/3 lg:right-1/3">
+            <div className="absolute flex items-center-safe justify-center bg-(--modal-filter-searchebar) p-5 rounded-4xl left-1/5 lg:left-1/3 lg:right-1/3">
               <p className="mr-3">Filter :</p>
               <div className="gap-2 m-2 flex flex-col ">
                 <button

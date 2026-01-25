@@ -613,18 +613,18 @@ export default function ChallengeDetailsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
-        <div className="text-white/70">Loading...</div>
+      <div className="min-h-screen   flex items-center justify-center">
+        <div className="foreground/70">Loading...</div>
       </div>
     );
   }
 
   if (loadError || !challenge) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-6">
+      <div className="min-h-screen   flex items-center justify-center px-6">
         <div className="text-center">
-          <div className="text-white font-semibold">Challenge not found</div>
-          <div className="text-white/60 mt-2">
+          <div className=" font-semibold">Challenge not found</div>
+          <div className="foreground/60 mt-2">
             {loadError ? loadError : 'No data returned from API.'}
           </div>
         </div>
@@ -679,7 +679,7 @@ export default function ChallengeDetailsPage() {
                 <div className="text-sm">
                   <span className="text-foreground/60">Game :</span>{' '}
                   <Link
-                    href={`/games/${challenge.gameId}`}
+                    href={`/games/${challenge.gameSlug}`}
                     className="text-xs font-semibold tracking-widest text-(--button-select)/90 mb-2 hover:underline"
                   >
                     {challenge.gameTitle}
@@ -746,7 +746,7 @@ export default function ChallengeDetailsPage() {
                 </div>
               </div>
 
-              <div className="mt-3 rounded-2xl bg-slate-950/30 ring-1 ring-background/10 p-3">
+              <div className="mt-3 rounded-2xl bg-(--challenge-slug-detail-card)/30 ring-1 ring-background/10 p-3">
                 {!isEditing ? (
                   <div className="text-foreground/85">{clamp100(descriptionPoints[0] ?? '')}</div>
                 ) : (
@@ -784,7 +784,7 @@ export default function ChallengeDetailsPage() {
                 ) : null}
               </div>
 
-              <div className="mt-3 rounded-2xl bg-slate-950/30 ring-1 ring-background/10 p-3">
+              <div className="mt-3 rounded-2xl bg-(--challenge-slug-detail-card)/30 ring-1 ring-background/10 p-3">
                 <ul className="space-y-2">
                   {detailsPoints.map((txt, idx) => (
                     <li key={`det-${idx}`} className="flex items-start gap-3">
@@ -796,7 +796,7 @@ export default function ChallengeDetailsPage() {
                           <input
                             value={txt}
                             onChange={(e) => updateBullet('details', idx, e.target.value)}
-                            className="flex-1 bg-slate-950/40 ring-1 ring-background/10 rounded-xl px-3 py-2 text-sm focus:outline-none"
+                            className="flex-1 bg-(--background-header)/40 ring-1 ring-background/10 rounded-xl px-3 py-2 text-sm focus:outline-none"
                           />
                           <button
                             type="button"
@@ -818,7 +818,7 @@ export default function ChallengeDetailsPage() {
               {user ? (
                 <button
                   type="button"
-                  className="px-10 py-3 rounded-full bg-purple-600 hover:bg-purple-500 font-semibold shadow-[0_10px_25px_rgba(0,0,0,0.45)]"
+                  className="px-10 py-3 rounded-full bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) font-semibold shadow-[0_10px_25px_rgba(0,0,0,0.45)]"
                   onClick={openCreateModal}
                 >
                   Participate
@@ -856,15 +856,15 @@ export default function ChallengeDetailsPage() {
             <div
               key={p.id}
               onClick={() => openViewModal(p.id)}
-              className="cursor-pointer rounded-2xl bg-slate-900/70 ring-1 ring-background/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] p-4"
+              className="cursor-pointer rounded-2xl bg-(--challenge-slug-detail-card)/40 ring-1 ring-background/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] p-4"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <div className="font-semibold">{p.name}</div>
-                  <div className="text-white/70 text-sm">{p.scoreLabel}</div>
+                  <div className="foreground/70 text-sm">{p.scoreLabel}</div>
                   {p.link ? (
-                    <div className="text-white/70 text-sm break-all">
-                      <span className="text-white/60">Link :</span> {p.link}
+                    <div className="foreground/70 text-sm break-all">
+                      <span className="foreground/60">Link :</span> {p.link}
                     </div>
                   ) : null}
                 </div>
@@ -890,7 +890,7 @@ export default function ChallengeDetailsPage() {
                         className="object-contain"
                       />
                     </button>
-                    <div className="mt-1 text-xs text-white/70">{formatLikes(p.likes)}</div>
+                    <div className="mt-1 text-xs foreground/70">{formatLikes(p.likes)}</div>
 
                     {isEditing ? (
                       <button
@@ -926,15 +926,15 @@ export default function ChallengeDetailsPage() {
         {/* Modal */}
         {isModalOpen ? (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/50 px-4"
             onMouseDown={(e) => {
               if (e.target === e.currentTarget) {
                 closeModal();
               }
             }}
           >
-            <div className="w-full max-w-[430px] md:max-w-xl rounded-3xl bg-slate-900 ring-1 ring-background/10 shadow-[0_20px_60px_rgba(0,0,0,0.65)] overflow-hidden">
-              <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between">
+            <div className="w-full max-w-[430px] md:max-w-xl rounded-3xl bg-(--button-area) ring-1 ring-background/10 shadow-[0_20px_60px_rgba(0,0,0,0.65)] overflow-hidden">
+              <div className="px-5 py-4 border-b border-background/10 flex items-center justify-between">
                 <div className="font-semibold">
                   {modalMode === 'create' ? 'New participation' : 'Participation'}
                 </div>
@@ -965,39 +965,39 @@ export default function ChallengeDetailsPage() {
 
               <div className="p-5 space-y-4">
                 <div>
-                  <div className="text-sm font-semibold text-white/80 mb-2">Description</div>
+                  <div className="text-sm font-semibold text-foreground/80 mb-2">Description</div>
                   {modalMode === 'view' ? (
-                    <div className="rounded-2xl bg-slate-950/30 ring-1 ring-background/10 p-3 text-white/85 whitespace-pre-wrap">
+                    <div className="rounded-2xl bg-slate-950/30 ring-1 ring-background/10 p-3 text-foreground/85 whitespace-pre-wrap">
                       {activeParticipation?.description ?? ''}
                     </div>
                   ) : (
                     <textarea
                       value={pDesc}
                       onChange={(e) => setPDesc(e.target.value)}
-                      className="w-full rounded-2xl bg-slate-950/30 ring-1 ring-background/10 p-3 text-sm text-white/90 focus:outline-none resize-none min-h-[100px]"
+                      className="w-full rounded-2xl bg-slate-950/30 ring-1 ring-background/10 p-3 text-sm text-foreground/90 focus:outline-none resize-none min-h-[100px]"
                       placeholder="Your participation description..."
                     />
                   )}
                 </div>
 
                 <div>
-                  <div className="text-sm font-semibold text-white/80 mb-2">Link</div>
+                  <div className="text-sm font-semibold text-foreground/80 mb-2">Link</div>
                   {modalMode === 'view' ? (
-                    <div className="rounded-2xl bg-slate-950/30 ring-1 ring-background/10 p-3 text-white/85 break-all">
+                    <div className="rounded-2xl bg-background/30 ring-1 ring-background/10 p-3 text-foreground/85 break-all">
                       {activeParticipation?.link ? activeParticipation.link : '—'}
                     </div>
                   ) : (
                     <input
                       value={pLink}
                       onChange={(e) => setPLink(e.target.value)}
-                      className="w-full rounded-2xl bg-slate-950/30 ring-1 ring-background/10 px-3 py-3 text-sm text-white/90 focus:outline-none"
+                      className="w-full rounded-2xl bg-slate-950/30 ring-1 ring-background/10 px-3 py-3 text-sm text-foreground/90 focus:outline-none"
                       placeholder="https://..."
                     />
                   )}
                 </div>
               </div>
 
-              <div className="px-5 py-4 border-t border-white/10 flex items-center justify-end gap-2">
+              <div className="px-5 py-4 border-t border-foreground/10 flex items-center justify-end gap-2">
                 {modalMode === 'view' ? (
                   <>
                     {isOwnActiveParticipation ? (
@@ -1029,7 +1029,7 @@ export default function ChallengeDetailsPage() {
                           closeModal();
                         }
                       }}
-                      className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                      className="px-4 py-2 rounded-2xl bg-(--error-text-message) hover:bg-(--error-text-message)/60 ring-1 ring-background/10 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
                     >
                       Cancel
                     </button>
@@ -1037,7 +1037,7 @@ export default function ChallengeDetailsPage() {
                     <button
                       type="button"
                       onClick={modalMode === 'create' ? submitCreate : saveEdit}
-                      className="px-8 py-2.5 rounded-full bg-purple-600 hover:bg-purple-500 font-semibold shadow-[0_10px_25px_rgba(0,0,0,0.45)]"
+                      className="px-8 py-2.5 rounded-full bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) font-semibold shadow-[0_10px_25px_rgba(0,0,0,0.45)]"
                     >
                       Submit
                     </button>
