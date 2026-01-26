@@ -278,16 +278,16 @@ export default function Leaderboard() {
         <div className="lg:flex">
           {/* Mobile: show selected leaderboard */}
           <ul className="flex justify-center flex-col lg:hidden ml-5 mr-5  bg-(--button-area) p-3 mb-5 rounded-b-3xl">
-            {renderLeaderboard(currentLeaderboardData)}
+            {renderLeaderboard(currentLeaderboardData, selectedLeaderboard)}
           </ul>
 
           {/* Desktop: show all leaderboard */}
-          <ul className="hidden lg:flex lg:justify-center lg:w-full lg:flex-col lg:ml-5 lg:mr-0 lg:text-black lg:bg-(--button-area) lg:p-3 lg:mb-5 lg:rounded-b-3xl">
-            {renderLeaderboard(normalizeLeaderboardData(usersLikedLeaderboard))}
+          <ul className="hidden lg:flex lg:justify-center lg:w-full lg:flex-col lg:ml-5 lg:mr-0  lg:bg-(--button-area) lg:p-3 lg:mb-5 lg:rounded-b-3xl">
+            {renderLeaderboard(normalizeLeaderboardData(usersLikedLeaderboard), 'likes')}
           </ul>
 
           <ul className="hidden lg:flex lg:justify-center lg:w-full lg:flex-col lg:mr-5  lg:bg-(--button-area) lg:p-3 lg:mb-5 lg:ml-15 lg:rounded-b-3xl">
-            {renderLeaderboard(normalizeLeaderboardData(participationLeaderboard))}
+            {renderLeaderboard(normalizeLeaderboardData(participationLeaderboard), 'participation')}
           </ul>
         </div>
       </section>
