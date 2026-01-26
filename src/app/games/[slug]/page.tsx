@@ -143,14 +143,14 @@ export default function GamePage() {
   }, [searchQuery, challenges, slug, games]);
 
   function extractShortDescription(raw: string) {
-  const text = (raw ?? '').replace(/\r\n/g, '\n').trim();
-  const idx = text.search(/\n\s*details\s*:?\s*\n/i);
+    const text = (raw ?? '').replace(/\r\n/g, '\n').trim();
+    const idx = text.search(/\n\s*details\s*:?\s*\n/i);
 
-  if (idx === -1) {
-    return text;
+    if (idx === -1) {
+      return text;
+    }
+    return text.slice(0, idx).trim();
   }
-  return text.slice(0, idx).trim();
-}
 
   // Pagination
   const totalPages = Math.max(1, Math.ceil(filteredChallenges.length / itemsPerPage));
@@ -272,8 +272,8 @@ export default function GamePage() {
 
                     <div className="text-2xl font-semibold leading-tight mb-2">{c.title}</div>
                     <div className="text-foreground/70 leading-relaxed mb-4">
-                        {extractShortDescription(c.description)}
-                      </div>
+                      {extractShortDescription(c.description)}
+                    </div>
 
                     <div className="mt-auto flex items-center justify-between pt-2">
                       <div className="flex items-center gap-3 text-foreground/70">
