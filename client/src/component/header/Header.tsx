@@ -27,7 +27,9 @@ export default function Header() {
       <Menu />
       <div className="flex">
         {user ? (
-          <p className="content-center mr-5 text-sm sm:text-lg">Welcome {user.username}</p>
+          <p className="content-center lg:mr-5 text-xs sm:text-lg text-center">
+            Welcome {user.username}
+          </p>
         ) : (
           <div></div>
         )}
