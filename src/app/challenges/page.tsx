@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
+import ChallengeCard from '@/component/ChallengeCard';
 
 // hook responsive
 function useMediaQuery(query: string) {
@@ -31,6 +32,7 @@ type Challenge = {
     title: string;
     imageUrl: string;
     description: string;
+    slug: string;
   };
   gameId: string;
   id: string;
@@ -355,68 +357,30 @@ export default function ChallengesPage() {
               )}
             </div>
 
-            {/* Cards de challenges */}
+{/* Cards de challenges */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-              {paginatedChallenges.map((c) => {
-                return (
-                  <div
-                    key={c.id}
-                    className="rounded-2xl bg-(--button-area) ring-1 ring-foreground/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden"
-                  >
-                    <div className="p-5 flex flex-col h-full">
-                      {/* Tag / jeu */}
-                      <div className="text-xs font-semibold tracking-widest text-(--button-select)/90 mb-2">
-                        {(c.game?.title ?? '').toUpperCase()}
-                      </div>
-
-                      {/* Titre */}
-                      <div className="text-2xl font-semibold leading-tight mb-2">{c.title}</div>
-
-                      {/* Description */}
-                      <div className="text-foreground/70 leading-relaxed mb-4">
-                        {extractShortDescription(c.description)}
-                      </div>
-
-                      {/* votes + bouton */}
-                      <div className="mt-auto flex items-center justify-between pt-2">
-                        <div className="flex items-center gap-3 ">
-                          <span className="relative w-8 h-8 shrink-0">
-                            <Image
-                              src={c.hasLiked ? '/like 1.png' : '/like 0.png'}
-                              alt={c.hasLiked ? 'Liked' : 'Not liked'}
-                              fill
-                              sizes="32px"
-                              style={{ objectFit: 'contain' }}
-                            />
-                          </span>
-                          <div className="flex items-baseline gap-1">
-                            <span className="text-sm font-semibold">
-                              {formatVotes(c.voteCount)}
-                            </span>
-                            <span className="text-sm">likes</span>
-                          </div>
-                        </div>
-
-                        <Link
-                          href={`/challenges/${c.slug ?? c.id}`}
-                          className="px-4 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
-                        >
-                          Details
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+              {paginatedChallenges.map((c) => (
+                <ChallengeCard
+                  key={c.id}
+                  gameTitle={c.game?.title ?? ''}
+                  gameSlug={c.game?.slug ?? ''}
+                  title={c.title}
+                  description={extractShortDescription(c.description)}
+                  voteCount={c.voteCount}
+                  slug={c.slug ?? c.id}
+                />
+              ))}
             </div>
-          </div>
-        </div>
 
-        {filteredChallenges.length === 0 && (
-          <p className="mt-6 text-center ">
-            {selectedGameId ? 'No challenge for this game yet' : 'No challenge found.'}
-          </p>
-        )}
+            {/* Message si aucun challenge */}
+            {filteredChallenges.length === 0 && (
+              <p className="mt-6 text-center ">
+                {selectedGameId ? 'No challenge for this game yet' : 'No challenge found.'}
+              </p>
+            )}
+
+          </div>  {/* Fin de .mx-auto max-w-md md:max-w-4xl */}
+        </div>  {/* Fin de .mb-8 (Challenges Section) */}
 
         {/* Pages */}
         <div className="flex justify-center gap-2 mb-12">
@@ -460,7 +424,8 @@ export default function ChallengesPage() {
               ...
             </button>
           )}
-        </div>
+        </div>  {/* Fin de pagination */}
+
       </main>
     </div>
   );
