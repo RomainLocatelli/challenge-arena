@@ -66,14 +66,12 @@ export const getChallengeBySlug = async (req: Request, res: Response, next: Next
       where: { slug },
       include: {
         game: true,
-
         creator: {
           select: {
             id: true,
             username: true
           }
         },
-
         participations: {
           include: {
             user: {
@@ -107,22 +105,20 @@ export const getChallengeBySlug = async (req: Request, res: Response, next: Next
       throw new AppError('Challenge not found', 404);
     }
 
-    const hasVoted = challenge.votes && challenge.votes.length > 0;
+    const parsedChallenge = {
+      ...challenge,
+      details: challenge.details ? JSON.parse(challenge.details) : [],
+      // Normalisation des votes (optionnel mais cohérent avec ton front)
+      hasVoted: challenge.votes && challenge.votes.length > 0,
+      likes: challenge._count.votes,
+      participations: challenge.participations.map((p) => ({
+        ...p,
+        hasVoted: p.votes && p.votes.length > 0,
+        voteCount: p._count?.votes || 0
+      }))
+    };
 
-    res.json({
-      challenge: {
-        ...challenge,
-        voteCount: challenge._count.votes,
-        hasVoted,
-        participations: challenge.participations.map((p) => ({
-          ...p,
-          hasVoted: p.votes && p.votes.length > 0,
-          votes: undefined
-        })),
-        votes: undefined,
-        _count: undefined
-      }
-    });
+    res.json({ challenge: parsedChallenge });
   } catch (error) {
     next(error);
   }
@@ -130,7 +126,8 @@ export const getChallengeBySlug = async (req: Request, res: Response, next: Next
 
 export const createChallenge = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { title, scoreFormat, description, gameId, gameTitle, gameSlug, gameImageUrl } = req.body;
+    const { title, scoreFormat, description, details, gameId, gameTitle, gameSlug, gameImageUrl } =
+      req.body;
     const userId = req.userId;
 
     if (!userId) {
@@ -151,6 +148,8 @@ export const createChallenge = async (req: Request, res: Response, next: NextFun
     // Convertir gameId en string (car RAWG renvoie un Number)
     const gameIdString = String(gameId);
 
+    const detailsJson =
+      details && Array.isArray(details) && details.length > 0 ? JSON.stringify(details) : null;
     // 1. Vérifier si le jeu existe déjà en base
     let game = await prisma.game.findUnique({ where: { id: gameIdString } });
 
@@ -173,6 +172,7 @@ export const createChallenge = async (req: Request, res: Response, next: NextFun
         slug: challengeSlug,
         scoreFormat,
         description,
+        details: detailsJson,
         gameId: game.id,
         createdBy: userId
       },
