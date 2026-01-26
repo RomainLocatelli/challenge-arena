@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 type Register = {
   username: string;
@@ -21,14 +21,12 @@ export default function AuthRegister() {
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const [passwordValidation, setPasswordValidation] = useState([false, false, false]);
 
   const registerUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
   // Validation en temps réel
-  useEffect(() => {
-    const validation = passwordRules.map(rule => rule.test(userPassword));
-    setPasswordValidation(validation);
+  const passwordValidation = useMemo(() => {
+    return passwordRules.map((rule) => rule.test(userPassword));
   }, [userPassword]);
 
   async function postForm(url: string, values: Register) {
@@ -82,7 +80,7 @@ export default function AuthRegister() {
               className="placeholder:text-foreground/40"
             />
           </div>
-          
+
           <div className="flex flex-col p-3 pl-7 pr-7 bg-(--button-area) rounded-3xl focus-within:bg-(--button-select) lg:ml-10">
             <label htmlFor="email">Your email address</label>
             <input
@@ -105,7 +103,7 @@ export default function AuthRegister() {
               id="password"
               className="placeholder:text-foreground/40"
             />
-            
+
             {/* Affichage des règles colorées */}
             {userPassword.length > 0 ? (
               <p className="text-sm mt-2">
