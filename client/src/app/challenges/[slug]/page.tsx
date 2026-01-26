@@ -127,6 +127,12 @@ export default function ChallengeDetailsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'create' | 'view' | 'edit'>('view');
   const [activeParticipationId, setActiveParticipationId] = useState<string | null>(null);
+  
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const triggerSuccessToast = () => {
+    setShowSuccessToast(true);
+    window.setTimeout(() => setShowSuccessToast(false), 2000);
+  };
 
   // Champs du formulaire (create / edit)
   const [pDesc, setPDesc] = useState('');
@@ -174,9 +180,14 @@ export default function ChallengeDetailsPage() {
           createdBy: raw.creator?.username ?? '—',
           createdById: raw.creator?.id ?? raw.createdBy ?? '',
 
+          creator: {
+            id: raw.creator?.id ?? raw.createdBy ?? ''
+          },
+
           gameId: raw.gameId ?? raw.game?.id ?? '',
           gameTitle: raw.game?.title ?? raw.gameTitle ?? '',
           gameImage: raw.game?.imageUrl ?? raw.gameImage ?? '',
+          gameSlug: raw.game?.slug ?? raw.gameSlug ?? raw.game?.id ?? raw.gameId ?? '',
 
           likes: raw.voteCount ?? raw.likes ?? 0,
           hasVoted: Boolean(raw.hasVoted),
@@ -438,6 +449,7 @@ export default function ChallengeDetailsPage() {
     };
 
     setParticipations((prev) => [newP, ...prev]);
+    triggerSuccessToast();
     closeModal();
   };
 
@@ -632,9 +644,33 @@ export default function ChallengeDetailsPage() {
     );
   }
 
+
   return (
     <div className="min-h-screen ">
       <main className="mx-auto w-full max-w-[430px] md:max-w-5xl px-4 md:px-8 py-5 md:py-8">
+        
+        {showSuccessToast ? (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center pointer-events-none">
+            <div
+              className="
+                pointer-events-none
+                rounded-3xl
+                bg-black/70
+                ring-1 ring-white/15
+                shadow-[0_20px_60px_rgba(0,0,0,0.65)]
+                px-8 py-6
+                text-center
+                text-white
+                text-xl md:text-2xl
+                font-semibold
+                animate-fadeInOut
+              "
+            >
+              ✅ Your participation is registered !
+            </div>
+          </div>
+        ) : null}
+
         <div className="rounded-3xl bg-(--background-header)/70 ring-1 ring-background/10 shadow-[0_20px_60px_rgba(0,0,0,0.55)] overflow-hidden">
           <div className="relative h-32 md:h-48 lg:h-64 w-full bg-(--button-area)">
             <Image src={headerImage} alt={title} fill sizes="430px" className="object-cover" />
@@ -679,7 +715,7 @@ export default function ChallengeDetailsPage() {
                 <div className="text-sm">
                   <span className="text-foreground/60">Game :</span>{' '}
                   <Link
-                    href={`/games/${challenge.gameSlug}`}
+                    href={`/games/${challenge.gameSlug ?? challenge.gameId}`}
                     className="text-xs font-semibold tracking-widest text-(--button-select)/90 mb-2 hover:underline"
                   >
                     {challenge.gameTitle}
@@ -860,11 +896,11 @@ export default function ChallengeDetailsPage() {
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <div className="font-semibold">{p.name}</div>
-                  <div className="foreground/70 text-sm">{p.scoreLabel}</div>
+                  <div className="font-semibold text-(--button-select)">{p.name}</div>
+                  <div className="foreground/70 text-sm line-clamp-2 break-words min-h-[2.5rem]">{p.description}</div>
                   {p.link ? (
-                    <div className="foreground/70 text-sm break-all">
-                      <span className="foreground/60">Link :</span> {p.link}
+                    <div className="opacity-60 text-sm line-clamp-1 break-words">
+                      <span className="foreground/60 ">Link :</span> {p.link}
                     </div>
                   ) : null}
                 </div>
@@ -939,37 +975,24 @@ export default function ChallengeDetailsPage() {
                   {modalMode === 'create' ? 'New participation' : 'Participation'}
                 </div>
 
-                {modalMode !== 'create' && isOwnActiveParticipation ? (
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      deleteActive();
-                    }}
-                    className="px-3 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm"
-                    aria-label="Delete participation"
-                    title="Delete"
-                  >
-                    🗑
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={closeModal}
-                    className="px-3 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm"
-                  >
-                    ✕
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="px-3 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm"
+                  aria-label="Close"
+                >
+                  ✕
+                </button>
               </div>
 
               <div className="p-5 space-y-4">
                 <div>
                   <div className="text-sm font-semibold text-foreground/80 mb-2">Description</div>
                   {modalMode === 'view' ? (
-                    <div className="rounded-2xl bg-slate-950/30 ring-1 ring-background/10 p-3 text-foreground/85 whitespace-pre-wrap">
+                    <div className="rounded-2xl bg-slate-950/30 ring-1 ring-background/10 p-3 text-foreground/85 whitespace-pre-wrap break-words max-h-[50vh] overflow-auto">
                       {activeParticipation?.description ?? ''}
                     </div>
+
                   ) : (
                     <textarea
                       value={pDesc}
@@ -1001,22 +1024,30 @@ export default function ChallengeDetailsPage() {
                 {modalMode === 'view' ? (
                   <>
                     {isOwnActiveParticipation ? (
-                      <button
-                        type="button"
-                        onClick={openEditModalForActive}
-                        className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
-                      >
-                        Modify
-                      </button>
+                      <>
+                        <button
+                          type="button"
+                          onClick={openEditModalForActive}
+                          className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                        >
+                          Modify
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteActive();
+                          }}
+                          className="px-4 py-2 rounded-2xl bg-(--button-delete) hover:bg-(--button-delete-hover) ring-1 ring-background/10 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                          aria-label="Delete participation"
+                          title="Delete"
+                        >
+                          🗑 Delete
+                        </button>
+                      </>
                     ) : null}
 
-                    <button
-                      type="button"
-                      onClick={closeModal}
-                      className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm font-semibold"
-                    >
-                      Close
-                    </button>
                   </>
                 ) : (
                   <>
