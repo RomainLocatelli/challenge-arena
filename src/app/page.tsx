@@ -50,21 +50,22 @@ export default function Home() {
   function extractShortDescription(raw: string) {
     const text = (raw ?? '').replace(/\r\n/g, '\n').trim();
     const idx = text.search(/\n\s*details\s*:?\s*\n/i);
-    if (idx === -1) { return text; }
+    if (idx === -1) {
+      return text;
+    }
     return text.slice(0, idx).trim();
   }
-
 
   // Game shown on screen
   function gamesShownOnPage(games: Game[]) {
     return (
-      <div className="flex scroll-smooth overflow-x-auto overflow-scroll min-w-40  h-63  lg:snap-none lg:overflow-y-visible pb-5 snap-x ml-3 mr-3 ">
+      <div className="flex scroll-smooth overflow-x-auto overflow-scroll min-w-40  h-63  lg:snap-none overflow-y-visible pb-5 snap-x ml-3 mr-3 ">
         {games.map((game) => {
           return (
             <Link
               key={game.id}
               href={`/games/${game.slug}`}
-              className="bg-(--button-area) hover:outline-double  outline-(--button-select) shrink-0 rounded-4xl snap-centertransition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 mt-5 ml-5 mr-5"
+              className="bg-(--button-area) hover:outline-double  outline-(--button-select) shrink-0 rounded-4xl snap-centertransition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 mt-5 ml-5 mr-5 scroll"
             >
               <Image
                 src={game.imageUrl}
@@ -140,14 +141,18 @@ export default function Home() {
   return (
     <div className="min-h-screen light:-bg-(--background-header)">
       {/* GamerChallenge news area */}
-      <div className="relative h-40 m-5 ml-10 mr-10 rounded-4xl overflow-hidden">
-        <img
-          src="/ratbanner.png"
+      <div className="relative h-30 w-80 md:h-60 md:w-160 lg:h-100 lg:w-265 m-5 ml-10 mr-10 rounded-4xl overflow-hidden place-self-center">
+        <Image
+          src="/rat-banner-800px.png"
           alt="Banner"
+          width={800}
+          height={800}
           className="absolute inset-0 w-full h-full object-cover object-top"
         />
         <div className="absolute inset-0 flex items-center justify-center z-10">
-          <p className="text-white text-xl font-bold drop-shadow-lg">WELCOME TO GAMERCHALLENGE</p>
+          <p className="text-4xl  md:text-6xl font-black uppercase tracking-wider bg-linear-to-r from-red-500 via-purple-500 to-red-500 bg-clip-text text-transparent drop-shadow-[0_4px_15px_rgba(168,85,247,0.7)] transition-all duration-300 hover:scale-105">
+            Forge your challenge
+          </p>
         </div>
       </div>
       {!user ? (
