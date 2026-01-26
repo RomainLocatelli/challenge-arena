@@ -1,7 +1,11 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-export function LogoutButton() {
+
+interface LogoutButtonProps {
+  onLogout?: () => void;
+}
+export function LogoutButton({ onLogout }: LogoutButtonProps) {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
   const router = useRouter();
 
@@ -12,6 +16,14 @@ export function LogoutButton() {
     });
     router.replace('/');
     router.refresh();
+    onLogout?.();
   };
-  return <button onClick={logout}>Disconnect</button>;
+  return (
+    <button
+      onClick={logout}
+      className="m-1.5 pl-1.5 pr-1.5 rounded-full hover:bg-(--button-game-challenge-hover)"
+    >
+      Disconnect
+    </button>
+  );
 }

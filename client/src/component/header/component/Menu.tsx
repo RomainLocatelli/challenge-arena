@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 
 export default function Menu() {
   const pathname = usePathname();
-  const pathActive = (path: string) => pathname === path;
+  const pathActive = (path: string) => pathname === path || pathname.startsWith(path + '/');
   return (
     <nav className="hidden lg:block lg:content-center">
       <ul className="lg:flex lg:bg-(--header-button-area) lg:rounded-full">

@@ -144,14 +144,14 @@ export default function GamePage() {
   }, [searchQuery, challenges, slug, games]);
 
   function extractShortDescription(raw: string) {
-  const text = (raw ?? '').replace(/\r\n/g, '\n').trim();
-  const idx = text.search(/\n\s*details\s*:?\s*\n/i);
+    const text = (raw ?? '').replace(/\r\n/g, '\n').trim();
+    const idx = text.search(/\n\s*details\s*:?\s*\n/i);
 
-  if (idx === -1) {
-    return text;
+    if (idx === -1) {
+      return text;
+    }
+    return text.slice(0, idx).trim();
   }
-  return text.slice(0, idx).trim();
-}
 
   // Pagination
   const totalPages = Math.max(1, Math.ceil(filteredChallenges.length / itemsPerPage));
