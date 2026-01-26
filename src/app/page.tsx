@@ -150,7 +150,7 @@ export default function Home() {
           className="absolute inset-0 w-full h-full object-cover object-top"
         />
         <div className="absolute inset-0 flex items-center justify-center z-10">
-          <p className="text-4xl  md:text-6xl font-black uppercase tracking-wider bg-linear-to-r from-red-500 via-purple-500 to-red-500 bg-clip-text text-transparent drop-shadow-[0_4px_15px_rgba(168,85,247,0.7)] transition-all duration-300 hover:scale-105">
+          <p className="text-4xl  md:text-6xl font-black uppercase tracking-wider bg-linear-to-r from-(--danger-button) via-purple-500 to-(--danger-button) bg-clip-text text-transparent drop-shadow-[0_4px_15px_rgba(168,85,247,0.7)] transition-all duration-300 hover:scale-105 animate-bounce">
             Forge your challenge
           </p>
         </div>
