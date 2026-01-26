@@ -117,7 +117,8 @@ export default function CreateChallengePage() {
     const payload = {
       title: title.trim(),
       scoreFormat: scoreFormat.trim() || 'SCORE',
-      description: fullDescription,
+      description: description.trim(),
+      details: detailsPoints.map((point) => point.trim()).filter(Boolean),
       gameId: selectedGame.id,
       gameTitle: selectedGame.name,
       gameSlug: selectedGame.slug,
