@@ -89,7 +89,7 @@ export default function CreateChallengePage() {
   //\   ? imageUrl.trim()
   //   : selectedGame?.background_image || '/real-rat.png';
 
-    const headerImage = selectedGame?.background_image || '/real-rat.png';
+  const headerImage = selectedGame?.background_image || '/real-rat.png';
 
   // Gestion des lignes à puces (details)
   const addBullet = () => setDetailsPoints((p) => [...p, '']);
@@ -173,7 +173,7 @@ export default function CreateChallengePage() {
               <input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full bg-foreground/40 ring-1 ring-background/10 rounded-xl px-3 py-2 text-2xl md:text-4xl font-semibold focus:outline-none text-center"
+                className="w-full bg-(--searchbar-color) ring-1 ring-background/10 rounded-xl px-3 py-2 text-2xl md:text-4xl font-semibold focus:outline-none text-center"
                 placeholder="Challenge title"
               />
             </div>
@@ -189,7 +189,7 @@ export default function CreateChallengePage() {
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       onFocus={() => setShowDropdown(true)}
-                      className="bg-foreground/40 ring-1 ring-background/10 rounded-xl px-3 py-2 text-sm focus:outline-none w-64"
+                      className="bg-(--searchbar-color) ring-1 ring-background/10 rounded-xl px-3 py-2 text-sm focus:outline-none w-64"
                       placeholder="Search for a game..."
                     />
 
@@ -260,11 +260,12 @@ export default function CreateChallengePage() {
               <input
                 value={scoreFormat}
                 onChange={(e) => setScoreFormat(e.target.value)}
-                className="w-full bg-foreground/40 ring-1 ring-background/10 rounded-xl px-3 py-2 text-sm focus:outline-none"
+                className="w-full bg-(--searchbar-color) ring-1 ring-background/10 rounded-xl px-3 py-2 text-sm focus:outline-none"
                 placeholder="e.g., SCORE, TIME, KILLS, etc."
               />
               <div className="text-xs text-foreground/50 mt-2">
-                *Optionnel : Comment sera mesuré le succès du challenge (ex: SCORE, TIME, DISTANCE...)
+                *Optionnel : Comment sera mesuré le succès du challenge (ex: SCORE, TIME,
+                DISTANCE...)
               </div>
             </div>
 
@@ -277,13 +278,13 @@ export default function CreateChallengePage() {
                 </div>
               </div>
 
-              <div className="mt-3 rounded-2xl bg-foreground/30 ring-1 ring-background/10 p-3">
+              <div className="mt-3 rounded-2xl bg-(--searchbar-color) ring-1 ring-background/10 p-3">
                 <div className="flex items-start gap-3">
                   <textarea
                     value={description}
                     maxLength={100}
                     onChange={(e) => setDescription(e.target.value)}
-                    className="flex-1 bg-foreground/40 ring-1 ring-background/10 rounded-xl px-3 py-2 text-sm focus:outline-none resize-none min-h-[44px]"
+                    className="flex-1 bg-(--searchbar-color) ring-1 ring-background/10 rounded-xl px-3 py-2 text-sm focus:outline-none resize-none min-h-[44px]"
                     placeholder="Description (max 100 chars)"
                   />
                   <div className="text-xs text-foreground/50 w-12 text-right pt-2">
@@ -310,7 +311,7 @@ export default function CreateChallengePage() {
                 </button>
               </div>
 
-              <div className="mt-3 rounded-2xl bg-foreground/30 ring-1 ring-background/10 p-3">
+              <div className="mt-3 rounded-2xl bg-(--searchbar-color) ring-1 ring-background/10 p-3">
                 <ul className="space-y-2">
                   {detailsPoints.map((txt, idx) => (
                     <li key={`det-${idx}`} className="flex items-start gap-3">
@@ -319,7 +320,7 @@ export default function CreateChallengePage() {
                         <input
                           value={txt}
                           onChange={(e) => updateBullet(idx, e.target.value)}
-                          className="flex-1 bg-foreground/40 ring-1 ring-background/10 rounded-xl px-3 py-2 text-sm focus:outline-none"
+                          className="flex-1 bg-(--searchbar-color) ring-1 ring-background/10 rounded-xl px-3 py-2 text-sm focus:outline-none"
                           placeholder={`Detail ${idx + 1}`}
                         />
                         <button
