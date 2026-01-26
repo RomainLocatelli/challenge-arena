@@ -31,7 +31,7 @@ export default function CreateChallengePage() {
   const isMd = useMediaQuery('(min-width: 768px)');
 
   // Auth
-  const { user, token } = useAuth();
+  const { user } = useAuth();
 
   // Form states
   const [title, setTitle] = useState('');
@@ -59,7 +59,9 @@ export default function CreateChallengePage() {
         `${process.env.NEXT_PUBLIC_API_URL}/games/search?q=${encodeURIComponent(query)}`
       );
 
-      if (!response.ok) throw new Error('Search failed');
+      if (!response.ok) {
+        throw new Error('Search failed');
+      }
 
       const data = await response.json();
       setSearchResults(data.results || []);
@@ -104,7 +106,7 @@ export default function CreateChallengePage() {
   }, [selectedGame, title, description]);
 
   const createChallenge = async () => {
-    if (!selectedGame) return;
+    if (!selectedGame) { return; }
 
     // Construire la description complète : description + details
     const fullDescription = [
