@@ -16,7 +16,7 @@ export default function BurgerMenu() {
   }
 
   const pathname = usePathname();
-  const pathActive = (path: string) => pathname === path;
+  const pathActive = (path: string) => pathname === path || pathname.startsWith(path + '/');
   const { user } = useAuth();
 
   // Détecte les clics en dehors du menu
@@ -53,72 +53,89 @@ export default function BurgerMenu() {
         </svg>
       </button>
 
-      {/* ✅ Toujours monté dans le DOM, mais déplacé hors écran quand fermé */}
       <ul
         className={`
-          bg-(--button-area) rounded-xl text-center p-3 
-          absolute right-1 top-16
-          transition-transform duration-300 ease-in-out
-          ${isOpen ? 'translate-x-0' : 'translate-x-[calc(100%+1rem)]'}
-        `}
+    bg-(--button-area) rounded-xl text-center p-3
+    fixed right-0 top-16 w-50
+    transform transition-all duration-300 ease-in-out
+    ${isOpen ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0 pointer-events-none'}
+  `}
       >
         <li
-          className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
+          className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full hover:bg-(--button-game-challenge-hover)`}
         >
-          <Link href="/">Home</Link>
+          <Link href="/" onClick={() => setIsOpen(false)}>
+            Home
+          </Link>
         </li>
         <li
-          className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/games') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
+          className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/games') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full hover:bg-(--button-game-challenge-hover)`}
         >
-          <Link href="/games">Games</Link>
+          <Link href="/games" onClick={() => setIsOpen(false)}>
+            Games
+          </Link>
         </li>
         <li
-          className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/challenges') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
+          className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/challenges') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full hover:bg-(--button-game-challenge-hover)`}
         >
-          <Link href="/challenges">Challenges</Link>
+          <Link href="/challenges" onClick={() => setIsOpen(false)}>
+            Challenges
+          </Link>
         </li>
         <li
-          className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/leaderboard') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
+          className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/leaderboard') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full hover:bg-(--button-game-challenge-hover)`}
         >
-          <Link href="/leaderboard">Leaderboard</Link>
+          <Link href="/leaderboard" onClick={() => setIsOpen(false)}>
+            Leaderboard
+          </Link>
         </li>
         {user ? (
           <li
-            className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/challenges/create') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
+            className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/challenges/create') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full hover:bg-(--button-game-challenge-hover)`}
           >
-            <Link href="/challenges/create">Create challenge</Link>
+            <Link href="/challenges/create" onClick={() => setIsOpen(false)}>
+              Create challenge
+            </Link>
           </li>
         ) : (
           <li
-            className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/login-register/login') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
+            className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/login-register/login') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full hover:bg-(--button-game-challenge-hover)`}
           >
-            <Link href="/login-register/login">Login</Link>
+            <Link href="/login-register/login" onClick={() => setIsOpen(false)}>
+              Login
+            </Link>
           </li>
         )}
         {user ? (
           <li
-            className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/profile') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
+            className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/profile') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full hover:bg-(--button-game-challenge-hover)`}
           >
-            <Link href="/profile">Profile</Link>
+            <Link href="/profile" onClick={() => setIsOpen(false)}>
+              Profile
+            </Link>
           </li>
         ) : (
           <li
-            className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/login-register/register') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
+            className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/login-register/register') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full hover:bg-(--button-game-challenge-hover)`}
           >
-            <Link href="/login-register/register">Register</Link>
+            <Link href="/login-register/register" onClick={() => setIsOpen(false)}>
+              Register
+            </Link>
           </li>
         )}
         <li
-          className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/support') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full`}
+          className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/support') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full hover:bg-(--button-game-challenge-hover)`}
         >
-          <Link href="/support">Support</Link>
+          <Link href="/support" onClick={() => setIsOpen(false)}>
+            Support
+          </Link>
         </li>
         <li>
           <ThemeToggle />
         </li>
         {user && (
           <li className="m-1.5 pl-1.5 pr-1.5">
-            <LogoutButton />
+            <LogoutButton onLogout={() => setIsOpen(false)} />
           </li>
         )}
       </ul>

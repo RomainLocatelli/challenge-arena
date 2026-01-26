@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import ChallengeCard from '@/component/ChallengeCard';
 
 // hook responsive
 function useMediaQuery(query: string) {
@@ -143,14 +144,14 @@ export default function GamePage() {
   }, [searchQuery, challenges, slug, games]);
 
   function extractShortDescription(raw: string) {
-  const text = (raw ?? '').replace(/\r\n/g, '\n').trim();
-  const idx = text.search(/\n\s*details\s*:?\s*\n/i);
+    const text = (raw ?? '').replace(/\r\n/g, '\n').trim();
+    const idx = text.search(/\n\s*details\s*:?\s*\n/i);
 
-  if (idx === -1) {
-    return text;
+    if (idx === -1) {
+      return text;
+    }
+    return text.slice(0, idx).trim();
   }
-  return text.slice(0, idx).trim();
-}
 
   // Pagination
   const totalPages = Math.max(1, Math.ceil(filteredChallenges.length / itemsPerPage));
@@ -260,47 +261,15 @@ export default function GamePage() {
             {/* Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               {paginatedChallenges.map((c) => (
-                <div
+                <ChallengeCard
                   key={c.id}
-                  className="rounded-2xl bg-(--background-header)/70 ring-1 ring-background/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] overflow-hidden"
-                >
-                  <div className="p-5 flex flex-col h-full">
-                    {/* Tag / game */}
-                    <div className="text-xs font-semibold tracking-widest text-(--button-select)/90 mb-2">
-                      {(c.game?.title ?? selectedGame?.title ?? '').toUpperCase()}
-                    </div>
-
-                    <div className="text-2xl font-semibold leading-tight mb-2">{c.title}</div>
-                    <div className="text-foreground/70 leading-relaxed mb-4">
-                        {extractShortDescription(c.description)}
-                      </div>
-
-                    <div className="mt-auto flex items-center justify-between pt-2">
-                      <div className="flex items-center gap-3 text-foreground/70">
-                        <span className="relative w-8 h-8 shrink-0">
-                          <Image
-                            src={c.hasLiked ? '/like 1.png' : '/like 0.png'}
-                            alt={c.hasLiked ? 'Liked' : 'Not liked'}
-                            fill
-                            sizes="32px"
-                            style={{ objectFit: 'contain' }}
-                          />
-                        </span>
-                        <div className="flex items-baseline gap-1">
-                          <span className="text-sm font-semibold">{formatVotes(c.voteCount)}</span>
-                          <span className="text-sm">likes</span>
-                        </div>
-                      </div>
-
-                      <Link
-                        href={`/challenges/${c.slug ?? c.id}`}
-                        className="px-4 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
-                      >
-                        Details
-                      </Link>
-                    </div>
-                  </div>
-                </div>
+                  gameTitle={c.game?.title ?? selectedGame?.title ?? ''}
+                  gameSlug={c.game?.slug ?? selectedGame?.slug ?? ''}
+                  title={c.title}
+                  description={extractShortDescription(c.description)}
+                  voteCount={c.voteCount}
+                  slug={c.slug ?? c.id}
+                />
               ))}
             </div>
           </div>
