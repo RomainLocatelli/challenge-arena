@@ -5,14 +5,54 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+type User = {
+  id: string;
+  username: string;
+  email: string;
+  createdAt: string;
+};
+
+type Stats = {
+  totalChallenges: number;
+  totalParticipations: number;
+  totalLikes: number;
+  rank: number | string;
+};
+
+type Challenge = {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  likes: number;
+  createdAt: string;
+  game?: {
+    title: string;
+  };
+};
+
+type Participation = {
+  id: string;
+  description: string;
+  likes: number;
+  createdAt: string;
+  challenge?: {
+    slug: string;
+    title: string;
+    game?: {
+      title: string;
+    };
+  };
+};
+
 // Hook custom pour récupérer le profil
 function useProfile() {
-  const [user, setUser] = useState(null);
-  const [stats, setStats] = useState(null);
-  const [challenges, setChallenges] = useState([]);
-  const [participations, setParticipations] = useState([]);
+  const [user, setUser] = useState<User | null>(null);
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [challenges, setChallenges] = useState<Challenge[]>([]);
+  const [participations, setParticipations] = useState<Participation[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/profile`, {
@@ -65,8 +105,10 @@ export default function ProfilePage() {
         throw new Error(errorData.message || 'Erreur lors de la suppression du profil');
       }
       router.push('/login');
-    } catch (error) {
-      setFormError(error.message || 'Une erreur est survenue lors de la suppression');
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error ? err.message : 'Une erreur est survenue lors de la suppression';
+      setFormError(errorMessage);
     }
   };
 
@@ -117,10 +159,16 @@ export default function ProfilePage() {
       return;
     }
 
-    const updates = {};
-    if (username !== user.username) updates.username = username;
-    if (email !== user.email) updates.email = email;
-    if (password) updates.password = password;
+    const updates: Partial<{ username: string; email: string; password: string }> = {};
+    if (username !== user.username) {
+      updates.username = username;
+    }
+    if (email !== user.email) {
+      updates.email = email;
+    }
+    if (password) {
+      updates.password = password;
+    }
 
     if (Object.keys(updates).length === 0) {
       setIsEditing(false);
@@ -158,8 +206,9 @@ export default function ProfilePage() {
       setIsEditing(false);
       setPassword('');
       setConfirmPassword('');
-    } catch (error) {
-      setFormError(error.message || 'Une erreur est survenue');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Une erreur est survenue';
+      setFormError(errorMessage);
     } finally {
       setIsSaving(false);
     }
