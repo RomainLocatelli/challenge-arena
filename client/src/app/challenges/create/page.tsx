@@ -35,7 +35,6 @@ export default function CreateChallengePage() {
 
   // Form states
   const [title, setTitle] = useState('');
-  // const [imageUrl, setImageUrl] = useState<string>('');
   const [description, setDescription] = useState('');
   const [detailsPoints, setDetailsPoints] = useState<string[]>([]);
   const [selectedGame, setSelectedGame] = useState<RawgGame | null>(null);
@@ -44,6 +43,7 @@ export default function CreateChallengePage() {
   const [isSearching, setIsSearching] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [scoreFormat, setScoreFormat] = useState('');
+  const [shouldSearch, setShouldSearch] = useState(true); // ✅ NOUVEAU
 
   // Fonction de recherche
   const searchGames = async (query: string) => {
@@ -72,8 +72,13 @@ export default function CreateChallengePage() {
     }
   };
 
-  // Debounce manuel
+  // ✅ MODIFIÉ : Debounce avec flag
   useEffect(() => {
+    if (!shouldSearch) {
+      setShouldSearch(true); // Reset le flag
+      return;
+    }
+
     const timer = setTimeout(() => {
       if (searchQuery.trim().length >= 2) {
         searchGames(searchQuery);
@@ -84,10 +89,6 @@ export default function CreateChallengePage() {
 
     return () => clearTimeout(timer);
   }, [searchQuery]);
-
-  // const headerImage = imageUrl.trim()
-  //\   ? imageUrl.trim()
-  //   : selectedGame?.background_image || '/real-rat.png';
 
   const headerImage = selectedGame?.background_image || '/real-rat.png';
 
@@ -106,18 +107,12 @@ export default function CreateChallengePage() {
   const createChallenge = async () => {
     if (!selectedGame) return;
 
-    // Construire la description complète : description + details
-    const fullDescription = [
-      description.trim(),
-      ...detailsPoints.map((point) => point.trim()).filter(Boolean)
-    ]
-      .filter(Boolean)
-      .join('\n');
-
+    // ✅ MODIFIÉ : description et details séparés
     const payload = {
       title: title.trim(),
       scoreFormat: scoreFormat.trim() || 'SCORE',
-      description: fullDescription,
+      description: description.trim(),
+      details: detailsPoints.map((point) => point.trim()).filter(Boolean),
       gameId: selectedGame.id,
       gameTitle: selectedGame.name,
       gameSlug: selectedGame.slug,
@@ -127,7 +122,7 @@ export default function CreateChallengePage() {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/challenges`, {
         method: 'POST',
-        credentials: 'include', // ← Ajouté pour l'auth
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },
@@ -140,8 +135,6 @@ export default function CreateChallengePage() {
       }
 
       const data = await response.json();
-
-      // Redirige vers le challenge créé
       router.push(`/challenges/${data.challenge.slug}`);
     } catch (error) {
       console.error('Error creating challenge:', error);
@@ -152,9 +145,7 @@ export default function CreateChallengePage() {
   return (
     <div className="min-h-screen">
       <main className="mx-auto w-full max-w-[430px] md:max-w-5xl px-4 md:px-8 py-5 md:py-8">
-        {/* Card principale */}
         <div className="rounded-3xl bg-background/70 ring-1 ring-background/10 shadow-[0_20px_60px_rgba(0,0,0,0.55)] overflow-hidden">
-          {/* Header */}
           <div className="relative h-32 md:h-48 lg:h-64 w-full bg-(--button-area)">
             <Image
               src={headerImage}
@@ -166,9 +157,7 @@ export default function CreateChallengePage() {
             <div className="absolute inset-0 bg-gradient-to-t from-foreground/65 via-foreground/15 to-transparent" />
           </div>
 
-          {/* Contenu */}
           <div className="p-5 md:p-8">
-            {/* Title */}
             <div className="flex items-start justify-between gap-3">
               <input
                 value={title}
@@ -178,7 +167,6 @@ export default function CreateChallengePage() {
               />
             </div>
 
-            {/* Meta (Game + Created by) */}
             <div className="mt-3 flex items-start justify-between gap-3">
               <div className="text-foreground/80 space-y-2">
                 <div className="text-sm">
@@ -207,6 +195,7 @@ export default function CreateChallengePage() {
                             type="button"
                             onClick={() => {
                               setSelectedGame(game);
+                              setShouldSearch(false); // ✅ AJOUTÉ : Désactive le search
                               setSearchQuery(game.name);
                               setShowDropdown(false);
                             }}
@@ -239,22 +228,6 @@ export default function CreateChallengePage() {
               </div>
             </div>
 
-            {/* Image URL 
-            <div className="mt-4">
-              <div className="text-sm font-semibold text-foreground/80 mb-2">Image URL</div>
-              <input
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                className="w-full bg-foreground/40 ring-1 ring-background/10 rounded-xl px-3 py-2 text-sm focus:outline-none"
-                placeholder="https://..."
-              />
-              <div className="text-xs text-background/50 mt-2">
-                Laisse vide pour afficher l'image du jeu par défaut.
-              </div>
-            </div>
-            */}
-
-            {/* Score Format */}
             <div className="mt-4">
               <div className="text-sm font-semibold text-foreground/80 mb-2">Score Format*</div>
               <input
@@ -269,7 +242,6 @@ export default function CreateChallengePage() {
               </div>
             </div>
 
-            {/* Description */}
             <div className="mt-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -294,7 +266,6 @@ export default function CreateChallengePage() {
               </div>
             </div>
 
-            {/* Challenge Details */}
             <div className="mt-5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -341,7 +312,6 @@ export default function CreateChallengePage() {
               </div>
             </div>
 
-            {/* Create */}
             <div className="mt-6 flex justify-center md:justify-end">
               <button
                 type="button"
