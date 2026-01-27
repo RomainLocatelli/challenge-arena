@@ -59,17 +59,6 @@ const clamp300 = (s: string) => {
   return t.length <= 300 ? t : t.slice(0, 300);
 };
 
-function buildChallengeDescription(desc: string, details: string[]) {
-  const cleanDesc = (desc ?? '').trim();
-  const cleanDetails = (details ?? []).map((d) => d.trim()).filter(Boolean);
-
-  if (cleanDetails.length === 0) {
-    return cleanDesc;
-  }
-
-  return `${cleanDesc}\n\nDetails:\n${cleanDetails.join('\n')}`;
-}
-
 function splitDescriptionAndDetails(raw: string): { desc: string; details: string[] } {
   const text = (raw ?? '').replace(/\r\n/g, '\n').trim();
   const re = /\n\s*details\s*:?\s*\n/i;
@@ -337,7 +326,8 @@ export default function ChallengeDetailsPage() {
     const payload = {
       title: title.trim(),
       scoreFormat: challenge.scoreFormat,
-      description: buildChallengeDescription(clamp300(description), detailsPoints)
+      description: clamp300(description),
+      details: detailsPoints.filter((d) => d.trim())
     };
 
     const res = await fetch(`${baseUrl}/challenges/${challenge.id}`, {
@@ -360,7 +350,8 @@ export default function ChallengeDetailsPage() {
         ? {
             ...prev,
             title: payload.title,
-            description: payload.description
+            description: payload.description,
+            details: payload.details
           }
         : prev
     );
