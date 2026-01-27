@@ -16,7 +16,7 @@ export default function Footer() {
               alt="gamerchallenge logo"
             />
           </div>
-          <h2 className="text-xl font-bold">GamerChallenge</h2>
+          <h2 className="text-xl font-bold">ChallengeArena</h2>
         </Link>
 
         {/* Liens du footer */}
@@ -27,10 +27,7 @@ export default function Footer() {
           <Link href="/leaderboards" className="hover:text-(--button-select) transition-colors">
             Leaderboards
           </Link>
-          <Link
-            href="/terms-of-service"
-            className="hover:text-(--button-select) transition-colors"
-          >
+          <Link href="/terms-of-service" className="hover:text-(--button-select) transition-colors">
             Terms of Service
           </Link>
           <Link href="/privacy-policy" className="hover:text-(--button-select) transition-colors">

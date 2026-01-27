@@ -5,11 +5,11 @@ import { faqData } from '../support/faqData';
 
 export default function HelpPage() {
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] p-8">
+    <div className="min-h-screen bg--background text--foreground p-8">
       {/* Header */}
       <section className="text-center mb-12">
         <h1 className="text-4xl font-bold mb-4">Support Center</h1>
-        <p className="text-[var(--foreground)] opacity-70">Find quick answers to your questions</p>
+        <p className="text-foreground opacity-70">Find quick answers to your questions</p>
       </section>
 
       {/* FAQ Section */}
@@ -24,13 +24,13 @@ export default function HelpPage() {
       </section>
 
       {/* Contact Section */}
-      <section className="max-w-3xl mx-auto text-center bg-[var(--button-area)] p-8 rounded-lg border border-[var(--header-button-area)]">
+      <section className="max-w-3xl mx-auto text-center bg-(--button-area) p-8 rounded-lg border border-(--header-button-area)">
         <h2 className="text-2xl font-bold mb-4">Can&apos;t find an answer?</h2>
-        <p className="text-[var(--foreground)] opacity-70 mb-6">Contact our support team</p>
+        <p className="text-foreground opacity-70 mb-6">Contact our support team</p>
 
         <a
-          href="mailto:support@gamerchallenges.com?subject=Help Request - GamerChallenges"
-          className="inline-block bg-[var(--button-select)] hover:bg-[var(--button-game-challenge-hover)] text-white font-semibold px-6 py-3 rounded-lg transition"
+          href="mailto:support@challengearena.com?subject=Help Request - GamerChallenges"
+          className="inline-block bg-(--button-select) hover:bg-(--button-game-challenge-hover) font-semibold px-6 py-3 rounded-lg transition"
         >
           Send an email
         </a>
@@ -48,16 +48,16 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
   };
 
   return (
-    <div className="border-b border-[var(--header-button-area)] py-4">
+    <div className="border-b border-(--header-button-area) py-4">
       <button
         onClick={handleClick}
-        className="w-full flex justify-between items-center text-left hover:text-[var(--button-select)] transition"
+        className="w-full flex justify-between items-center text-left hover:text-(--button-select) transition"
       >
         <span className="font-semibold text-lg">{question}</span>
         <span className="text-2xl">{isOpen ? '−' : '+'}</span>
       </button>
 
-      {isOpen && <div className="mt-3 text-[var(--foreground)] opacity-80 pl-4">{answer}</div>}
+      {isOpen && <div className="mt-3 text-foreground opacity-80 pl-4">{answer}</div>}
     </div>
   );
 }
