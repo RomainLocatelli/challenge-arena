@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useAuth } from './context/AuthContext';
+import ChallengeCard from '@/component/ChallengeCard';
 
 export default function Home() {
   type Game = { id: string; title: string; imageUrl: string; slug: string };
@@ -13,8 +14,8 @@ export default function Home() {
     game: {
       id: string;
       title: string;
+      slug: string;
       imageUrl: string;
-      description: string;
     };
     gameId: string;
     id: string;
@@ -89,48 +90,15 @@ export default function Home() {
         <div className="grid grid-rows-2 grid-flow-col gap-10 w-max m-5">
           {challenges.map((challenge) => {
             return (
-              <div
+              <ChallengeCard
                 key={challenge.id}
-                className="rounded-2xl shrink-0 snap-center bg-(--button-area) ring-1 ring-background/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] w-60 lg:w-70 hover:outline-double outline-(--button-select) delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110"
-              >
-                <div className="p-5 flex flex-col h-full">
-                  {/* Tag / jeu */}
-                  <div className="text-xs font-semibold tracking-widest text-(--button-select) mb-2">
-                    {(challenge.game.title ?? challenge.title).toUpperCase()}
-                  </div>
-                  {/* Titre */}
-                  <div className="text-2xl font-semibold leading-tight mb-2">{challenge.title}</div>
-                  {/* Description */}
-                  <div className="text-foreground/70 leading-relaxed mb-4">
-                    {extractShortDescription(challenge.description)}
-                  </div>
-                  {/* votes + bouton */}
-                  <div className="mt-auto flex items-center justify-between pt-2">
-                    <div className="items-center gap-2 text-foreground/70">
-                      <span className="relative w-8 h-8 shrink-0">
-                        {/* <Image
-                    src={challenge.hasLiked ? '/like 1.png' : '/like 0.png'}
-                    alt={challenge.hasLiked ? 'Liked' : 'Not liked'}
-                    fill
-                    sizes="32px"
-                    className="object-contain"
-                  /> */}
-                      </span>
-                      <span className="text-sm font-semibold">
-                        {formatVotes(challenge.voteCount)}
-                      </span>
-                      <span className="text-sm"> likes</span>
-                    </div>
-                    <Link
-                      href={`/challenges/${challenge.slug}`}
-                      type="button"
-                      className="px-4 py-2 rounded-xl bg-(--button-game-challenge)  text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)] hover:bg-(--button-game-challenge-hover)"
-                    >
-                      Details
-                    </Link>
-                  </div>
-                </div>
-              </div>
+                gameTitle={challenge.game?.title ?? ''}
+                gameSlug={challenge.game?.slug ?? ''}
+                title={challenge.title}
+                description={extractShortDescription(challenge.description)}
+                voteCount={challenge.voteCount}
+                slug={challenge.slug ?? challenge.id}
+              />
             );
           })}
         </div>
@@ -150,7 +118,7 @@ export default function Home() {
           className="absolute inset-0 w-full h-full object-cover object-top"
         />
         <div className="absolute inset-0 flex items-center justify-center z-10">
-          <p className="text-4xl  md:text-6xl font-black uppercase tracking-wider bg-linear-to-r from-(--danger-button) via-purple-500 to-(--danger-button) bg-clip-text text-transparent drop-shadow-[0_4px_15px_rgba(168,85,247,0.7)] transition-all duration-300 hover:scale-105 animate-bounce">
+          <p className="text-4xl  md:text-6xl font-black uppercase tracking-wider bg-linear-to-r from-(--danger-button) via-(--button-select) to-(--danger-button) bg-clip-text text-transparent drop-shadow-[0_4px_15px_rgba(168,85,247,0.7)] transition-all duration-300 hover:scale-105 animate-bounce">
             Forge your challenge
           </p>
         </div>
