@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import ChallengeCard from '@/component/ChallengeCard';
+import SearchBar from '@/component/SearchBar';
 
 // hook responsive
 function useMediaQuery(query: string) {
@@ -51,6 +52,42 @@ type Challenge = {
   };
 };
 
+function filterOrderingChallenges(
+  challenges: Challenge[],
+  orderFilterSearchbar: string,
+  filterSelectorChoice: string
+) {
+  const sorted = [...challenges];
+  if (filterSelectorChoice === 'Popularity') {
+    sorted.sort((a, b) => {
+      if (orderFilterSearchbar === 'ASC') {
+        return a.voteCount - b.voteCount;
+      } else {
+        return b.voteCount - a.voteCount;
+      }
+    });
+  } else if (filterSelectorChoice === 'Date added') {
+    sorted.sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      if (orderFilterSearchbar === 'ASC') {
+        return dateB - dateA;
+      } else {
+        return dateA - dateB;
+      }
+    });
+  } else {
+    sorted.sort((a, b) => {
+      if (orderFilterSearchbar === 'ASC') {
+        return a.title.localeCompare(b.title);
+      } else {
+        return b.title.localeCompare(a.title);
+      }
+    });
+  }
+  return sorted;
+}
+
 const formatVotes = (n?: number) => `${n ?? 0}`;
 
 export default function GamePage() {
@@ -60,6 +97,12 @@ export default function GamePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [pageBlockStart, setPageBlockStart] = useState(2);
+
+  const [filterModalArea, setFilterModalArea] = useState<boolean>(false);
+  const [orderFilterSearchbar, setOrderFilterSearchBar] = useState<'ASC' | 'DESC'>('ASC');
+  const [filterSelectorChoice, setFilterSelectorChoice] = useState<
+    'Popularity' | 'Date added' | 'Alphabetical'
+  >('Date added');
 
   const [games, setGames] = useState<Game[]>([]);
   const [challenges, setChallenges] = useState<Challenge[]>([]);
@@ -153,8 +196,12 @@ export default function GamePage() {
     return text.slice(0, idx).trim();
   }
 
+  const sortedChallenges = useMemo(() => {
+    return filterOrderingChallenges(filteredChallenges, orderFilterSearchbar, filterSelectorChoice);
+  }, [filteredChallenges, orderFilterSearchbar, filterSelectorChoice]);
+
   // Pagination
-  const totalPages = Math.max(1, Math.ceil(filteredChallenges.length / itemsPerPage));
+  const totalPages = Math.max(1, Math.ceil(sortedChallenges.length / itemsPerPage));
   const effectivePage = Math.min(Math.max(1, currentPage), totalPages);
 
   useEffect(() => {
@@ -165,7 +212,7 @@ export default function GamePage() {
   }, [itemsPerPage, totalPages]);
 
   const startIndex = (effectivePage - 1) * itemsPerPage;
-  const paginatedChallenges = filteredChallenges.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedChallenges = sortedChallenges.slice(startIndex, startIndex + itemsPerPage);
 
   const goToPage = (page: number) => {
     setCurrentPage(page);
@@ -215,32 +262,16 @@ export default function GamePage() {
         ) : null}
 
         {/* Search Bar */}
-        <div className="mb-6">
-          <div className="relative max-w-md md:max-w-2xl mx-auto">
-            <div className="absolute inset-0 rounded-full bg-(--searchbar-color) ring-1 ring-background/10 shadow-[0_10px_30px_rgba(0,0,0,0.45)]" />
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 z-10 h-12 w-12 flex items-center justify-center shadow">
-              <Image
-                src="/loupe.png"
-                width={100}
-                height={100}
-                alt="Search Icon"
-                className="opacity-80"
-              />
-            </div>
-
-            <input
-              type="text"
-              placeholder="Search a challenge..."
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setCurrentPage(1);
-                setPageBlockStart(2);
-              }}
-              className="relative w-full rounded-full bg-transparent py-3 pl-14 pr-4  text-center text-xl  focus:outline-none"
-            />
-          </div>
-        </div>
+        <SearchBar
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          setCurrentPage={setCurrentPage}
+          setPageBlockStart={setPageBlockStart}
+          filterModalArea={filterModalArea}
+          setFilterModalArea={setFilterModalArea}
+          setOrderFilterSearchBar={setOrderFilterSearchBar}
+          setFilterSelectorChoice={setFilterSelectorChoice}
+        />
 
         {/* Challenges Section */}
         <div className="mb-8">
