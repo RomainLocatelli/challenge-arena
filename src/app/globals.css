@@ -67,9 +67,9 @@
     --profile-modify-text-area: var(--color-slate-400);
     --profile-save-button: var(--color-green-600);
     --danger-button: var(--color-red-700);
-    --leadboard-first: #ffd700;
-    --leadboard-second: #c0c0c0;
-    --leadboard-third: #cd7f32;
+    --leadboard-first: #d4af37;
+    --leadboard-second: #9ca3af;
+    --leadboard-third: #b87333;
     --leadboard-mix-one: #1f283b;
     --leadboard-mix-two: #b386ff;
     --leadboard-me: #1f283b;
@@ -93,9 +93,9 @@
   --profile-modify-text-area: var(--color-slate-400);
   --profile-save-button: var(--color-green-600);
   --danger-button: var(--color-red-700);
-  --leadboard-first: #ffd700;
-  --leadboard-second: #c0c0c0;
-  --leadboard-third: #cd7f32;
+  --leadboard-first: #d4af37;
+  --leadboard-second: #9ca3af;
+  --leadboard-third: #b87333;
   --leadboard-mix-one: #1f283b;
   --leadboard-mix-two: #b386ff;
   --leadboard-me: #223764;
@@ -116,6 +116,19 @@
     opacity: 1;
     transform: scale(1.3);
   }
+}
+
+@keyframes rainbow {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+.animate-rainbow {
+  animation: rainbow 3s linear infinite;
 }
 
 body {
