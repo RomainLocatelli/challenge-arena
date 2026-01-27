@@ -159,7 +159,6 @@ export const updateProfile = async (req: Request, res: Response, next: NextFunct
 
     // Préparer les données à mettre à jour
     const dataToUpdate: any = {};
-
     if (username) {
       dataToUpdate.username = username;
     }
@@ -182,8 +181,31 @@ export const updateProfile = async (req: Request, res: Response, next: NextFunct
       }
     });
 
-    res.json({ user: updatedUser });
-  } catch (error) {
+    res.json({
+      message: 'Profile updated successfully',
+      user: updatedUser
+    });
+  } catch (error: any) {
+    // Gérer l'erreur Prisma de contrainte unique
+    if (error.code === 'P2002') {
+      // L'info est cachée dans driverAdapterError avec ton adaptateur
+      const fields = error.meta?.driverAdapterError?.cause?.constraint?.fields;
+
+      if (Array.isArray(fields)) {
+        if (fields.includes('username')) {
+          return next(new AppError('This username is already in use by another user', 409));
+        }
+
+        if (fields.includes('email')) {
+          return next(new AppError('This email address is already in use by another user', 409));
+        }
+      }
+
+      // Fallback
+      return next(new AppError('This information is already in use', 409));
+    }
+
+    // Autres erreurs
     next(error);
   }
 };
