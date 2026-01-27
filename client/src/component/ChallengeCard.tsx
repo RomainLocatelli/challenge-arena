@@ -20,7 +20,7 @@ export default function ChallengeCard({
   const formatVotes = (n: number) => `${n}`;
 
   return (
-    <div className="rounded-2xl shrink-0 snap-center bg-(--button-area) ring-1 ring-background/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] w-60 lg:w-70 hover:outline-double outline-(--button-select) delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110">
+    <div className="rounded-2xl  shrink-0 snap-center bg-(--button-area) ring-1 ring-background/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] w-80 lg:w-100 h-50 hover:outline-double outline-(--button-select) delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110">
       <div className="p-5 flex flex-col h-full">
         {/* Tag / jeu avec lien */}
         <Link
