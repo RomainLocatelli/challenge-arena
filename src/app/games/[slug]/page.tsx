@@ -240,10 +240,10 @@ export default function GamePage() {
 
   return (
     <div className="min-h-screen  flex flex-col">
-      <main className="px-4 md:px-8 py-6 max-w-7xl mx-auto w-full">
+      <main className="px-4 md:px-8 py-6   ">
         {/* Selected Game card */}
         {selectedGame ? (
-          <div className="mb-4 max-w-md md:max-w-2xl mx-auto">
+          <div className="mb-4 md:max-w-2xl mx-auto">
             <div className="relative w-full h-44 md:h-56 overflow-hidden rounded-2xl bg-(--background-header) ring-1 ring-background shadow-[0_10px_30px_rgba(0,0,0,0.45)]">
               <Image
                 src={selectedGame.imageUrl}
@@ -252,7 +252,7 @@ export default function GamePage() {
                 sizes="(max-width: 768px) 100vw, 768px"
                 className="object-contain p-4"
               />
-              <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-foreground/60 to-transparent">
+              <div className="absolute inset-x-0 bottom-0 p-3 bg-linear-to-t from-foreground/60 to-transparent">
                 <div className="text-lg font-semibold text-center text-(--button-select)">
                   {selectedGame.title}
                 </div>
@@ -275,22 +275,22 @@ export default function GamePage() {
 
         {/* Challenges Section */}
         <div className="mb-8">
-          <div className="mx-auto max-w-md md:max-w-4xl">
-            <div className="mb-6 flex items-center justify-between gap-4">
-              <h2 className="text-xl font-bold border-l-4 border-(--button-select) pl-3">
+          <div className="mx-auto ">
+            <div className="mb-6 flex items-center justify-around gap-4">
+              <h2 className="text-xl font-bold border-l-4 border-(--button-select) pl-3 ml-15 md:ml-40 mt-10 mb-10">
                 Challenges
               </h2>
 
               <Link
                 href="/challenges/create"
-                className="px-4 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                className="px-4 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)] mr-40"
               >
                 Create a challenge
               </Link>
             </div>
 
             {/* Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            <div className="flex flex-wrap justify-center gap-4 md:gap-6  mr-20 ml-20">
               {paginatedChallenges.map((c) => (
                 <ChallengeCard
                   key={c.id}

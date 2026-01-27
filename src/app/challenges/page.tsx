@@ -217,8 +217,8 @@ export default function ChallengesPage() {
   ====================== */
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <main className="px-4 md:px-8 py-6 max-w-7xl mx-auto w-full">
+    <div className="min-h-screen flex flex-col ml-10 mr-20">
+      <main className="px-4 md:px-8 py-6  mx-auto w-full ">
         {/* Search Bar */}
         <SearchBar
           searchQuery={searchQuery}
@@ -231,9 +231,9 @@ export default function ChallengesPage() {
           setFilterSelectorChoice={setFilterSelectorChoice}
         />
         {/* Challenges Section */}
-        <div className="mb-8">
-          <div className="mx-auto max-w-md md:max-w-4xl">
-            <div className="mb-6 flex items-center justify-between gap-4">
+        <div className="mb-8 ">
+          <div className="mx-auto">
+            <div className="flex items-center justify-around gap-4 mt-10 mb-10">
               <h2 className="text-xl font-bold border-l-4 border-(--button-select) pl-3">
                 Challenges
               </h2>
@@ -270,7 +270,7 @@ export default function ChallengesPage() {
             </div>
 
             {/* Cards de challenges */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            <div className="flex flex-wrap justify-center gap-4 md:gap-6 ml-8 mg:mr-20 mg:ml-20 ">
               {paginatedChallenges.map((c) => (
                 <ChallengeCard
                   key={c.id}
