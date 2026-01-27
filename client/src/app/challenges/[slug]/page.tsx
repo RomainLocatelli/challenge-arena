@@ -53,13 +53,10 @@ type ChallengeDetails = {
   };
 };
 
-// Description avec max 100 chars
-const clamp100 = (s: string) => {
-  const t = (s ?? '').trim();
-  if (t.length <= 100) {
-    return t;
-  }
-  return `${t.slice(0, 97)}...`;
+// Description avec max 300 chars
+const clamp300 = (s: string) => {
+  const t = s ?? '';
+  return t.length <= 300 ? t : t.slice(0, 300);
 };
 
 function buildChallengeDescription(desc: string, details: string[]) {
@@ -117,11 +114,17 @@ export default function ChallengeDetailsPage() {
 
   const [isAllowToModifyOrDelete, setIsAllowToModifyOrDelete] = useState<boolean>(false);
 
-  const [descriptionPoints, setDescriptionPoints] = useState<string[]>([]);
+  const [description, setDescription] = useState('');
   const [detailsPoints, setDetailsPoints] = useState<string[]>([]);
 
   const [participations, setParticipations] = useState<Participation[]>([]);
   const [visibleCount, setVisibleCount] = useState(defaultVisible);
+
+  // Confirmation delete modal 
+  type ConfirmAction = 'delete-challenge' | 'delete-participation' | null;
+
+  const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null);
+  const [confirmParticipationId, setConfirmParticipationId] = useState<string | null>(null);
 
   // Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -132,6 +135,34 @@ export default function ChallengeDetailsPage() {
   const triggerSuccessToast = () => {
     setShowSuccessToast(true);
     window.setTimeout(() => setShowSuccessToast(false), 2000);
+  };
+
+  // Delete Challenge
+
+  const confirmDeleteChallenge = async () => {
+    if (!challenge) {
+      return;
+    }
+
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+
+    const res = await fetch(`${baseUrl}/challenges/${challenge.id}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    });
+
+    if (!res.ok) {
+      const msg = await res.text().catch(() => '');
+      alert(msg || 'Failed to delete challenge');
+      return;
+    }
+
+    // close confirm modal 
+    setConfirmAction(null);
+    setConfirmParticipationId(null);
+
+  // Redirection vers la liste des challenges
+    router.push('/challenges');
   };
 
   // Champs du formulaire (create / edit)
@@ -243,7 +274,7 @@ export default function ChallengeDetailsPage() {
     const finalDetails =
       parsed.details.length > 0 ? parsed.details : (challenge.details ?? []).filter(Boolean);
 
-    setDescriptionPoints([parsed.desc]);
+    setDescription(parsed.desc);
     setDetailsPoints(finalDetails);
 
     setParticipations(challenge.participations ?? []);
@@ -306,7 +337,7 @@ export default function ChallengeDetailsPage() {
     const payload = {
       title: title.trim(),
       scoreFormat: challenge.scoreFormat,
-      description: buildChallengeDescription(clamp100(descriptionPoints[0] ?? ''), detailsPoints)
+      description: buildChallengeDescription(clamp300(description), detailsPoints)
     };
 
     const res = await fetch(`${baseUrl}/challenges/${challenge.id}`, {
@@ -341,35 +372,24 @@ export default function ChallengeDetailsPage() {
     if (!challenge) {
       return;
     }
+    const parsed = splitDescriptionAndDetails(challenge.description);
     setTitle(challenge.title);
     setImageUrl(undefined);
-    setDescriptionPoints([challenge.description]);
-    setDetailsPoints(challenge.details ?? []);
+    setDescription(parsed.desc);
+    setDetailsPoints(parsed.details.length ? parsed.details : challenge.details ?? []);
     setIsEditing(false);
   };
 
   const addBullet = (kind: 'desc' | 'details') => {
-    if (kind === 'desc') {
-      setDescriptionPoints((p) => [...p, '']);
-    } else {
-      setDetailsPoints((p) => [...p, '']);
-    }
+    setDetailsPoints((p) => [...p, '']);
   };
 
   const updateBullet = (kind: 'desc' | 'details', idx: number, val: string) => {
-    if (kind === 'desc') {
-      setDescriptionPoints((p) => p.map((x, i) => (i === idx ? val : x)));
-    } else {
-      setDetailsPoints((p) => p.map((x, i) => (i === idx ? val : x)));
-    }
+    setDetailsPoints((p) => p.map((x, i) => (i === idx ? val : x)));
   };
 
   const removeBullet = (kind: 'desc' | 'details', idx: number) => {
-    if (kind === 'desc') {
-      setDescriptionPoints((p) => p.filter((_, i) => i !== idx));
-    } else {
-      setDetailsPoints((p) => p.filter((_, i) => i !== idx));
-    }
+    setDetailsPoints((p) => p.filter((_, i) => i !== idx));
   };
 
   const closeModal = () => {
@@ -550,7 +570,7 @@ export default function ChallengeDetailsPage() {
           credentials: 'include'
         });
 
-        // ✅ Met à jour SEULEMENT cette participation
+        // Met à jour SEULEMENT cette participation
         setParticipations((prev) =>
           prev.map((participation) =>
             participation.id === p.id
@@ -569,7 +589,7 @@ export default function ChallengeDetailsPage() {
           credentials: 'include'
         });
 
-        // ✅ Met à jour SEULEMENT cette participation
+        // Met à jour SEULEMENT cette participation
         setParticipations((prev) =>
           prev.map((participation) =>
             participation.id === p.id
@@ -599,7 +619,6 @@ export default function ChallengeDetailsPage() {
     toggleParticipationLike(p);
   };
 
-  // Todo remove participations does not send to the right back adress
   const removeParticipation = async (id: string) => {
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
     const res = await fetch(`${baseUrl}/participation/participations/${id}`, {
@@ -623,6 +642,28 @@ export default function ChallengeDetailsPage() {
     await deleteActiveParticipation();
   };
 
+  const confirmDelete = async () => {
+    if (confirmAction === 'delete-challenge' && challenge) {
+      await confirmDeleteChallenge();
+    }
+
+    if (
+      confirmAction === 'delete-participation' &&
+      confirmParticipationId
+    ) {
+      await removeParticipation(confirmParticipationId);
+    }
+
+    setConfirmAction(null);
+    setConfirmParticipationId(null);
+  };
+
+  const cancelDelete = () => {
+    setConfirmAction(null);
+    setConfirmParticipationId(null);
+  };
+
+
   if (loading) {
     return (
       <div className="min-h-screen   flex items-center justify-center">
@@ -643,6 +684,11 @@ export default function ChallengeDetailsPage() {
       </div>
     );
   }
+
+  const autoResizeTextarea = (el: HTMLTextAreaElement) => {
+    el.style.height = 'auto';
+    el.style.height = `${el.scrollHeight}px`;
+  };
 
 
   return (
@@ -784,18 +830,37 @@ export default function ChallengeDetailsPage() {
 
               <div className="mt-3 rounded-2xl bg-(--challenge-slug-detail-card)/30 ring-1 ring-background/10 p-3">
                 {!isEditing ? (
-                  <div className="text-foreground/85">{clamp100(descriptionPoints[0] ?? '')}</div>
+                  <div className="text-foreground/85 whitespace-pre-wrap break-words">
+                    {description}
+                  </div>
                 ) : (
                   <div className="flex items-start gap-3">
                     <textarea
-                      value={descriptionPoints[0] ?? ''}
-                      maxLength={100}
-                      onChange={(e) => setDescriptionPoints([e.target.value])}
-                      className="flex-1 bg-(--background-header)/40 ring-1 ring-background/10 rounded-xl px-3 py-2 text-sm focus:outline-none resize-none min-h-[44px]"
-                      placeholder="Description (max 100 chars)"
+                      value={description}
+                      maxLength={300}
+                      ref={(el) => {
+                        if (el) { autoResizeTextarea(el); }
+                      }}
+                      onChange={(e) => {
+                        setDescription(e.target.value);
+                        autoResizeTextarea(e.target);
+                      }}
+                      className="
+                        flex-1
+                        bg-(--background-header)/40
+                        ring-1 ring-background/10
+                        rounded-xl
+                        px-3 py-2
+                        text-sm
+                        focus:outline-none
+                        resize-none
+                        overflow-hidden
+                        min-h-[44px]
+                      "
+                      placeholder="Description (max 300 chars)"
                     />
                     <div className="text-xs text-foreground/50 w-12 text-right pt-2">
-                      {(descriptionPoints[0] ?? '').length}/100
+                      {description.length}/300
                     </div>
                   </div>
                 )}
@@ -806,7 +871,7 @@ export default function ChallengeDetailsPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="h-5 w-1 rounded-full bg-(--button-select)" />
-                  <div className="font-semibold">Challenge Details :</div>
+                  <div className="font-semibold">Challenge Rules :</div>
                 </div>
 
                 {isEditing ? (
@@ -850,7 +915,29 @@ export default function ChallengeDetailsPage() {
               </div>
             </div>
 
-            <div className="mt-6 flex justify-center md:justify-end">
+            <div className="mt-6 flex items-center justify-between">
+
+              {isAllowToModifyOrDelete ? (
+                <button
+                  type="button"
+                  onClick={() => setConfirmAction('delete-challenge')}
+                  className="
+                    px-4 py-2
+                    rounded-2xl
+                    bg-(--button-delete)
+                    hover:bg-(--button-delete-hover)
+                    ring-1 ring-background/10
+                    text-sm font-semibold
+                    shadow-[0_10px_20px_rgba(0,0,0,0.35)]
+                  "
+                  aria-label="Delete challenge"
+                >
+                  🗑 Delete challenge
+                </button>
+              ) : (
+                <div />
+              )}
+
               {user ? (
                 <button
                   type="button"
@@ -931,7 +1018,11 @@ export default function ChallengeDetailsPage() {
                     {isEditing ? (
                       <button
                         type="button"
-                        onClick={() => removeParticipation(p.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setConfirmAction('delete-participation');
+                          setConfirmParticipationId(p.id);
+                        }}
                         className="px-3 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm"
                         aria-label="Remove participation"
                       >
@@ -959,7 +1050,7 @@ export default function ChallengeDetailsPage() {
           </div>
         ) : null}
 
-        {/* Modal */}
+        {/* Modals */}
         {isModalOpen ? (
           <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/50 px-4"
@@ -1037,7 +1128,8 @@ export default function ChallengeDetailsPage() {
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation();
-                            deleteActive();
+                            setConfirmAction('delete-participation');
+                            setConfirmParticipationId(activeParticipation?.id ?? null);
                           }}
                           className="px-4 py-2 rounded-2xl bg-(--button-delete) hover:bg-(--button-delete-hover) ring-1 ring-background/10 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
                           aria-label="Delete participation"
@@ -1079,6 +1171,73 @@ export default function ChallengeDetailsPage() {
           </div>
         ) : null}
       </main>
+
+      {/* Delete modal */}
+        {confirmAction ? (
+          <div
+            className="fixed inset-0 z-[70] flex items-center justify-center bg-foreground/50 px-4"
+            onMouseDown={(e) => {
+              if (e.target === e.currentTarget) {
+                cancelDelete();
+              }
+            }}
+          >
+            <div className="
+              w-full max-w-md
+              rounded-3xl
+              bg-(--button-area)
+              ring-1 ring-background/10
+              shadow-[0_20px_60px_rgba(0,0,0,0.65)]
+              overflow-hidden
+            ">
+            {/* Header */}
+              <div className="px-5 py-4 border-b border-background/10 flex items-center justify-between">
+                <div className="font-semibold text-lg">
+                  Delete
+                </div>
+
+                <button
+                  type="button"
+                  onClick={cancelDelete}
+                  className="px-3 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover)"
+                  aria-label="Close"
+                >
+                  ✕
+                </button>
+              </div>
+
+            {/* Content */}
+              <div className="p-6 text-center space-y-4">
+                <div className="text-foreground/90 text-lg font-semibold">
+                  Are you sure?
+                </div>
+                <div className="text-foreground/70 text-sm">
+                  This action is irreversible.
+                </div>
+              </div>
+
+            {/* Actions */}
+              <div className="px-6 py-4 border-t border-foreground/10 flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={confirmDelete}
+                  className="
+                    px-4 py-2
+                    rounded-2xl
+                    bg-(--button-delete)
+                    hover:bg-(--button-delete-hover)
+                    ring-1 ring-background/10
+                    text-sm font-semibold
+                    shadow-[0_10px_20px_rgba(0,0,0,0.35)]
+                  "
+                >
+                  🗑 Confirm delete
+                </button>
+              </div>
+            </div>
+          </div>
+      ) : null}
+
     </div>
   );
 }
