@@ -1,8 +1,9 @@
 'use client';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import PodiumStars from './component/starry-background';
 import { useAuth } from '../context/AuthContext';
+import { readlink } from 'fs';
 
 export default function Leaderboard() {
   // BDD types
@@ -105,8 +106,9 @@ export default function Leaderboard() {
       return 'bg-(--leadboard-me)';
     }
     if (rank === 1) {
-      return 'bg-(--leadboard-first) mb-5 p-4';
+      return 'bg-(--leadboard-first) mb-5 p-4 bg-linear-to-r from-(--leadboard-first) via-(--leadboard-third) to-(--leadboard-first) animate-rainbow drop-shadow-[0_0_12px_rgba(255,255,255,0.4)] bg-size-[200%_200%]';
     }
+
     if (rank === 2) {
       return 'bg-(--leadboard-second) mb-3 p-3';
     }
@@ -122,22 +124,30 @@ export default function Leaderboard() {
     const bgClass = getBgClass(rank, isCurrentUser);
     const rankText = `${rank}${getOrdinalSuffix(rank)}`;
     const isPodium = rank <= 3 && !isCurrentUser;
+    const isFirst = rank === 1 && !isCurrentUser;
 
     return (
-      <li
-        key={`${username}-${isCurrentUser ? 'me' : 'rank'}`}
-        className={`flex justify-between ${bgClass}  rounded-2xl p-2 mb-2 ${isCurrentUser ? 'mt-5' : ''} relative overflow-hidden`}
-      >
-        {/* Étoiles en arrière-plan pour le podium */}
-        {isPodium && <PodiumStars />}
+      <Fragment key={`${username}-${rank}`}>
+        <li className={`${isCurrentUser ? 'block mt-5 mb-1' : 'hidden'}`}>
+          <p>Your rank :</p>
+        </li>
+        <li
+          className={`flex justify-between ${bgClass}  rounded-2xl p-2 mb-2 ${isCurrentUser ? 'mb-3' : ''} relative overflow-hidden`}
+        >
+          {/* Starry effect for the three first place*/}
+          {isPodium && <PodiumStars />}
 
-        {/* Contenu principal (au-dessus des étoiles) */}
-        <div className="flex relative z-10">
-          <p className="ml-2">{rankText}</p>
-          <p className="ml-5">{username}</p>
-        </div>
-        <p className="mr-5 relative z-10">{score}</p>
-      </li>
+          <div className="flex relative z-10">
+            <p className={`ml-2 content-center ${isFirst ? `text-5xl ` : ''}`}>{rankText}</p>
+            <p className={`ml-5 font-bold content-center ${isFirst ? `text-5xl ` : ''}`}>
+              {username}
+            </p>
+          </div>
+          <p className={`mr-5 relative z-10 content-center ${isFirst ? `text-5xl ` : ''}`}>
+            {score}
+          </p>
+        </li>
+      </Fragment>
     );
   }
 
