@@ -19,7 +19,7 @@ export default function Header() {
           height={100}
           alt="gamerchallenge logo"
         />
-        <h1 className=" text-sm sm:text-3xl font-extrabold content-center">GamerChallenge</h1>
+        <h1 className=" text-sm sm:text-3xl font-extrabold content-center">ChallengeArena</h1>
       </Link>
 
       {/* desktop menu */}
