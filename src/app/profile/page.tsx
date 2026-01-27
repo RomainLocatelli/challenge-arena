@@ -102,12 +102,11 @@ export default function ProfilePage() {
       });
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Erreur lors de la suppression du profil');
+        throw new Error(errorData.message || 'Error deleting profile');
       }
       router.push('/login');
     } catch (err: unknown) {
-      const errorMessage =
-        err instanceof Error ? err.message : 'Une erreur est survenue lors de la suppression';
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred during deletion';
       setFormError(errorMessage);
     }
   };
@@ -190,7 +189,7 @@ export default function ProfilePage() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Erreur lors de la sauvegarde');
+        throw new Error(errorData.message || 'Error during backup');
       }
 
       const data = await response.json();
@@ -207,7 +206,7 @@ export default function ProfilePage() {
       setPassword('');
       setConfirmPassword('');
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Une erreur est survenue';
+      const errorMessage = err instanceof Error ? err.message : 'An error has occurred';
       setFormError(errorMessage);
     } finally {
       setIsSaving(false);
