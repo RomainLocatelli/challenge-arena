@@ -29,6 +29,14 @@ export const loginController = async (req: Request, res: Response, next: NextFun
     // Appeler le service login (retourne user sans password)
     const user = await authService.login(loginData);
 
+    // ➕ NOUVELLE VÉRIFICATION : si l'utilisateur est banni
+    if (user.isBanned) {
+      return res.status(403).json({
+        error: "Account banned",
+        message: "Account banned, for any request please contact the support"
+      });
+    }    
+
     // Générer le JWT token
     const token = jwt.sign(
       { userId: user.id, username: user.username, role: user.role },
