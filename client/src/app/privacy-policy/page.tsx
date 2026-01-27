@@ -56,7 +56,7 @@ export default function privacyPolicy() {
           <h3 className="pb-2 pl-10 text-xl">7. Contact</h3>
           <p>
             For any privacy-related request, please contact: <br />
-            privacy@example.com
+            support@challengearena.com
           </p>
         </li>
       </ol>
