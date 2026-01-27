@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
 import ChallengeCard from '@/component/ChallengeCard';
+import SearchBar from '@/component/SearchBar';
 
 // hook responsive
 function useMediaQuery(query: string) {
@@ -219,105 +220,16 @@ export default function ChallengesPage() {
     <div className="min-h-screen flex flex-col">
       <main className="px-4 md:px-8 py-6 max-w-7xl mx-auto w-full">
         {/* Search Bar */}
-        <div className="mb-6">
-          <div className="relative max-w-md md:max-w-2xl mx-auto">
-            <div className="absolute inset-0 rounded-full bg-(--searchbar-color) ring-1 ring-foreground/10 shadow-[0_10px_30px_rgba(0,0,0,0.45)]" />
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 z-10 h-12 w-12 flex items-center justify-center shadow">
-              <Image
-                src="/loupe.png"
-                width={100}
-                height={100}
-                alt="Search Icon"
-                className="opacity-80"
-              />
-            </div>
-
-            <input
-              type="text"
-              placeholder="Search a challenge..."
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setCurrentPage(1);
-                setPageBlockStart(2);
-              }}
-              className="relative w-full rounded-full bg-transparent py-3 pl-14 pr-4  text-center text-xl  focus:outline-none"
-            />
-            <button
-              type="button"
-              onClick={() => {
-                setFilterModalArea(!filterModalArea);
-              }}
-              className="absolute bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) rounded-full top-1/2 right-3 -translate-y-1/2 z-8 h-10 w-10 flex items-center justify-center shadow"
-            >
-              <Image
-                src="/filter.png"
-                width={100}
-                height={100}
-                alt="Search Icon"
-                className="opacity-80"
-              />
-            </button>
-          </div>
-          {/* Modal filter menu */}
-          {filterModalArea ? (
-            <div className="absolute flex items-center-safe justify-center bg-(--modal-filter-searchebar) p-5 rounded-4xl left-1/5 lg:left-1/3 lg:right-1/3">
-              <p className="mr-3">Filter :</p>
-              <div className="gap-2 m-2 flex flex-col ">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setOrderFilterSearchBar('ASC');
-                  }}
-                  className="bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) rounded-4xl p-1"
-                >
-                  Ascending ⬆️
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setOrderFilterSearchBar('DESC');
-                  }}
-                  className="bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) rounded-4xl p-1"
-                >
-                  Descending ⬇️
-                </button>
-              </div>
-              <div className="gap-2 m-2 flex flex-col">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setFilterSelectorChoice('Popularity');
-                  }}
-                  className="bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) rounded-4xl p-1"
-                >
-                  Popularity
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setFilterSelectorChoice('Date added');
-                  }}
-                  className="bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) rounded-4xl p-1"
-                >
-                  Date added
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setFilterSelectorChoice('Alphabetical');
-                  }}
-                  className="bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) rounded-4xl p-1"
-                >
-                  Alphabetical
-                </button>
-              </div>
-            </div>
-          ) : (
-            <p></p>
-          )}
-        </div>
-
+        <SearchBar
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          setCurrentPage={setCurrentPage}
+          setPageBlockStart={setPageBlockStart}
+          filterModalArea={filterModalArea}
+          setFilterModalArea={setFilterModalArea}
+          setOrderFilterSearchBar={setOrderFilterSearchBar}
+          setFilterSelectorChoice={setFilterSelectorChoice}
+        />
         {/* Challenges Section */}
         <div className="mb-8">
           <div className="mx-auto max-w-md md:max-w-4xl">
@@ -357,7 +269,7 @@ export default function ChallengesPage() {
               )}
             </div>
 
-{/* Cards de challenges */}
+            {/* Cards de challenges */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               {paginatedChallenges.map((c) => (
                 <ChallengeCard
@@ -378,10 +290,10 @@ export default function ChallengesPage() {
                 {selectedGameId ? 'No challenge for this game yet' : 'No challenge found.'}
               </p>
             )}
-
-          </div>  {/* Fin de .mx-auto max-w-md md:max-w-4xl */}
-        </div>  {/* Fin de .mb-8 (Challenges Section) */}
-
+          </div>{' '}
+          {/* Fin de .mx-auto max-w-md md:max-w-4xl */}
+        </div>{' '}
+        {/* Fin de .mb-8 (Challenges Section) */}
         {/* Pages */}
         <div className="flex justify-center gap-2 mb-12">
           {/* Page 1 toujours visible */}
@@ -424,8 +336,8 @@ export default function ChallengesPage() {
               ...
             </button>
           )}
-        </div>  {/* Fin de pagination */}
-
+        </div>{' '}
+        {/* Fin de pagination */}
       </main>
     </div>
   );
