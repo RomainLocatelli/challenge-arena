@@ -5,10 +5,10 @@ interface SearchBarProps {
   setSearchQuery: (value: string) => void;
   setCurrentPage: (value: number) => void;
   setPageBlockStart: (value: number) => void;
-  filterModalArea: boolean;
-  setFilterModalArea: (value: boolean) => void;
-  setOrderFilterSearchBar: (value: 'ASC' | 'DESC') => void;
-  setFilterSelectorChoice: (value: 'Popularity' | 'Date added' | 'Alphabetical') => void;
+  filterModalArea?: boolean;
+  setFilterModalArea?: (value: boolean) => void;
+  setOrderFilterSearchBar?: (value: 'ASC' | 'DESC') => void;
+  setFilterSelectorChoice?: (value: 'Popularity' | 'Date added' | 'Alphabetical') => void;
 }
 
 export default function SearchBar({
@@ -46,21 +46,23 @@ export default function SearchBar({
           }}
           className="relative w-full rounded-full bg-transparent py-3 pl-14 pr-4  text-center text-xl  focus:outline-none"
         />
-        <button
-          type="button"
-          onClick={() => {
-            setFilterModalArea(!filterModalArea);
-          }}
-          className="absolute bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) rounded-full top-1/2 right-3 -translate-y-1/2 z-8 h-10 w-10 flex items-center justify-center shadow"
-        >
-          <Image
-            src="/filter.png"
-            width={100}
-            height={100}
-            alt="Search Icon"
-            className="opacity-80"
-          />
-        </button>
+        {setFilterModalArea !== undefined ? (
+          <button
+            type="button"
+            onClick={() => {
+              setFilterModalArea(!filterModalArea);
+            }}
+            className="absolute bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) rounded-full top-1/2 right-3 -translate-y-1/2 z-8 h-10 w-10 flex items-center justify-center shadow"
+          >
+            <Image
+              src="/filter.png"
+              width={100}
+              height={100}
+              alt="Search Icon"
+              className="opacity-80"
+            />
+          </button>
+        ) : null}
       </div>
       {/* Modal filter menu */}
       {filterModalArea ? (

@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import SearchBar from '@/component/SearchBar';
 
 // Petit hook responsive (sans event resize manuel côté composant)
 function useMediaQuery(query: string) {
@@ -98,32 +99,12 @@ export default function GamesPage() {
     <div className="min-h-screen flex flex-col">
       <main className="px-4 md:px-8 py-6 max-w-7xl mx-auto">
         {/* Search Bar */}
-        <div className="mb-8">
-          <div className="relative max-w-md md:max-w-2xl mx-auto">
-            <div className="absolute inset-0 rounded-full bg-(--searchbar-color) ring-1 ring-foreground shadow-[0_10px_30px_rgba(0,0,0,0.45)]" />
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 z-10 h-12 w-12 flex items-center justify-center shadow">
-              <Image
-                src="/loupe.png"
-                width={100}
-                height={100}
-                alt="Search Icon"
-                className="opacity-80"
-              />
-            </div>
-
-            <input
-              type="text"
-              placeholder="Search a game..."
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setCurrentPage(1);
-                setPageBlockStart(2);
-              }}
-              className="relative w-full rounded-full bg-transparent py-3 pl-14 pr-4  text-center text-xl placeholder:text-foreground focus:outline-none"
-            />
-          </div>
-        </div>
+        <SearchBar
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          setCurrentPage={setCurrentPage}
+          setPageBlockStart={setPageBlockStart}
+        />
 
         {/* Games Section */}
         <div className="mb-8">
