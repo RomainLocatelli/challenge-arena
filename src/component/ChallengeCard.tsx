@@ -22,9 +22,8 @@ export default function ChallengeCard({
   return (
     <div className="rounded-2xl shrink-0 snap-center bg-(--button-area) ring-1 ring-background/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] w-60 lg:w-70 hover:outline-double outline-(--button-select) delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110">
       <div className="p-5 flex flex-col h-full">
-        
         {/* Tag / jeu avec lien */}
-        <Link 
+        <Link
           href={`/games/${gameSlug}`}
           className="text-xs font-semibold tracking-widest text-(--button-select) mb-2 hover:underline"
         >
@@ -32,23 +31,16 @@ export default function ChallengeCard({
         </Link>
 
         {/* Titre du challenge */}
-        <div className="text-2xl font-semibold leading-tight mb-2">
-          {title}
-        </div>
+        <div className="text-2xl font-semibold leading-tight mb-2">{title}</div>
 
         {/* Description */}
-        <div className="text-foreground/70 leading-relaxed mb-4">
-          {description}
-        </div>
+        <div className="text-foreground/70 leading-relaxed mb-4">{description}</div>
 
         {/* Footer : votes + bouton Details */}
         <div className="mt-auto flex items-center justify-between pt-2">
-          
           {/* Zone votes */}
           <div className="items-center gap-2 text-foreground/70">
-            <span className="text-sm font-semibold">
-              {formatVotes(voteCount)}
-            </span>
+            <span className="text-sm font-semibold">{formatVotes(voteCount)}</span>
             <span className="text-sm"> likes</span>
           </div>
 
@@ -59,7 +51,6 @@ export default function ChallengeCard({
           >
             Details
           </Link>
-
         </div>
       </div>
     </div>
