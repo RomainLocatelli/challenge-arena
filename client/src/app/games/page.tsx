@@ -5,6 +5,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 import SearchBar from '@/component/SearchBar';
 
+// Typage pour les jeux affichés
+interface Game {
+  id: string;
+  title: string;
+  slug: string;
+  imageUrl?: string;
+}
+
 // Petit hook responsive (sans event resize manuel côté composant)
 function useMediaQuery(query: string) {
   const [matches, setMatches] = useState(false);

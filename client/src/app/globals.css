@@ -19,6 +19,8 @@
   --button-select: color-mix(in srgb, #8554da 80%, transparent);
   --button-game-challenge: color-mix(in srgb, #8554da 80%, transparent);
   --button-game-challenge-hover: #8554da;
+  --button-delete: #b91c1c;
+  --button-delete-hover: #ff0000;
   --searchbar-color: #6b3cf615;
   --modal-filter-searchebar: #6b3cf615;
   --profile-modify-text-area: var(--color-slate-400);
@@ -62,6 +64,8 @@
     --button-select: #7c39ed;
     --button-game-challenge: color-mix(in srgb, #8554da 80%, transparent);
     --button-game-challenge-hover: #8554da;
+    --button-delete: #b91c1c;
+    --button-delete-hover: #ff0000;
     --searchbar-color: #6203d721;
     --modal-filter-searchebar: #6203d721;
     --profile-modify-text-area: var(--color-slate-400);
@@ -88,6 +92,8 @@
   --button-select: #7c39ed;
   --button-game-challenge: color-mix(in srgb, var(--color-amber-600) 80%, transparent);
   --button-game-challenge-hover: var(--color-amber-600);
+  --button-delete: #991b1b;
+  --button-delete-hover: #b91c1c;
   --searchbar-color: #6203d721;
   --modal-filter-searchebar: #6203d721;
   --profile-modify-text-area: var(--color-slate-400);
@@ -149,4 +155,15 @@ html.dark body {
     #0c1326 100%
   );
   background-attachment: fixed;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: scale(0.96); }
+  10% { opacity: 1; transform: scale(1); }
+  80% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.98); }
+}
+
+.animate-fadeInOut {
+  animation: fadeInOut 2s ease-in-out forwards;
 }
