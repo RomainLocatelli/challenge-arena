@@ -20,7 +20,7 @@ export default function Header() {
             height={100}
             alt="challengeArena logo"
           />
-          <h1 className="ml-2 text-sm sm:text-3xl font-extrabold whitespace-nowrap">
+          <h1 className="ml-2 text-sm md:text-xl xl:text-2xl 2xl:text-3xl font-extrabold whitespace-nowrap">
             ChallengeArena
           </h1>
         </Link>
@@ -33,8 +33,18 @@ export default function Header() {
         {/* User info + Burger à droite */}
         <div className="flex items-center gap-2">
           {user && (
-            <p className="hidden sm:block text-xs sm:text-lg text-center">
-              Welcome {user.username}
+            <p
+              className="
+                hidden sm:block
+                text-sm md:text-base
+                font-semibold
+                tracking-wide
+                bg-gradient-to-r from-violet-400 to-fuchsia-500
+                bg-clip-text text-transparent
+                select-none
+              "
+            >
+              {user.username}
             </p>
           )}
           <BurgerMenu />
