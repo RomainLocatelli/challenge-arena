@@ -40,7 +40,7 @@ export default function BurgerMenu() {
     <nav ref={menuRef} className="text-right pr-3 relative z-50">
       <button
         type="button"
-        className="bg-transparent border-2 border-[var(--button-select)] hover:bg-[var(--button-game-challenge-hover)] p-2 rounded-xl cursor-pointer relative z-50 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-[#7c39ed]/50"
+        className="bg-transparent border-2 border-(--button-select) hover:bg-(--button-game-challenge-hover) p-2 rounded-xl cursor-pointer relative z-50 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-[#7c39ed]/50"
         onClick={toggleMenu}
       >
         <svg

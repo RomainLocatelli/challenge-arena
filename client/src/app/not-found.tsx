@@ -4,7 +4,7 @@ import Link from 'next/link';
 export default function NotFound() {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen">
-      <div className=" w-2xl h-57 bg-[url(/white-cloud.png)] bg-size-[400px] bg-no-repeat bg-center text-black flex items-center flex-col justify-center text-2xl">
+      <div className=" w-2xl h-57 bg-[url(/white-cloud.png)] bg-size-[400px] bg-no-repeat bg-center flex items-center flex-col justify-center text-2xl">
         <p>
           Error <span className="font-extrabold">404</span>
         </p>
