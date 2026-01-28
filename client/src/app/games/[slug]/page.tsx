@@ -110,8 +110,21 @@ export default function GamePage() {
   const [games, setGames] = useState<Game[]>([]);
   const [challenges, setChallenges] = useState<Challenge[]>([]);
 
-  const ismd = useMediaQuery('(min-width: 768px)');
-  const itemsPerPage = ismd ? 6 : 4;
+  const isMd = useMediaQuery('(min-width: 768px)');
+  const isL = useMediaQuery('(min-width: 1464px)');
+  const isXL = useMediaQuery('(min-width: 1888px)');
+  const isXXL = useMediaQuery('(min-width: 2312px)');
+
+const itemsPerPage 
+  = isXXL
+  ? 15
+  : isXL
+  ? 12
+  : isL
+  ? 9
+  : isMd
+  ? 6
+  : 4;
 
   // Fetch games (for selected game card)
   useEffect(() => {
