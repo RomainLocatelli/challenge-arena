@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
 import ChallengeCard from '@/component/ChallengeCard';
@@ -46,10 +45,6 @@ type Challenge = {
   voteCount: number;
   // optional flag indicating whether the current user has liked the challenge
   hasLiked?: boolean;
-};
-
-const formatVotes = (n: number) => {
-  return `${n}`;
 };
 
 // Search filter function
@@ -110,15 +105,7 @@ export default function ChallengesPage() {
   const isXL = useMediaQuery('(min-width: 1888px)');
   const isXXL = useMediaQuery('(min-width: 2312px)');
 
-  const itemsPerPage = isXXL
-    ? 15
-    : isXL
-    ? 12
-    : isL
-    ? 9
-    : isMd
-    ? 6
-    : 4;
+  const itemsPerPage = isXXL ? 15 : isXL ? 12 : isL ? 9 : isMd ? 6 : 4;
 
   /* ======================
     API CALLS
@@ -166,7 +153,7 @@ export default function ChallengesPage() {
   }
 
   /* ======================
-     FILTERING
+    FILTERING
   ====================== */
 
   const filteredChallenges = useMemo(() => {
@@ -187,7 +174,7 @@ export default function ChallengesPage() {
   }, [searchQuery, selectedGameId, challenges]);
 
   /* ======================
-     SORTING
+    SORTING
   ====================== */
 
   const sortedChallenges = useMemo(() => {
@@ -195,7 +182,7 @@ export default function ChallengesPage() {
   }, [filteredChallenges, orderFilterSearchbar, filterSelectorChoice]);
 
   /* ======================
-     PAGINATION
+    PAGINATION
   ====================== */
 
   const totalPages = Math.max(1, Math.ceil(sortedChallenges.length / itemsPerPage));
@@ -226,7 +213,7 @@ export default function ChallengesPage() {
   };
 
   /* ======================
-     RENDER
+    RENDER
   ====================== */
 
   return (
@@ -254,11 +241,11 @@ export default function ChallengesPage() {
               {user ? (
                 <Link
                   href="/challenges/create"
-                  className="group relative px-6 py-3 rounded-xl bg-[var(--button-game-challenge)] hover:bg-[var(--button-game-challenge-hover)] text-base font-bold shadow-lg shadow-[var(--button-game-challenge-hover)]/30 hover:shadow-[0_0_40px_rgba(133,84,218,1)] hover:scale-110 transition-all duration-300 overflow-hidden animate-pulse-glow"
+                  className="group relative px-6 py-3 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-base font-bold shadow-lg shadow-(--button-game-challenge-hover)/30 hover:shadow-[0_0_40px_rgba(133,84,218,1)] hover:scale-110 transition-all duration-300 overflow-hidden animate-pulse-glow"
                 >
                   {/* Effet shimmer au hover */}
-                  <span className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
-                  
+                  <span className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-linear-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
+
                   {/* Texte */}
                   <span className="relative z-10">Create a challenge</span>
                 </Link>
@@ -298,8 +285,8 @@ export default function ChallengesPage() {
           <button
             className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
               currentPage === 1
-                ? 'bg-[var(--button-select)] shadow-lg shadow-[#7c39ed]/50 scale-110'
-                : 'bg-[var(--button-area)] border-2 border-transparent hover:bg-[var(--button-select)] hover:border-[var(--button-game-challenge-hover)] hover:shadow-lg hover:shadow-[#7c39ed]/50 hover:scale-110'
+                ? 'bg-(--button-select) shadow-lg shadow-[#7c39ed]/50 scale-110'
+                : 'bg-(--button-area) border-2 border-transparent hover:bg-(--button-select) hover:border-(--button-game-challenge-hover) hover:shadow-lg hover:shadow-[#7c39ed]/50 hover:scale-110'
             }`}
             onClick={() => goToPage(1)}
           >
@@ -314,8 +301,8 @@ export default function ChallengesPage() {
                 key={page}
                 className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
                   currentPage === page
-                    ? 'bg-[var(--button-select)] shadow-lg shadow-[#7c39ed]/50 scale-110'
-                    : 'bg-[var(--button-area)] border-2 border-transparent hover:bg-[var(--button-select)] hover:border-[var(--button-game-challenge-hover)] hover:shadow-lg hover:shadow-[#7c39ed]/50 hover:scale-110'
+                    ? 'bg-(--button-select) shadow-lg shadow-[#7c39ed]/50 scale-110'
+                    : 'bg-(--button-area) border-2 border-transparent hover:bg-(--button-select)hover:border-(--button-game-challenge-hover) hover:shadow-lg hover:shadow-[#7c39ed]/50 hover:scale-110'
                 }`}
                 onClick={() => goToPage(page)}
               >
@@ -327,7 +314,7 @@ export default function ChallengesPage() {
           {totalPages > pageBlockStart + 3 && (
             <button
               type="button"
-              className="w-8 h-8 bg-[var(--button-area)] hover:bg-[var(--button-select)] rounded-full flex items-center justify-center border-2 border-transparent hover:border-[var(--button-game-challenge-hover)] hover:shadow-lg hover:shadow-[#7c39ed]/50 hover:scale-110 transition-all duration-300"
+              className="w-8 h-8 bg-(--button-area) hover:bg-(--button-select) rounded-full flex items-center justify-center border-2 border-transparent hover:border-(--button-game-challenge-hover) hover:shadow-lg hover:shadow-[#7c39ed]/50 hover:scale-110 transition-all duration-300"
               onClick={nextBlock}
               aria-label="Afficher les pages suivantes"
             >
