@@ -191,7 +191,7 @@ export const createChallenge = async (req: Request, res: Response, next: NextFun
 export const updateChallenge = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const { title, scoreFormat, description } = req.body;
+    const { title, scoreFormat, description, details } = req.body;
     const userId = req.userId;
 
     if (!userId) {
@@ -218,7 +218,8 @@ export const updateChallenge = async (req: Request, res: Response, next: NextFun
       data: {
         ...(title && { title }),
         ...(scoreFormat && { scoreFormat }),
-        ...(description && { description })
+        ...(description && { description }),
+        ...(details && { details: JSON.stringify(details) })
       },
       include: { game: true }
     });
