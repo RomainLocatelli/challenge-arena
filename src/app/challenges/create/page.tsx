@@ -28,7 +28,6 @@ function useMediaQuery(query: string) {
 
 export default function CreateChallengePage() {
   const router = useRouter();
-  const isMd = useMediaQuery('(min-width: 768px)');
 
   // Auth
   const { user } = useAuth();
@@ -107,7 +106,9 @@ export default function CreateChallengePage() {
   }, [selectedGame, title, description]);
 
   const createChallenge = async () => {
-    if (!selectedGame) { return; }
+    if (!selectedGame) {
+      return;
+    }
 
     // ✅ MODIFIÉ : description et details séparés
     const payload = {
@@ -146,7 +147,7 @@ export default function CreateChallengePage() {
 
   return (
     <div className="min-h-screen">
-      <main className="mx-auto w-full max-w-[430px] md:max-w-5xl px-4 md:px-8 py-5 md:py-8">
+      <main className="mx-auto w-full max-w-107.5 md:max-w-5xl px-4 md:px-8 py-5 md:py-8">
         <div className="rounded-3xl bg-background/70 ring-1 ring-background/10 shadow-[0_20px_60px_rgba(0,0,0,0.55)] overflow-hidden">
           <div className="relative h-32 md:h-48 lg:h-64 w-full bg-(--button-area)">
             <Image
@@ -156,7 +157,7 @@ export default function CreateChallengePage() {
               sizes="(max-width: 767px) 430px, 1024px"
               className="object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-foreground/65 via-foreground/15 to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-foreground/65 via-foreground/15 to-transparent" />
           </div>
 
           <div className="p-5 md:p-8">
@@ -204,7 +205,9 @@ export default function CreateChallengePage() {
                             className="w-full px-3 py-2 text-left hover:bg-(--button-area) flex items-center gap-3 text-sm"
                           >
                             {game.background_image && (
-                              <img
+                              <Image
+                                width={100}
+                                height={100}
                                 src={game.background_image}
                                 alt={game.name}
                                 className="w-10 h-10 object-cover rounded"
@@ -258,7 +261,7 @@ export default function CreateChallengePage() {
                     value={description}
                     maxLength={100}
                     onChange={(e) => setDescription(e.target.value)}
-                    className="flex-1 bg-(--searchbar-color) ring-1 ring-background/10 rounded-xl px-3 py-2 text-sm focus:outline-none resize-none min-h-[44px]"
+                    className="flex-1 bg-(--searchbar-color) ring-1 ring-background/10 rounded-xl px-3 py-2 text-sm focus:outline-none resize-none min-h-11"
                     placeholder="Description (max 100 chars)"
                   />
                   <div className="text-xs text-foreground/50 w-12 text-right pt-2">

@@ -171,8 +171,8 @@ export default function GamesPage() {
           <button
             className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
               currentPage === 1
-                ? 'bg-[var(--button-select)] shadow-lg shadow-[#7c39ed]/50 scale-110'
-                : 'bg-[var(--button-area)] border-2 border-transparent hover:bg-[var(--button-select)] hover:border-[var(--button-game-challenge-hover)] hover:shadow-lg hover:shadow-[#7c39ed]/50 hover:scale-110'
+                ? 'bg-(--button-select) shadow-lg shadow-[#7c39ed]/50 scale-110'
+                : 'bg-(--button-area) border-2 border-transparent hover:bg-(--button-select) hover:border-(--button-game-challenge-hover) hover:shadow-lg hover:shadow-[#7c39ed]/50 hover:scale-110'
             }`}
             onClick={() => goToPage(1)}
           >
@@ -187,8 +187,8 @@ export default function GamesPage() {
                 key={page}
                 className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
                   currentPage === page
-                    ? 'bg-[var(--button-select)] shadow-lg shadow-[#7c39ed]/50 scale-110'
-                    : 'bg-[var(--button-area)] border-2 border-transparent hover:bg-[var(--button-select)] hover:border-[var(--button-game-challenge-hover)] hover:shadow-lg hover:shadow-[#7c39ed]/50 hover:scale-110'
+                    ? 'bg-(--button-select) shadow-lg shadow-[#7c39ed]/50 scale-110'
+                    : 'bg-(--button-area) border-2 border-transparent hover:bg-(--button-select) hover:border-(--button-game-challenge-hover) hover:shadow-lg hover:shadow-[#7c39ed]/50 hover:scale-110'
                 }`}
                 onClick={() => goToPage(page)}
               >
@@ -200,7 +200,7 @@ export default function GamesPage() {
           {totalPages > pageBlockStart + 3 && (
             <button
               type="button"
-              className="w-8 h-8 bg-[var(--button-area)] hover:bg-[var(--button-select)] rounded-full flex items-center justify-center border-2 border-transparent hover:border-[var(--button-game-challenge-hover)] hover:shadow-lg hover:shadow-[#7c39ed]/50 hover:scale-110 transition-all duration-300"
+              className="w-8 h-8 bg-(--button-area) hover:bg-(--button-select) rounded-full flex items-center justify-center border-2 border-transparent hover:border-(--button-game-challenge-hover) hover:shadow-lg hover:shadow-[#7c39ed]/50 hover:scale-110 transition-all duration-300"
               onClick={nextBlock}
               aria-label="Afficher les pages suivantes"
             >
