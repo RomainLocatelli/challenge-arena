@@ -90,8 +90,6 @@ function filterOrderingChallenges(
   return sorted;
 }
 
-const formatVotes = (n?: number) => `${n ?? 0}`;
-
 export default function GamePage() {
   const { user } = useAuth();
   const params = useParams() as { slug?: string } | undefined;
@@ -115,16 +113,7 @@ export default function GamePage() {
   const isXL = useMediaQuery('(min-width: 1888px)');
   const isXXL = useMediaQuery('(min-width: 2312px)');
 
-const itemsPerPage 
-  = isXXL
-  ? 15
-  : isXL
-  ? 12
-  : isL
-  ? 9
-  : isMd
-  ? 6
-  : 4;
+  const itemsPerPage = isXXL ? 15 : isXL ? 12 : isL ? 9 : isMd ? 6 : 4;
 
   // Fetch games (for selected game card)
   useEffect(() => {
@@ -287,6 +276,7 @@ const itemsPerPage
           setFilterModalArea={setFilterModalArea}
           setOrderFilterSearchBar={setOrderFilterSearchBar}
           setFilterSelectorChoice={setFilterSelectorChoice}
+          page='challenge'
         />
 
         {/* Challenges Section */}
@@ -301,11 +291,11 @@ const itemsPerPage
               ) : (
                 <Link
                   href="/challenges/create"
-                  className="group relative px-6 py-3 rounded-xl bg-[var(--button-game-challenge)] hover:bg-[var(--button-game-challenge-hover)] text-base font-bold shadow-lg shadow-[var(--button-game-challenge-hover)]/30 hover:shadow-[0_0_40px_rgba(133,84,218,1)] hover:scale-110 transition-all duration-300 overflow-hidden animate-pulse-glow"
+                  className="group relative px-6 py-3 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-base font-bold shadow-lg shadow-(--button-game-challenge-hover)/30 hover:shadow-[0_0_40px_rgba(133,84,218,1)] hover:scale-110 transition-all duration-300 overflow-hidden animate-pulse-glow"
                 >
                   {/* Effet shimmer au hover */}
-                  <span className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
-                  
+                  <span className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-linear-to-r from-transparent via-foreground/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
+
                   {/* Texte */}
                   <span className="relative z-10">Create a challenge</span>
                 </Link>

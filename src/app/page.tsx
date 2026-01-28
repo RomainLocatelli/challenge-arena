@@ -6,49 +6,35 @@ import { useAuth } from './context/AuthContext';
 import ChallengeCard from '@/component/ChallengeCard';
 import PageBanner from '@/component/PageBanner';
 import LoginRegisterCard from '@/component/LoginRegisterCard';
+import { HomePageData, TopGame, TopChallenge } from '@/lib/Types';
 
 export default function Home() {
-  type Game = { id: string; title: string; imageUrl: string; slug: string };
-  type Challenge = {
-    createdAt: string;
-    createdBy: string;
-    description: string;
-    game: {
-      id: string;
-      title: string;
-      slug: string;
-      imageUrl: string;
-    };
-    gameId: string;
-    id: string;
-    scoreFormat: string;
-    title: string;
-    slug: string;
-    updatedAt: string;
-    voteCount: number;
-  };
-
   const { user } = useAuth();
-
-  const [homePageGames, setHomePageGames] = useState<Game[]>([]);
-  const [homePageChallenges, setHomePageChallenges] = useState<Challenge[]>([]);
+  const [homeData, setHomeData] = useState<HomePageData | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function getHomePage() {
-      const registerUrl = process.env.API_URL || '';
-      const response = await fetch(registerUrl);
-      const replyDb = await response.json();
+      try {
+        setLoading(true);
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
+        const response = await fetch(`${apiUrl}/`);
 
-      setHomePageGames(replyDb.topGames);
-      setHomePageChallenges(replyDb.topChallenges);
+        if (!response.ok) {
+          throw new Error('Failed to fetch home data');
+        }
+
+        const data: HomePageData = await response.json();
+        setHomeData(data);
+      } catch (error) {
+        console.error('Error fetching home data:', error);
+      } finally {
+        setLoading(false);
+      }
     }
 
     getHomePage();
   }, []);
-
-  const formatVotes = (n: number) => {
-    return `${n}`;
-  };
 
   function extractShortDescription(raw: string) {
     const text = (raw ?? '').replace(/\r\n/g, '\n').trim();
@@ -60,7 +46,7 @@ export default function Home() {
   }
 
   // Game shown on screen
-  function gamesShownOnPage(games: Game[]) {
+  function gamesShownOnPage(games: TopGame[]) {
     return (
       <div className="flex scroll-smooth overflow-x-auto overflow-scroll min-w-40  h-63  lg:snap-none overflow-y-visible pb-5 snap-x ml-3 mr-3 ">
         {games.map((game) => {
@@ -86,7 +72,7 @@ export default function Home() {
   }
 
   // Challenges shown on screen
-  function challengesShownOnPage(challenges: Challenge[]) {
+  function challengesShownOnPage(challenges: TopChallenge[]) {
     return (
       <div className="flex gap-10 scroll-smooth overflow-x-auto overflow-y-hidden snap-x snap-mandatory m-3 mb-5 pb-4 lg:block lg:overflow-y-visible ">
         <div className="grid grid-rows-2 grid-flow-col gap-10 w-max m-5">
@@ -104,6 +90,22 @@ export default function Home() {
             );
           })}
         </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  if (!homeData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>No data available</p>
       </div>
     );
   }
@@ -134,7 +136,7 @@ export default function Home() {
       </div>
       {/* show trending games */}
       <section className="flex justify-between mr-5 ml-5 mb-10  lg:justify-center ">
-        {gamesShownOnPage(homePageGames)}
+        {gamesShownOnPage(homeData.topGames)}
       </section>
 
       {/* show trending challenges */}
@@ -150,7 +152,7 @@ export default function Home() {
           </Link>
         </nav>
         <nav className="flex justify-between mr-5 ml-5 lg:justify-center">
-          {challengesShownOnPage(homePageChallenges)}
+          {challengesShownOnPage(homeData.topChallenges)}
         </nav>
       </section>
     </div>

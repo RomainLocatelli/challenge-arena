@@ -7,7 +7,7 @@ export default function AboutPage() {
   const teamMembers = [
     {
       pseudo: 'Shinro',
-      funFact: "Pussy's destroyer",
+      funFact: 'Code, break, fix, repeat',
       avatar: '/cute_rat.jpg'
     },
     {
@@ -22,7 +22,8 @@ export default function AboutPage() {
     },
     {
       pseudo: 'Medou',
-      funFact: 'Keyboard go brrrr 💻',
+      funFact:
+        'I knew exactly what to do. But in a much more real sense, I had no idea what to do.',
       avatar: '/loup(2).png'
     }
   ];

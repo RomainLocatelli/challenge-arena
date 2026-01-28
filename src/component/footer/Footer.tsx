@@ -24,10 +24,7 @@ export default function Footer() {
           <Link href="/about" className="hover:text-(--button-select) transition-colors">
             About Us
           </Link>
-          <Link
-            href="/terms-of-service"
-            className="hover:text-(--button-select) transition-colors"
-          >
+          <Link href="/terms-of-service" className="hover:text-(--button-select) transition-colors">
             Terms of Service
           </Link>
           <Link href="/privacy-policy" className="hover:text-(--button-select) transition-colors">
