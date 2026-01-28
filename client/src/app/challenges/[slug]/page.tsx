@@ -60,25 +60,6 @@ const clamp300 = (s: string) => {
   return t.length <= 300 ? t : t.slice(0, 300);
 };
 
-function splitDescriptionAndDetails(raw: string): { desc: string; details: string[] } {
-  const text = (raw ?? '').replace(/\r\n/g, '\n').trim();
-  const re = /\n\s*details\s*:?\s*\n/i;
-  const parts = text.split(re);
-  if (parts.length < 2) {
-    return { desc: text, details: [] };
-  }
-
-  const desc = (parts[0] ?? '').trim();
-  const detailsBlock = (parts[1] ?? '').trim();
-
-  const details = detailsBlock
-    .split('\n')
-    .map((l) => l.trim())
-    .filter(Boolean);
-
-  return { desc, details };
-}
-
 export default function ChallengeDetailsPage() {
   const router = useRouter();
   const { user } = useAuth();
@@ -269,13 +250,8 @@ export default function ChallengeDetailsPage() {
     setTitle(challenge.title);
     setImageUrl(undefined); // API n’a pas image custom dans la seed
 
-    const parsed = splitDescriptionAndDetails(challenge.description);
-
-    const finalDetails =
-      parsed.details.length > 0 ? parsed.details : (challenge.details ?? []).filter(Boolean);
-
-    setDescription(parsed.desc);
-    setDetailsPoints(finalDetails);
+    setDescription(challenge.description ?? '');
+    setDetailsPoints(challenge.details ?? []);
 
     setParticipations(challenge.participations ?? []);
   }, [challenge]);
@@ -374,11 +350,9 @@ export default function ChallengeDetailsPage() {
     if (!challenge) {
       return;
     }
-    const parsed = splitDescriptionAndDetails(challenge.description);
     setTitle(challenge.title);
-    setImageUrl(undefined);
-    setDescription(parsed.desc);
-    setDetailsPoints(parsed.details.length ? parsed.details : (challenge.details ?? []));
+    setDescription(challenge.description ?? '');
+    setDetailsPoints(challenge.details ?? []);
     setIsEditing(false);
   };
 
@@ -812,6 +786,8 @@ export default function ChallengeDetailsPage() {
     }
   };
 
+  const isDescriptionValid = description.trim().length > 0;
+
   return (
     <div className="min-h-screen ">
       <main className="mx-auto w-full max-w-107.5 md:max-w-5xl px-4 md:px-8 py-5 md:py-8">
@@ -914,7 +890,18 @@ export default function ChallengeDetailsPage() {
                   <button
                     type="button"
                     onClick={saveEdits}
-                    className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                    className={`
+                      px-4 py-2
+                      rounded-2xl
+                      text-sm font-semibold
+                      shadow-[0_10px_20px_rgba(0,0,0,0.35)]
+                      transition
+                      ${
+                        isDescriptionValid
+                          ? 'bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover)'
+                          : 'bg-(--button-game-challenge)/40 cursor-not-allowed opacity-50'
+                      }
+                    `}
                   >
                     Save
                   </button>
@@ -976,7 +963,7 @@ export default function ChallengeDetailsPage() {
                         overflow-hidden
                         min-h-[44px]
                       "
-                      placeholder="Description (max 300 chars)"
+                      placeholder={isDescriptionValid ? 'Description (max 300 chars)' : 'Description required'}
                     />
                     <div className="text-xs text-foreground/50 w-12 text-right pt-2">
                       {description.length}/300
