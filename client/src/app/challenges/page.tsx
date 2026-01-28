@@ -110,16 +110,15 @@ export default function ChallengesPage() {
   const isXL = useMediaQuery('(min-width: 1888px)');
   const isXXL = useMediaQuery('(min-width: 2312px)');
 
-const itemsPerPage 
-  = isXXL
-  ? 15
-  : isXL
-  ? 12
-  : isL
-  ? 9
-  : isMd
-  ? 6
-  : 4;
+  const itemsPerPage = isXXL
+    ? 15
+    : isXL
+    ? 12
+    : isL
+    ? 9
+    : isMd
+    ? 6
+    : 4;
 
   /* ======================
     API CALLS
@@ -243,6 +242,7 @@ const itemsPerPage
           setFilterModalArea={setFilterModalArea}
           setOrderFilterSearchBar={setOrderFilterSearchBar}
           setFilterSelectorChoice={setFilterSelectorChoice}
+          page='challenge'
         />
         {/* Challenges Section */}
         <div className="mb-8 ">

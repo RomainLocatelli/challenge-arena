@@ -287,6 +287,7 @@ const itemsPerPage
           setFilterModalArea={setFilterModalArea}
           setOrderFilterSearchBar={setOrderFilterSearchBar}
           setFilterSelectorChoice={setFilterSelectorChoice}
+          page='challenge'
         />
 
         {/* Challenges Section */}
