@@ -229,6 +229,7 @@ export default function ChallengesPage() {
           setFilterModalArea={setFilterModalArea}
           setOrderFilterSearchBar={setOrderFilterSearchBar}
           setFilterSelectorChoice={setFilterSelectorChoice}
+          page='challenge'
         />
         {/* Challenges Section */}
         <div className="mb-8 ">

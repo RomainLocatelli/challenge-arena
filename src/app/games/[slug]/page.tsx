@@ -276,6 +276,7 @@ export default function GamePage() {
           setFilterModalArea={setFilterModalArea}
           setOrderFilterSearchBar={setOrderFilterSearchBar}
           setFilterSelectorChoice={setFilterSelectorChoice}
+          page='challenge'
         />
 
         {/* Challenges Section */}

@@ -37,8 +37,18 @@ export default function GamesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const ismd = useMediaQuery('(min-width: 768px)');
-  const itemsPerPage = ismd ? 9 : 6;
+  const isMd = useMediaQuery('(min-width: 768px)');
+  const isL = useMediaQuery('(min-width: 1024px)');
+  const isXL = useMediaQuery('(min-width: 1280px)');
+
+  const itemsPerPage 
+    = isXL
+    ? 15
+    : isL
+    ? 12
+    : isMd
+    ? 9
+    : 6;
 
   useEffect(() => {
     async function getAllGames() {
@@ -112,6 +122,7 @@ export default function GamesPage() {
           setSearchQuery={setSearchQuery}
           setCurrentPage={setCurrentPage}
           setPageBlockStart={setPageBlockStart}
+          page='game'
         />
 
         {/* Games Section */}
@@ -134,7 +145,17 @@ export default function GamesPage() {
 
           {/* Games icons */}
           {!loading && !error && (
-            <div className="mx-auto w-65 grid grid-cols-2 gap-4 md:gap-6 md:w-150 md:grid-cols-3 lg:w-200 ">
+            <div className="
+              mx-auto
+              max-w-7xl
+              grid
+              gap-6
+              grid-cols-1
+              sm:grid-cols-2
+              md:grid-cols-3
+              lg:grid-cols-4
+              xl:grid-cols-5
+            ">
               {paginatedGames.map((game) => (
                 <Link
                   key={game.id}
