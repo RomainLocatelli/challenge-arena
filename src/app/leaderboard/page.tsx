@@ -4,6 +4,7 @@ import { Fragment, useEffect, useState } from 'react';
 import PodiumStars from './component/starry-background';
 import { useAuth } from '../context/AuthContext';
 import { readlink } from 'fs';
+import PageBanner from '@/component/PageBanner';
 
 export default function Leaderboard() {
   // BDD types
@@ -231,25 +232,7 @@ export default function Leaderboard() {
   return (
     <main className="min-h-screen">
       {/* Hero Banner */}
-      <div className="relative mx-5 my-8 rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-br from-foreground via-(--button-select) to-foreground max-w-5xl lg:mx-auto">
-        {/* Image centrée sans étirement */}
-        <div className="flex items-center justify-center py-6 lg:py-12 px-4">
-          <Image
-            className="rounded-2xl shadow-xl w-full h-auto max-w-full object-contain"
-            src="/ratbanner.png"
-            width={900}
-            height={300}
-            alt="leaderboard banner"
-            priority
-          />
-        </div>
-        {/* Titre par-dessus */}
-        <div className="absolute top-15 md:top-32 lg:top-50 right-5 md:right-30 lg:right-40 flex justify-center z-10 px-4">
-          <h1 className="text-sm md:text-3xl lg:text-5xl font-black text-background drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)] bg-foreground/40 px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 rounded-full backdrop-blur-sm">
-            LEADERBOARD
-          </h1>
-        </div>
-      </div>
+      <PageBanner title="LEADERBOARD" />
       <section className="flex justify-center flex-col">
         <div className="flex justify-center mr-5">
           {/* Mobile: selection button*/}

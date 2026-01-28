@@ -1,39 +1,46 @@
 'use client';
-
 import Image from 'next/image';
 import Link from 'next/link';
-
 import BurgerMenu from './component/BurgerMenu';
 import Menu from './component/Menu';
 import { useAuth } from '@/app/context/AuthContext';
 
 export default function Header() {
   const { user } = useAuth();
+  
   return (
-    <div className="bg-(--background-header) flex justify-between h-24 ">
-      <Link href="/" className="flex">
-        <Image
-          className="p-3 h-16 w-16 sm:h-25 sm:w-25 self-center-safe"
-          src="/icone-manette.png"
-          width={100}
-          height={100}
-          alt="gamerchallenge logo"
-        />
-        <h1 className=" text-sm sm:text-3xl font-extrabold content-center">GamerChallenge</h1>
-      </Link>
+    <div className="bg-(--background-header) h-24 relative">
+      <div className="h-full flex items-center justify-between px-4">
+        
+        {/* Logo à gauche */}
+        <Link href="/" className="flex items-center flex-shrink-0">
+          <Image
+            className="h-16 w-16 sm:h-20 sm:w-20"
+            src="/icone-manette.png"
+            width={100}
+            height={100}
+            alt="gamerchallenge logo"
+          />
+          <h1 className="ml-2 text-sm sm:text-3xl font-extrabold whitespace-nowrap">
+            GamerChallenge
+          </h1>
+        </Link>
 
-      {/* desktop menu */}
+        {/* Menu centré (position absolue par rapport au header) */}
+        <div className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <Menu />
+        </div>
 
-      <Menu />
-      <div className="flex">
-        {user ? (
-          <p className="content-center lg:mr-5 text-xs sm:text-lg text-center">
-            Welcome {user.username}
-          </p>
-        ) : (
-          <div></div>
-        )}
-        <BurgerMenu />
+        {/* User info + Burger à droite */}
+        <div className="flex items-center gap-2">
+          {user && (
+            <p className="hidden sm:block text-xs sm:text-lg text-center">
+              Welcome {user.username}
+            </p>
+          )}
+          <BurgerMenu />
+        </div>
+        
       </div>
     </div>
   );

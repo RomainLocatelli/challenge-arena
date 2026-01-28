@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
 import ChallengeCard from '@/component/ChallengeCard';
 import SearchBar from '@/component/SearchBar';
+import LoginRegisterCard from '@/component/LoginRegisterCard';
 
 // hook responsive
 function useMediaQuery(query: string) {
@@ -240,32 +241,16 @@ export default function ChallengesPage() {
               {user ? (
                 <Link
                   href="/challenges/create"
-                  className="px-4 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                  className="group relative px-6 py-3 rounded-xl bg-[var(--button-game-challenge)] hover:bg-[var(--button-game-challenge-hover)] text-base font-bold shadow-lg shadow-[var(--button-game-challenge-hover)]/30 hover:shadow-[0_0_40px_rgba(133,84,218,1)] hover:scale-110 transition-all duration-300 overflow-hidden animate-pulse-glow"
                 >
-                  Create a challenge
+                  {/* Effet shimmer au hover */}
+                  <span className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
+                  
+                  {/* Texte */}
+                  <span className="relative z-10">Create a challenge</span>
                 </Link>
               ) : (
-                <div>
-                  <p>To create a challenge, register or login </p>
-                  <nav className="flex justify-center mb-8">
-                    <Link href="/login-register/login">
-                      <button
-                        type="button"
-                        className="bg-(--button-area) p-3 rounded-3xl mr-8 mt-6 cursor-pointer"
-                      >
-                        Login
-                      </button>
-                    </Link>
-                    <Link href="/login-register/register">
-                      <button
-                        type="button"
-                        className="bg-(--button-select) p-3 rounded-3xl  mt-6 cursor-pointer"
-                      >
-                        Register
-                      </button>
-                    </Link>
-                  </nav>
-                </div>
+                <LoginRegisterCard message="Create your first challenge and compete with the community" />
               )}
             </div>
 
@@ -298,10 +283,10 @@ export default function ChallengesPage() {
         <div className="flex justify-center gap-2 mb-12">
           {/* Page 1 toujours visible */}
           <button
-            className={`w-8 h-8 rounded-full flex items-center justify-center ${
+            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
               currentPage === 1
-                ? 'bg-(--button-select)'
-                : 'bg-(--button-area) hover:bg-(--searchbar-color)'
+                ? 'bg-[var(--button-select)] shadow-lg shadow-[#7c39ed]/50 scale-110'
+                : 'bg-[var(--button-area)] border-2 border-transparent hover:bg-[var(--button-select)] hover:border-[var(--button-game-challenge-hover)] hover:shadow-lg hover:shadow-[#7c39ed]/50 hover:scale-110'
             }`}
             onClick={() => goToPage(1)}
           >
@@ -314,10 +299,10 @@ export default function ChallengesPage() {
             .map((page) => (
               <button
                 key={page}
-                className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
                   currentPage === page
-                    ? 'bg-(--button-select)'
-                    : 'bg-(--button-area) hover:bg-(--background-header)'
+                    ? 'bg-[var(--button-select)] shadow-lg shadow-[#7c39ed]/50 scale-110'
+                    : 'bg-[var(--button-area)] border-2 border-transparent hover:bg-[var(--button-select)] hover:border-[var(--button-game-challenge-hover)] hover:shadow-lg hover:shadow-[#7c39ed]/50 hover:scale-110'
                 }`}
                 onClick={() => goToPage(page)}
               >
@@ -329,7 +314,7 @@ export default function ChallengesPage() {
           {totalPages > pageBlockStart + 3 && (
             <button
               type="button"
-              className="w-8 h-8 bg-(--button-area) hover:bg-(--background-header) rounded-full flex items-center justify-center"
+              className="w-8 h-8 bg-[var(--button-area)] hover:bg-[var(--button-select)] rounded-full flex items-center justify-center border-2 border-transparent hover:border-[var(--button-game-challenge-hover)] hover:shadow-lg hover:shadow-[#7c39ed]/50 hover:scale-110 transition-all duration-300"
               onClick={nextBlock}
               aria-label="Afficher les pages suivantes"
             >

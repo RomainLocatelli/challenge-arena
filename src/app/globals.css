@@ -179,3 +179,27 @@ html.dark body {
 .animate-fadeInOut {
   animation: fadeInOut 2s ease-in-out forwards;
 }
+
+/* Animation pulse glow pour le bouton Create */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(133, 84, 218, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(133, 84, 218, 0.7), 0 0 40px rgba(212, 175, 55, 0.3);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Animation shimmer pour effet de lumière */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
