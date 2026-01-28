@@ -37,22 +37,17 @@ export default function BurgerMenu() {
   }, [isOpen]);
 
   return (
-    <nav ref={menuRef} className="text-right pr-3 relative z-50">
+    <nav ref={menuRef} className="text-right pr-3 pt-4 relative z-50">
       <button
         type="button"
-        className="bg-transparent border-2 border-(--button-select) hover:bg-(--button-game-challenge-hover) p-2 rounded-xl cursor-pointer relative z-50 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-[#7c39ed]/50"
+        className="bg-(--header-button-area) p-2 rounded-xl cursor-pointer relative z-50"
         onClick={toggleMenu}
       >
-        <svg
-          className="w-10 h-10 text-foreground transition-colors duration-300"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
+        <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeWidth={2.5}
+            strokeWidth={2}
             d="M4 6h16M4 12h16M4 18h16"
           />
         </svg>
@@ -60,8 +55,6 @@ export default function BurgerMenu() {
 
       <ul
         className={`
-    mr-1
-    mt-9
     bg-(--button-area) rounded-xl text-center p-3
     fixed right-0 top-16 w-50
     transform transition-all duration-300 ease-in-out
@@ -69,40 +62,36 @@ export default function BurgerMenu() {
   `}
       >
         <li
-          className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full hover:bg-(--button-game-challenge-hover) hover:scale-105 hover:shadow-lg hover:shadow-[#7c39ed]/50 transition-all duration-300`}
+          className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full hover:bg-(--button-game-challenge-hover)`}
         >
           <Link href="/" onClick={() => setIsOpen(false)}>
             Home
           </Link>
         </li>
-
         <li
-          className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/games') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full hover:bg-(--button-game-challenge-hover) hover:scale-105 hover:shadow-lg hover:shadow-[#7c39ed]/50 transition-all duration-300`}
+          className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/games') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full hover:bg-(--button-game-challenge-hover)`}
         >
           <Link href="/games" onClick={() => setIsOpen(false)}>
             Games
           </Link>
         </li>
-
         <li
-          className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/challenges') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full hover:bg-(--button-game-challenge-hover) hover:scale-105 hover:shadow-lg hover:shadow-[#7c39ed]/50 transition-all duration-300`}
+          className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/challenges') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full hover:bg-(--button-game-challenge-hover)`}
         >
           <Link href="/challenges" onClick={() => setIsOpen(false)}>
             Challenges
           </Link>
         </li>
-
         <li
-          className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/leaderboard') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full hover:bg-(--button-game-challenge-hover) hover:scale-105 hover:shadow-lg hover:shadow-[#7c39ed]/50 transition-all duration-300`}
+          className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/leaderboard') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full hover:bg-(--button-game-challenge-hover)`}
         >
           <Link href="/leaderboard" onClick={() => setIsOpen(false)}>
             Leaderboard
           </Link>
         </li>
-
         {user ? (
           <li
-            className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/challenges/create') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full hover:bg-(--button-game-challenge-hover) hover:scale-105 hover:shadow-lg hover:shadow-[#7c39ed]/50 transition-all duration-300`}
+            className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/challenges/create') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full hover:bg-(--button-game-challenge-hover)`}
           >
             <Link href="/challenges/create" onClick={() => setIsOpen(false)}>
               Create challenge
@@ -110,17 +99,16 @@ export default function BurgerMenu() {
           </li>
         ) : (
           <li
-            className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/login-register/login') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full hover:bg-(--button-game-challenge-hover) hover:scale-105 hover:shadow-lg hover:shadow-[#7c39ed]/50 transition-all duration-300`}
+            className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/login-register/login') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full hover:bg-(--button-game-challenge-hover)`}
           >
             <Link href="/login-register/login" onClick={() => setIsOpen(false)}>
               Login
             </Link>
           </li>
         )}
-
         {user ? (
           <li
-            className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/profile') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full hover:bg-(--button-game-challenge-hover) hover:scale-105 hover:shadow-lg hover:shadow-[#7c39ed]/50 transition-all duration-300`}
+            className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/profile') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full hover:bg-(--button-game-challenge-hover)`}
           >
             <Link href="/profile" onClick={() => setIsOpen(false)}>
               Profile
@@ -128,26 +116,23 @@ export default function BurgerMenu() {
           </li>
         ) : (
           <li
-            className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/login-register/register') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full hover:bg-(--button-game-challenge-hover) hover:scale-105 hover:shadow-lg hover:shadow-[#7c39ed]/50 transition-all duration-300`}
+            className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/login-register/register') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full hover:bg-(--button-game-challenge-hover)`}
           >
             <Link href="/login-register/register" onClick={() => setIsOpen(false)}>
               Register
             </Link>
           </li>
         )}
-
         <li
-          className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/support') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full hover:bg-(--button-game-challenge-hover) hover:scale-105 hover:shadow-lg hover:shadow-[#7c39ed]/50 transition-all duration-300`}
+          className={`m-1.5 pl-1.5 pr-1.5 ${pathActive('/support') ? 'bg-(--button-select) bg-origin-padding p-1.5' : ''} rounded-full hover:bg-(--button-game-challenge-hover)`}
         >
           <Link href="/support" onClick={() => setIsOpen(false)}>
             Support
           </Link>
         </li>
-
         <li>
           <ThemeToggle />
         </li>
-
         {user && (
           <li className="m-1.5 pl-1.5 pr-1.5">
             <LogoutButton onLogout={() => setIsOpen(false)} />
