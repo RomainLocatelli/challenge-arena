@@ -1,9 +1,9 @@
 'use client';
-import Image from 'next/image';
+
 import { Fragment, useEffect, useState } from 'react';
 import PodiumStars from './component/starry-background';
 import { useAuth } from '../context/AuthContext';
-import { readlink } from 'fs';
+
 import PageBanner from '@/component/PageBanner';
 
 export default function Leaderboard() {
