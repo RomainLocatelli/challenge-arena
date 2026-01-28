@@ -7,13 +7,12 @@ import { useAuth } from '@/app/context/AuthContext';
 
 export default function Header() {
   const { user } = useAuth();
-  
+
   return (
     <div className="bg-(--background-header) h-24 relative">
       <div className="h-full flex items-center justify-between px-4">
-        
         {/* Logo à gauche */}
-        <Link href="/" className="flex items-center flex-shrink-0">
+        <Link href="/" className="flex items-center shrink-0">
           <Image
             className="h-16 w-16 sm:h-20 sm:w-20"
             src="/icone-manette.png"
@@ -40,7 +39,6 @@ export default function Header() {
           )}
           <BurgerMenu />
         </div>
-        
       </div>
     </div>
   );

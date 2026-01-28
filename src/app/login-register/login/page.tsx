@@ -63,7 +63,7 @@ export default function AuthLogin() {
 
         {/* Contenu */}
         <div className="relative z-10 text-center px-4">
-          <h1 className="text-5xl md:text-6xl font-extrabold mb-4 bg-gradient-to-r ">Log In</h1>
+          <h1 className="text-5xl md:text-6xl font-extrabold mb-4 bg-linear-to-r ">Log In</h1>
           <p className="text-lg ">Your next challenge is waiting</p>
         </div>
       </div>
