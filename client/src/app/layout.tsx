@@ -5,6 +5,7 @@ import './globals.css';
 import Header from '@/component/header/Header';
 import Footer from '@/component/footer/Footer';
 import { AuthProvider } from './context/AuthContext';
+import { ReactNode } from 'react';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({
   children
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   let user = null;
   const cookieStore = await cookies();
