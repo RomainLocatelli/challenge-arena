@@ -6,6 +6,7 @@ import { useMemo, useState, useEffect } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/app/context/AuthContext';
 import PopUp from '@/component/Pop--up';
+import LoginRegisterCard from '@/component/LoginRegisterCard';
 
 // hook responsive
 function useMediaQuery(query: string) {
@@ -1046,33 +1047,17 @@ export default function ChallengeDetailsPage() {
               {user ? (
                 <button
                   type="button"
-                  className="px-10 py-3 rounded-full bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) font-semibold shadow-[0_10px_25px_rgba(0,0,0,0.45)]"
+                  className="group relative px-10 py-3 rounded-full bg-[var(--button-game-challenge)] hover:bg-[var(--button-game-challenge-hover)] font-semibold shadow-lg shadow-[var(--button-game-challenge-hover)]/30 hover:shadow-[0_0_40px_rgba(133,84,218,1)] hover:scale-110 transition-all duration-300 overflow-hidden animate-pulse-glow"
                   onClick={openCreateModal}
                 >
-                  Participate
+                  {/* Effet shimmer au hover */}
+                  <span className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
+                  
+                  {/* Texte */}
+                  <span className="relative z-10">Participate</span>
                 </button>
               ) : (
-                <div>
-                  <p className="text-center">Connection required to participate</p>
-                  <nav className="flex justify-center mb-8">
-                    <Link href="/login-register/login">
-                      <button
-                        type="button"
-                        className="bg-(--button-area) p-3 rounded-3xl mr-8 mt-6 cursor-pointer"
-                      >
-                        Login
-                      </button>
-                    </Link>
-                    <Link href="/login-register/register">
-                      <button
-                        type="button"
-                        className="bg-(--button-select) p-3 rounded-3xl  mt-6 cursor-pointer"
-                      >
-                        Register
-                      </button>
-                    </Link>
-                  </nav>
-                </div>
+                <LoginRegisterCard message="Sign up to participate in this challenge" />
               )}
             </div>
           </div>
