@@ -22,7 +22,7 @@
   --button-delete: #b91c1c;
   --button-delete-hover: #ff0000;
   --searchbar-color: #6b3cf615;
-  --modal-filter-searchebar: #6b3cf615;
+  --modal-filter-searchebar: #e4e7ee;
   --profile-modify-text-area: var(--color-slate-400);
   --profile-save-button: var(--color-green-600);
   --danger-button: var(--color-red-700);
@@ -67,7 +67,7 @@
     --button-delete: #b91c1c;
     --button-delete-hover: #ff0000;
     --searchbar-color: #6203d721;
-    --modal-filter-searchebar: #6203d721;
+    --modal-filter-searchebar: #1f283b;
     --profile-modify-text-area: var(--color-slate-400);
     --profile-save-button: var(--color-green-600);
     --danger-button: var(--color-red-700);

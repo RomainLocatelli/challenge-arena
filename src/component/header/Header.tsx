@@ -19,10 +19,10 @@ export default function Header() {
             src="/icone-manette.png"
             width={100}
             height={100}
-            alt="gamerchallenge logo"
+            alt="challengeArena logo"
           />
           <h1 className="ml-2 text-sm sm:text-3xl font-extrabold whitespace-nowrap">
-            GamerChallenge
+            ChallengeArena
           </h1>
         </Link>
 

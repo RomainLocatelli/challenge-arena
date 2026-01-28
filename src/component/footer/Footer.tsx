@@ -16,7 +16,7 @@ export default function Footer() {
               alt="gamerchallenge logo"
             />
           </div>
-          <h2 className="text-xl font-bold">GamerChallenge</h2>
+          <h2 className="text-xl font-bold">ChallengeArena</h2>
         </Link>
 
         {/* Liens du footer */}

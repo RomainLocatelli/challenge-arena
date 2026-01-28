@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useMemo, useState, useEffect } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/app/context/AuthContext';
+import PopUp from '@/component/Pop--up';
 
 // hook responsive
 function useMediaQuery(query: string) {
@@ -59,25 +60,6 @@ const clamp300 = (s: string) => {
   return t.length <= 300 ? t : t.slice(0, 300);
 };
 
-function splitDescriptionAndDetails(raw: string): { desc: string; details: string[] } {
-  const text = (raw ?? '').replace(/\r\n/g, '\n').trim();
-  const re = /\n\s*details\s*:?\s*\n/i;
-  const parts = text.split(re);
-  if (parts.length < 2) {
-    return { desc: text, details: [] };
-  }
-
-  const desc = (parts[0] ?? '').trim();
-  const detailsBlock = (parts[1] ?? '').trim();
-
-  const details = detailsBlock
-    .split('\n')
-    .map((l) => l.trim())
-    .filter(Boolean);
-
-  return { desc, details };
-}
-
 export default function ChallengeDetailsPage() {
   const router = useRouter();
   const { user } = useAuth();
@@ -109,7 +91,7 @@ export default function ChallengeDetailsPage() {
   const [participations, setParticipations] = useState<Participation[]>([]);
   const [visibleCount, setVisibleCount] = useState(defaultVisible);
 
-  // Confirmation delete modal 
+  // Confirmation delete modal
   type ConfirmAction = 'delete-challenge' | 'delete-participation' | null;
 
   const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null);
@@ -119,7 +101,17 @@ export default function ChallengeDetailsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'create' | 'view' | 'edit'>('view');
   const [activeParticipationId, setActiveParticipationId] = useState<string | null>(null);
-  
+
+  // Report
+  const [openReportModal, setOpenReportModal] = useState<boolean>(false);
+  const [reportMessage, setReportMessage] = useState<string>('');
+  const [reportTargetType, setReportTargetType] = useState<'CHALLENGE' | 'PARTICIPATION'>(
+    'CHALLENGE'
+  );
+  const [reportTargetId, setReportTargetId] = useState<string>('');
+  const [showSuccessReport, setShowSuccessReport] = useState<boolean>(false);
+  const [reportResponseMessage, setReportResponseMessage] = useState<string>('');
+
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const triggerSuccessToast = () => {
     setShowSuccessToast(true);
@@ -146,11 +138,11 @@ export default function ChallengeDetailsPage() {
       return;
     }
 
-    // close confirm modal 
+    // close confirm modal
     setConfirmAction(null);
     setConfirmParticipationId(null);
 
-  // Redirection vers la liste des challenges
+    // Redirection vers la liste des challenges
     router.push('/challenges');
   };
 
@@ -258,13 +250,8 @@ export default function ChallengeDetailsPage() {
     setTitle(challenge.title);
     setImageUrl(undefined); // API n’a pas image custom dans la seed
 
-    const parsed = splitDescriptionAndDetails(challenge.description);
-
-    const finalDetails =
-      parsed.details.length > 0 ? parsed.details : (challenge.details ?? []).filter(Boolean);
-
-    setDescription(parsed.desc);
-    setDetailsPoints(finalDetails);
+    setDescription(challenge.description ?? '');
+    setDetailsPoints(challenge.details ?? []);
 
     setParticipations(challenge.participations ?? []);
   }, [challenge]);
@@ -363,11 +350,9 @@ export default function ChallengeDetailsPage() {
     if (!challenge) {
       return;
     }
-    const parsed = splitDescriptionAndDetails(challenge.description);
     setTitle(challenge.title);
-    setImageUrl(undefined);
-    setDescription(parsed.desc);
-    setDetailsPoints(parsed.details.length ? parsed.details : challenge.details ?? []);
+    setDescription(challenge.description ?? '');
+    setDetailsPoints(challenge.details ?? []);
     setIsEditing(false);
   };
 
@@ -638,10 +623,7 @@ export default function ChallengeDetailsPage() {
       await confirmDeleteChallenge();
     }
 
-    if (
-      confirmAction === 'delete-participation' &&
-      confirmParticipationId
-    ) {
+    if (confirmAction === 'delete-participation' && confirmParticipationId) {
       await removeParticipation(confirmParticipationId);
     }
 
@@ -653,7 +635,6 @@ export default function ChallengeDetailsPage() {
     setConfirmAction(null);
     setConfirmParticipationId(null);
   };
-
 
   if (loading) {
     return (
@@ -681,37 +662,141 @@ export default function ChallengeDetailsPage() {
     el.style.height = `${el.scrollHeight}px`;
   };
 
+  // Modal report a person
 
-  return (
-    <div className="min-h-screen ">
-      <main className="mx-auto w-full max-w-[430px] md:max-w-5xl px-4 md:px-8 py-5 md:py-8">
-        
-        {showSuccessToast ? (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center pointer-events-none">
-            <div
-              className="
-                pointer-events-none
-                rounded-3xl
-                bg-black/70
-                ring-1 ring-white/15
-                shadow-[0_20px_60px_rgba(0,0,0,0.65)]
-                px-8 py-6
-                text-center
-                text-white
-                text-xl md:text-2xl
-                font-semibold
-                animate-fadeInOut
-              "
-            >
-              ✅ Your participation is registered !
+  function modalReport() {
+    return (
+      <div>
+        {openReportModal ? (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/50 px-4"
+            onMouseDown={(e) => {
+              if (e.target === e.currentTarget) {
+                setOpenReportModal(false);
+                setReportMessage('');
+              }
+            }}
+          >
+            <div className="w-full max-w-[430px] md:max-w-xl rounded-3xl bg-(--button-area) ring-1 ring-background/10 shadow-[0_20px_60px_rgba(0,0,0,0.65)] overflow-hidden">
+              <div className="px-5 py-4 border-b border-background/10 flex items-center justify-between">
+                <div className="font-semibold">
+                  Report {reportTargetType === 'CHALLENGE' ? 'Challenge' : 'Participation'}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOpenReportModal(false);
+                    setReportMessage('');
+                  }}
+                  className="px-3 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) ring-1 ring-background/10 text-sm"
+                  aria-label="Close"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="p-5 space-y-4">
+                <div>
+                  <div className="text-sm font-semibold text-foreground/80 mb-2">
+                    Why are you reporting this content?{' '}
+                    <span className="opacity-25">Minimum 10 character</span>
+                  </div>
+                  <textarea
+                    value={reportMessage}
+                    onChange={(e) => setReportMessage(e.target.value)}
+                    className="w-full rounded-2xl bg-background/30 ring-1 ring-background/10 p-3 text-sm text-foreground/90 focus:outline-none resize-none min-h-[120px]"
+                    placeholder="Please describe the reason for your report..."
+                  />
+                </div>
+              </div>
+
+              <div className="px-5 py-4 border-t border-foreground/10 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOpenReportModal(false);
+                    setReportMessage('');
+                  }}
+                  className="px-4 py-2 rounded-2xl bg-(--error-text-message) hover:bg-(--error-text-message)/60 ring-1 ring-background/10 text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="button"
+                  onClick={sendReportMessage}
+                  disabled={!reportMessage.trim()}
+                  className="px-8 py-2.5 rounded-full bg-(--button-delete) hover:bg-(--button-delete-hover) font-semibold shadow-[0_10px_25px_rgba(0,0,0,0.45)] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Report
+                </button>
+              </div>
             </div>
           </div>
         ) : null}
+      </div>
+    );
+  }
 
+  // POST report a person
+
+  const sendReportMessage = async () => {
+    if (!reportMessage.trim()) {
+      return;
+    }
+
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+
+    try {
+      const res = await fetch(`${baseUrl}/reports`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          targetType: reportTargetType,
+          targetId: reportTargetId,
+          reason: reportMessage.trim()
+        })
+      });
+      const triggerSuccessReport = () => {
+        setShowSuccessReport(true);
+        window.setTimeout(() => setShowSuccessReport(false), 2000);
+      };
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setReportResponseMessage(data.message);
+        triggerSuccessReport();
+        return;
+      }
+
+      const data = await res.json().catch(() => ({}));
+      setReportResponseMessage(data.message);
+
+      triggerSuccessReport();
+      setOpenReportModal(false);
+      setReportMessage('');
+      setReportTargetType('CHALLENGE');
+      setReportTargetId('');
+    } catch (error) {
+      console.error('Error submitting report:', error);
+      PopUp('');
+    }
+  };
+
+  const isDescriptionValid = description.trim().length > 0;
+
+  return (
+    <div className="min-h-screen ">
+      <main className="mx-auto w-full max-w-107.5 md:max-w-5xl px-4 md:px-8 py-5 md:py-8">
+        {showSuccessToast ? PopUp('✅ Your participation is registered !') : null}
+        {showSuccessReport ? PopUp(`🚨 ${reportResponseMessage}`) : null}
         <div className="rounded-3xl bg-(--background-header)/70 ring-1 ring-background/10 shadow-[0_20px_60px_rgba(0,0,0,0.55)] overflow-hidden">
           <div className="relative h-32 md:h-48 lg:h-64 w-full bg-(--button-area)">
             <Image src={headerImage} alt={title} fill sizes="430px" className="object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-foreground/65 via-foreground/15 to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-tfrom-foreground/65 via-foreground/15 to-transparent" />
           </div>
 
           <div className="p-5 md:p-8">
@@ -726,24 +811,41 @@ export default function ChallengeDetailsPage() {
                   placeholder="Challenge title"
                 />
               )}
-
-              <div className="flex flex-col items-center leading-none">
+              <div className="flex">
                 <button
                   type="button"
-                  onClick={onToggleChallengeLike}
-                  className="relative w-10 h-10 shrink-0 hover:opacity-90"
-                  aria-pressed={challengeHasVoted}
-                  aria-label={challengeHasVoted ? 'Unlike challenge' : 'Like challenge'}
+                  onClick={() => {
+                    if (!challenge) {
+                      return;
+                    }
+                    setReportTargetType('CHALLENGE');
+                    setReportTargetId(challenge.id);
+                    setOpenReportModal(true);
+                  }}
+                  className="mr-5 bg-(--button-delete) hover:bg-(--button-delete-hover) rounded-4xl pr-5 pl-5"
                 >
-                  <Image
-                    src={challengeHasVoted ? '/like 0.png' : '/like 1.png'}
-                    alt={challengeHasVoted ? 'Voted' : 'Not Voted'}
-                    fill
-                    sizes="40px"
-                    className="object-contain"
-                  />
+                  Report
                 </button>
-                <div className="mt-1 text-xs text-foreground/70">{formatLikes(challengeLikes)}</div>
+                <div className="flex flex-col items-center leading-none">
+                  <button
+                    type="button"
+                    onClick={onToggleChallengeLike}
+                    className="relative w-10 h-10 shrink-0 hover:opacity-90"
+                    aria-pressed={challengeHasVoted}
+                    aria-label={challengeHasVoted ? 'Unlike challenge' : 'Like challenge'}
+                  >
+                    <Image
+                      src={challengeHasVoted ? '/like 0.png' : '/like 1.png'}
+                      alt={challengeHasVoted ? 'Voted' : 'Not Voted'}
+                      fill
+                      sizes="40px"
+                      className="object-contain"
+                    />
+                  </button>
+                  <div className="mt-1 text-xs text-foreground/70">
+                    {formatLikes(challengeLikes)}
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -788,7 +890,18 @@ export default function ChallengeDetailsPage() {
                   <button
                     type="button"
                     onClick={saveEdits}
-                    className="px-4 py-2 rounded-2xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)]"
+                    className={`
+                      px-4 py-2
+                      rounded-2xl
+                      text-sm font-semibold
+                      shadow-[0_10px_20px_rgba(0,0,0,0.35)]
+                      transition
+                      ${
+                        isDescriptionValid
+                          ? 'bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover)'
+                          : 'bg-(--button-game-challenge)/40 cursor-not-allowed opacity-50'
+                      }
+                    `}
                   >
                     Save
                   </button>
@@ -830,7 +943,9 @@ export default function ChallengeDetailsPage() {
                       value={description}
                       maxLength={300}
                       ref={(el) => {
-                        if (el) { autoResizeTextarea(el); }
+                        if (el) {
+                          autoResizeTextarea(el);
+                        }
                       }}
                       onChange={(e) => {
                         setDescription(e.target.value);
@@ -848,7 +963,7 @@ export default function ChallengeDetailsPage() {
                         overflow-hidden
                         min-h-[44px]
                       "
-                      placeholder="Description (max 300 chars)"
+                      placeholder={isDescriptionValid ? 'Description (max 300 chars)' : 'Description required'}
                     />
                     <div className="text-xs text-foreground/50 w-12 text-right pt-2">
                       {description.length}/300
@@ -907,7 +1022,6 @@ export default function ChallengeDetailsPage() {
             </div>
 
             <div className="mt-6 flex items-center justify-between">
-
               {isAllowToModifyOrDelete ? (
                 <button
                   type="button"
@@ -975,7 +1089,9 @@ export default function ChallengeDetailsPage() {
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <div className="font-semibold text-(--button-select)">{p.name}</div>
-                  <div className="foreground/70 text-sm line-clamp-2 break-words min-h-[2.5rem]">{p.description}</div>
+                  <div className="foreground/70 text-sm line-clamp-2 break-words min-h-[2.5rem]">
+                    {p.description}
+                  </div>
                   {p.link ? (
                     <div className="opacity-60 text-sm line-clamp-1 break-words">
                       <span className="foreground/60 ">Link :</span> {p.link}
@@ -989,22 +1105,43 @@ export default function ChallengeDetailsPage() {
                     onMouseDown={(e) => e.stopPropagation()}
                     className="flex flex-col items-center leading-none"
                   >
-                    <button
-                      type="button"
-                      onClick={() => onToggleParticipationLike(p.id)}
-                      className="relative w-8 h-8 hover:opacity-90"
-                      aria-pressed={!!p.hasVoted}
-                      aria-label={p.hasVoted ? 'Unlike participation' : 'Like participation'}
-                    >
-                      <Image
-                        src={p.hasVoted ? '/like 0.png' : '/like 1.png'}
-                        alt={p.hasVoted ? 'Voted' : 'Not Voted'}
-                        fill
-                        sizes="32px"
-                        className="object-contain"
-                      />
-                    </button>
-                    <div className="mt-1 text-xs foreground/70">{formatLikes(p.likes)}</div>
+                    <div className="flex">
+                      {p.userId !== currentUserId && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setReportTargetType('PARTICIPATION');
+                            setReportTargetId(p.id);
+                            setOpenReportModal(true);
+                          }}
+                          className="mb-2 px-2 mr-5 h-8 py-1 text-xs bg-(--button-delete) hover:bg-(--button-delete-hover) rounded-lg"
+                          aria-label="Report participation"
+                        >
+                          🚨
+                        </button>
+                      )}
+                      <div className="flex flex-col">
+                        <button
+                          type="button"
+                          onClick={() => onToggleParticipationLike(p.id)}
+                          className="relative w-8 h-8 hover:opacity-90"
+                          aria-pressed={!!p.hasVoted}
+                          aria-label={p.hasVoted ? 'Unlike participation' : 'Like participation'}
+                        >
+                          <Image
+                            src={p.hasVoted ? '/like 0.png' : '/like 1.png'}
+                            alt={p.hasVoted ? 'Voted' : 'Not Voted'}
+                            fill
+                            sizes="32px"
+                            className="object-contain"
+                          />
+                        </button>
+                        <div className="mt-1 text-xs text-center foreground/70">
+                          {formatLikes(p.likes)}
+                        </div>
+                      </div>
+                    </div>
 
                     {isEditing ? (
                       <button
@@ -1074,7 +1211,6 @@ export default function ChallengeDetailsPage() {
                     <div className="rounded-2xl bg-slate-950/30 ring-1 ring-background/10 p-3 text-foreground/85 whitespace-pre-wrap break-words max-h-[50vh] overflow-auto">
                       {activeParticipation?.description ?? ''}
                     </div>
-
                   ) : (
                     <textarea
                       value={pDesc}
@@ -1130,7 +1266,6 @@ export default function ChallengeDetailsPage() {
                         </button>
                       </>
                     ) : null}
-
                   </>
                 ) : (
                   <>
@@ -1161,58 +1296,55 @@ export default function ChallengeDetailsPage() {
             </div>
           </div>
         ) : null}
+        {openReportModal ? modalReport() : <p></p>}
       </main>
 
       {/* Delete modal */}
-        {confirmAction ? (
+      {confirmAction ? (
+        <div
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-foreground/50 px-4"
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) {
+              cancelDelete();
+            }
+          }}
+        >
           <div
-            className="fixed inset-0 z-[70] flex items-center justify-center bg-foreground/50 px-4"
-            onMouseDown={(e) => {
-              if (e.target === e.currentTarget) {
-                cancelDelete();
-              }
-            }}
-          >
-            <div className="
+            className="
               w-full max-w-md
               rounded-3xl
               bg-(--button-area)
               ring-1 ring-background/10
               shadow-[0_20px_60px_rgba(0,0,0,0.65)]
               overflow-hidden
-            ">
+            "
+          >
             {/* Header */}
-              <div className="px-5 py-4 border-b border-background/10 flex items-center justify-between">
-                <div className="font-semibold text-lg">
-                  Delete
-                </div>
+            <div className="px-5 py-4 border-b border-background/10 flex items-center justify-between">
+              <div className="font-semibold text-lg">Delete</div>
 
-                <button
-                  type="button"
-                  onClick={cancelDelete}
-                  className="px-3 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover)"
-                  aria-label="Close"
-                >
-                  ✕
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={cancelDelete}
+                className="px-3 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover)"
+                aria-label="Close"
+              >
+                ✕
+              </button>
+            </div>
 
             {/* Content */}
-              <div className="p-6 text-center space-y-4">
-                <div className="text-foreground/90 text-lg font-semibold">
-                  Are you sure?
-                </div>
-                <div className="text-foreground/70 text-sm">
-                  This action is irreversible.
-                </div>
-              </div>
+            <div className="p-6 text-center space-y-4">
+              <div className="text-foreground/90 text-lg font-semibold">Are you sure?</div>
+              <div className="text-foreground/70 text-sm">This action is irreversible.</div>
+            </div>
 
             {/* Actions */}
-              <div className="px-6 py-4 border-t border-foreground/10 flex items-center justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={confirmDelete}
-                  className="
+            <div className="px-6 py-4 border-t border-foreground/10 flex items-center justify-end gap-3">
+              <button
+                type="button"
+                onClick={confirmDelete}
+                className="
                     px-4 py-2
                     rounded-2xl
                     bg-(--button-delete)
@@ -1221,14 +1353,13 @@ export default function ChallengeDetailsPage() {
                     text-sm font-semibold
                     shadow-[0_10px_20px_rgba(0,0,0,0.35)]
                   "
-                >
-                  🗑 Confirm delete
-                </button>
-              </div>
+              >
+                🗑 Confirm delete
+              </button>
             </div>
           </div>
+        </div>
       ) : null}
-
     </div>
   );
 }
