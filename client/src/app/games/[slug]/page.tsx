@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import ChallengeCard from '@/component/ChallengeCard';
 import SearchBar from '@/component/SearchBar';
+import { useAuth } from '@/app/context/AuthContext';
 
 // hook responsive
 function useMediaQuery(query: string) {
@@ -91,6 +92,7 @@ function filterOrderingChallenges(
 const formatVotes = (n?: number) => `${n ?? 0}`;
 
 export default function GamePage() {
+  const { user } = useAuth();
   const params = useParams() as { slug?: string } | undefined;
   const slug = params?.slug;
 
@@ -280,13 +282,38 @@ export default function GamePage() {
               <h2 className="text-xl font-bold border-l-4 border-(--button-select) pl-3 ml-15 md:ml-40 mt-10 mb-10">
                 Challenges
               </h2>
-
-              <Link
-                href="/challenges/create"
-                className="px-4 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)] mr-40"
-              >
-                Create a challenge
-              </Link>
+              {!user ? (
+                <div>
+                  <p className="text-center">
+                    Challenge yourself or others by registering or connecting
+                  </p>
+                  <nav className="flex justify-center mb-8">
+                    <Link href="/login-register/login">
+                      <button
+                        type="button"
+                        className="bg-(--button-area) p-3 rounded-3xl mr-8 mt-6 cursor-pointer"
+                      >
+                        Login
+                      </button>
+                    </Link>
+                    <Link href="/login-register/register">
+                      <button
+                        type="button"
+                        className="bg-(--button-select) p-3 rounded-3xl  mt-6 cursor-pointer"
+                      >
+                        Register
+                      </button>
+                    </Link>
+                  </nav>
+                </div>
+              ) : (
+                <Link
+                  href="/challenges/create"
+                  className="px-4 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)] mr-40"
+                >
+                  Create a challenge
+                </Link>
+              )}
             </div>
 
             {/* Cards */}
