@@ -123,7 +123,11 @@ export default function AboutPage() {
                     />
                   </div>
 
-                  <h3 className="text-2xl font-bold mb-2">{member.pseudo}</h3>
+                  <h3
+                    className={`text-2xl font-bold mb-2 ${member.pseudo === 'Stwompy' ? 'bg-linear-to-r from-(--button-delete) via-(--button-game-challenge) to-(--button-delete) bg-size-[200%_auto] bg-clip-text text-transparent animate-rainbow' : ''}`}
+                  >
+                    {member.pseudo}
+                  </h3>
 
                   <p className="text-sm text-foreground/50 italic">{member.funFact}</p>
                 </div>
