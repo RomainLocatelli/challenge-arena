@@ -44,7 +44,7 @@ export default function SearchBar({
             setCurrentPage(1);
             setPageBlockStart(2);
           }}
-          className="relative w-full rounded-full bg-transparent py-3 pl-14 pr-4  text-center text-xl  focus:outline-none"
+          className="relative w-full rounded-full bg-transparent py-3 pl-14 pr-4  text-center text-xl  focus:outline-none placeholder:text-foreground/50"
         />
         {setFilterModalArea !== undefined ? (
           <button
