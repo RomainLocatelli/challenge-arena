@@ -80,13 +80,12 @@ export default function AuthRegister() {
           router.replace('/');
           router.refresh();
         } catch (error) {
-          console.error('Login error:', error);
           setErrorMessage('Network error. Please try again later.');
           setIsLoading(false);
         }
       }
     } catch (e) {
-      setErrorMessage('An error happened, please try again later');
+      setErrorMessage(`An error happened, please try again later ${e}`);
     }
   }
 
