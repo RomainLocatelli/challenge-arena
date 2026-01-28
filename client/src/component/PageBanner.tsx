@@ -10,8 +10,8 @@ export default function PageBanner({ title }: PageBannerProps) {
   return (
     <section className="relative flex items-center justify-center py-12 md:py-16 overflow-hidden">
       {/* Pattern léger */}
-      <div 
-        className="absolute inset-0 opacity-40"
+      <div
+        className="absolute inset-0 opacity-30"
         style={{ backgroundImage: `url("${patternSVG}")` }}
       />
 
@@ -27,7 +27,7 @@ export default function PageBanner({ title }: PageBannerProps) {
           />
         </div>
       </div> */}
-      
+
       {/* Titre centré */}
       <div className="relative z-10 text-center px-4">
         <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold">
