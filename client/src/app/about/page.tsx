@@ -110,9 +110,9 @@ export default function AboutPage() {
             {teamMembers.map((member) => (
               <div
                 key={member.pseudo}
-                className="group relative bg-(--button-area) rounded-lg p-6 border border-foreground/50 hover:border-(--button-select) transition-all hover:scale-[1.02]"
+                className={`group relative bg-(--button-area) rounded-lg p-6 border border-foreground/50 hover:border-(--button-select) transition-all hover:scale-[1.02] ${member.pseudo === 'Stwompy' ? 'bg-[url(/waaaaaagh.jpg)] bg-cover' : ''}`}
               >
-                <div className="flex flex-col items-center text-center">
+                <div className="flex flex-col items-center text-center ">
                   <div className="w-24 h-24 rounded-full bg--background border-2 border-(--button-select) mb-4 overflow-hidden">
                     <Image
                       width={500}
@@ -129,7 +129,11 @@ export default function AboutPage() {
                     {member.pseudo}
                   </h3>
 
-                  <p className="text-sm text-foreground/50 italic">{member.funFact}</p>
+                  <p
+                    className={`text-sm  italic ${member.pseudo === 'Stwompy' ? 'text-(--button-delete) bg-(--text-hover) rounded-4xl p-1' : 'text-foreground/50'}`}
+                  >
+                    {member.funFact}
+                  </p>
                 </div>
               </div>
             ))}
