@@ -76,9 +76,8 @@ export interface LeaderboardResponse {
   topByParticipations: LeaderboardByParticipations[];
   topByLikes: LeaderboardByLikes[];
   currentUserRank: {
-    username: string;
-    rank: number;
-    totalLikes: number;
+    byLikes: { rank: number; totalLikes: number };
+    byParticipations: { rank: number; participationCount: number };
   } | null;
 }
 
