@@ -32,7 +32,7 @@ export default function AuthLogin() {
         headers: {
           'Content-Type': 'application/json'
         },
-        credentials: 'include', // CRUCIAL : pour recevoir et envoyer les cookies
+        credentials: 'include',
         body: JSON.stringify(loginData)
       });
 
