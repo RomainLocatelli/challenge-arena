@@ -7,6 +7,7 @@ import { useParams } from 'next/navigation';
 import ChallengeCard from '@/component/ChallengeCard';
 import SearchBar from '@/component/SearchBar';
 import { useAuth } from '@/app/context/AuthContext';
+import LoginRegisterCard from '@/component/LoginRegisterCard';
 
 // hook responsive
 function useMediaQuery(query: string) {
@@ -283,35 +284,17 @@ export default function GamePage() {
                 Challenges
               </h2>
               {!user ? (
-                <div>
-                  <p className="text-center">
-                    Challenge yourself or others by registering or connecting
-                  </p>
-                  <nav className="flex justify-center mb-8">
-                    <Link href="/login-register/login">
-                      <button
-                        type="button"
-                        className="bg-(--button-area) p-3 rounded-3xl mr-8 mt-6 cursor-pointer"
-                      >
-                        Login
-                      </button>
-                    </Link>
-                    <Link href="/login-register/register">
-                      <button
-                        type="button"
-                        className="bg-(--button-select) p-3 rounded-3xl  mt-6 cursor-pointer"
-                      >
-                        Register
-                      </button>
-                    </Link>
-                  </nav>
-                </div>
+                <LoginRegisterCard message="Sign up to participate in this game's challenges" />
               ) : (
                 <Link
                   href="/challenges/create"
-                  className="px-4 py-2 rounded-xl bg-(--button-game-challenge) hover:bg-(--button-game-challenge-hover) text-sm font-semibold shadow-[0_10px_20px_rgba(0,0,0,0.35)] mr-40"
+                  className="group relative px-6 py-3 rounded-xl bg-[var(--button-game-challenge)] hover:bg-[var(--button-game-challenge-hover)] text-base font-bold shadow-lg shadow-[var(--button-game-challenge-hover)]/30 hover:shadow-[0_0_40px_rgba(133,84,218,1)] hover:scale-110 transition-all duration-300 overflow-hidden animate-pulse-glow"
                 >
-                  Create a challenge
+                  {/* Effet shimmer au hover */}
+                  <span className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
+                  
+                  {/* Texte */}
+                  <span className="relative z-10">Create a challenge</span>
                 </Link>
               )}
             </div>
