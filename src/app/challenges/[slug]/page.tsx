@@ -128,6 +128,8 @@ export default function ChallengeDetailsPage() {
     'CHALLENGE'
   );
   const [reportTargetId, setReportTargetId] = useState<string>('');
+  const [showSuccessReport, setShowSuccessReport] = useState<boolean>(false);
+  const [reportResponseMessage, setReportResponseMessage] = useState<string>('');
 
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const triggerSuccessToast = () => {
@@ -729,7 +731,7 @@ export default function ChallengeDetailsPage() {
                   <textarea
                     value={reportMessage}
                     onChange={(e) => setReportMessage(e.target.value)}
-                    className="w-full rounded-2xl bg-slate-950/30 ring-1 ring-background/10 p-3 text-sm text-foreground/90 focus:outline-none resize-none min-h-[120px]"
+                    className="w-full rounded-2xl bg-background/30 ring-1 ring-background/10 p-3 text-sm text-foreground/90 focus:outline-none resize-none min-h-[120px]"
                     placeholder="Please describe the reason for your report..."
                   />
                 </div>
@@ -785,21 +787,28 @@ export default function ChallengeDetailsPage() {
           reason: reportMessage.trim()
         })
       });
-
+      const triggerSuccessReport = () => {
+        setShowSuccessReport(true);
+        window.setTimeout(() => setShowSuccessReport(false), 2000);
+      };
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        alert(data.message || 'Failed to submit report');
+        setReportResponseMessage(data.message);
+        triggerSuccessReport();
         return;
       }
 
-      alert('Report submitted successfully. Thank you!');
+      const data = await res.json().catch(() => ({}));
+      setReportResponseMessage(data.message);
+
+      triggerSuccessReport();
       setOpenReportModal(false);
       setReportMessage('');
       setReportTargetType('CHALLENGE');
       setReportTargetId('');
     } catch (error) {
       console.error('Error submitting report:', error);
-      alert('An error occurred while submitting your report');
+      PopUp('');
     }
   };
 
@@ -807,7 +816,7 @@ export default function ChallengeDetailsPage() {
     <div className="min-h-screen ">
       <main className="mx-auto w-full max-w-107.5 md:max-w-5xl px-4 md:px-8 py-5 md:py-8">
         {showSuccessToast ? PopUp('✅ Your participation is registered !') : null}
-
+        {showSuccessReport ? PopUp(`🚨 ${reportResponseMessage}`) : null}
         <div className="rounded-3xl bg-(--background-header)/70 ring-1 ring-background/10 shadow-[0_20px_60px_rgba(0,0,0,0.55)] overflow-hidden">
           <div className="relative h-32 md:h-48 lg:h-64 w-full bg-(--button-area)">
             <Image src={headerImage} alt={title} fill sizes="430px" className="object-cover" />

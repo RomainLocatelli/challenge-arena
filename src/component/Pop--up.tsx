@@ -5,7 +5,7 @@ export default function PopUp(message: string) {
         className="
                   pointer-events-none
                   rounded-3xl
-                  bg-black/70
+                  bg-background/70
                   ring-1 ring-foreground/15
                   shadow-[0_20px_60px_rgba(0,0,0,0.65)]
                   px-8 py-6
