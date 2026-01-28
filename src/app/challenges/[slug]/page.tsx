@@ -32,6 +32,12 @@ type Participation = {
   likes: number;
 };
 
+type User = {
+  id: string;
+  username: string;
+  role: string;
+} | null;
+
 type ChallengeDetails = {
   id: string;
   slug: string;
@@ -740,6 +746,34 @@ export default function ChallengeDetailsPage() {
     );
   }
 
+  // Check connected on press button
+  function userConnectedCheck(
+    user: User,
+    p: Participation | ChallengeDetails,
+    reportType: 'PARTICIPATION' | 'CHALLENGE',
+    e: React.SyntheticEvent<EventTarget>
+  ) {
+    if (!user) {
+      setReportResponseMessage('Require to be connected to report');
+      PopUp('pouet');
+      const triggerSuccessReport = () => {
+        setShowSuccessReport(true);
+        window.setTimeout(() => setShowSuccessReport(false), 2000);
+      };
+      triggerSuccessReport();
+    } else if (reportType === 'PARTICIPATION') {
+      e.stopPropagation();
+      setReportTargetType('PARTICIPATION');
+      setReportTargetId(p.id);
+      setOpenReportModal(true);
+    } else {
+      e.stopPropagation();
+      setReportTargetType('CHALLENGE');
+      setReportTargetId(p.id);
+      setOpenReportModal(true);
+    }
+  }
+
   // POST report a person
 
   const sendReportMessage = async () => {
@@ -815,13 +849,8 @@ export default function ChallengeDetailsPage() {
               <div className="flex">
                 <button
                   type="button"
-                  onClick={() => {
-                    if (!challenge) {
-                      return;
-                    }
-                    setReportTargetType('CHALLENGE');
-                    setReportTargetId(challenge.id);
-                    setOpenReportModal(true);
+                  onClick={(e) => {
+                    userConnectedCheck(user, challenge, 'CHALLENGE', e);
                   }}
                   className="mr-5 bg-(--button-delete) hover:bg-(--button-delete-hover) rounded-4xl pr-5 pl-5"
                 >
@@ -964,7 +993,9 @@ export default function ChallengeDetailsPage() {
                         overflow-hidden
                         min-h-[44px]
                       "
-                      placeholder={isDescriptionValid ? 'Description (max 300 chars)' : 'Description required'}
+                      placeholder={
+                        isDescriptionValid ? 'Description (max 300 chars)' : 'Description required'
+                      }
                     />
                     <div className="text-xs text-foreground/50 w-12 text-right pt-2">
                       {description.length}/300
@@ -1052,7 +1083,7 @@ export default function ChallengeDetailsPage() {
                 >
                   {/* Effet shimmer au hover */}
                   <span className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
-                  
+
                   {/* Texte */}
                   <span className="relative z-10">Participate</span>
                 </button>
@@ -1095,10 +1126,7 @@ export default function ChallengeDetailsPage() {
                         <button
                           type="button"
                           onClick={(e) => {
-                            e.stopPropagation();
-                            setReportTargetType('PARTICIPATION');
-                            setReportTargetId(p.id);
-                            setOpenReportModal(true);
+                            userConnectedCheck(user, p, 'PARTICIPATION', e);
                           }}
                           className="mb-2 px-2 mr-5 h-8 py-1 text-xs bg-(--button-delete) hover:bg-(--button-delete-hover) rounded-lg"
                           aria-label="Report participation"
