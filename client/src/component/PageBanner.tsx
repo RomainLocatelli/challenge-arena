@@ -1,5 +1,3 @@
-import Image from 'next/image';
-
 type PageBannerProps = {
   title: string;
 };
@@ -12,6 +10,7 @@ export default function PageBanner({ title }: PageBannerProps) {
       {/* Pattern léger */}
       <div
         className="absolute inset-0 opacity-30"
+
         style={{ backgroundImage: `url("${patternSVG}")` }}
       />
 
@@ -31,7 +30,7 @@ export default function PageBanner({ title }: PageBannerProps) {
       {/* Titre centré */}
       <div className="relative z-10 text-center px-4">
         <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold">
-          <span className="bg-gradient-to-r from-[#7c39ed] via-[#d4af37] to-[#7c39ed] bg-[length:200%_auto] bg-clip-text text-transparent animate-rainbow">
+          <span className="bg-linear-to-r from-[#7c39ed] via-[#d4af37] to-[#7c39ed] bg-size-[200%_auto] bg-clip-text text-transparent animate-rainbow">
             {title}
           </span>
         </h1>

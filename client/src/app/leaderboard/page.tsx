@@ -1,59 +1,70 @@
 'use client';
-import Image from 'next/image';
+
 import { Fragment, useEffect, useState } from 'react';
 import PodiumStars from './component/starry-background';
 import { useAuth } from '../context/AuthContext';
-import { readlink } from 'fs';
 import PageBanner from '@/component/PageBanner';
+import { LeaderboardResponse } from '@/lib/Types';
+
+// Type pour normaliser les données de leaderboard
+type LeaderboardUser = {
+  username: string;
+  score: number;
+  rank?: number;
+};
 
 export default function Leaderboard() {
-  // BDD types
-  type UsersLiked = { username: string; totalLikes: number };
-  type Participation = { username: string; participationCount: number };
-  type UserRank = {
-    byLikes: { rank: number; totalLikes: number };
-    byParticipations: { rank: number; participationCount: number };
-  };
-
-  // New type which can be used to all the function for the leaderboard
-  type LeaderboardUser = {
-    username: string;
-    score: number;
-    rank?: number;
-  };
-
   const { user } = useAuth();
   const currentUsername = user?.username;
 
-  const [usersLikedLeaderboard, setUsersLikedLeaderboard] = useState<UsersLiked[]>([]);
-  const [participationLeaderboard, setParticipationLeaderboard] = useState<Participation[]>([]);
-  const [userConnected, setUserConnected] = useState<UserRank>();
+  const [leaderboardData, setLeaderboardData] = useState<LeaderboardResponse | null>(null);
+  const [loading, setLoading] = useState(true);
   const [selectedLeaderboard, setSelectedLeaderboard] = useState<'likes' | 'participation'>(
     'likes'
   );
 
   useEffect(() => {
     async function getLeaderboard() {
-      const registerUrl = `${process.env.API_URL}/leaderboard`;
-      const response = await fetch(registerUrl, {
-        credentials: 'include'
-      });
-      const replyDb = await response.json();
+      try {
+        setLoading(true);
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
+        const response = await fetch(`${apiUrl}/leaderboard`, {
+          credentials: 'include'
+        });
 
-      setUsersLikedLeaderboard(replyDb.topByLikes);
-      setParticipationLeaderboard(replyDb.topByParticipations);
-      setUserConnected(replyDb.currentUserRank);
+        if (!response.ok) {
+          throw new Error('Failed to fetch leaderboard');
+        }
+
+        const data: LeaderboardResponse = await response.json();
+        setLeaderboardData(data);
+      } catch (error) {
+        console.error('Error fetching leaderboard:', error);
+      } finally {
+        setLoading(false);
+      }
     }
 
     getLeaderboard();
   }, []);
 
   // Normalize the leaderboard format to a unique one
-  function normalizeLeaderboardData(data: UsersLiked[] | Participation[]): LeaderboardUser[] {
-    return data.map((user) => ({
-      username: user.username,
-      score: 'totalLikes' in user ? user.totalLikes : user.participationCount
-    }));
+  function normalizeLeaderboardData(leaderboardType: 'likes' | 'participation'): LeaderboardUser[] {
+    if (!leaderboardData) {
+      return [];
+    }
+
+    if (leaderboardType === 'likes') {
+      return leaderboardData.topByLikes.map((user) => ({
+        username: user.username,
+        score: user.totalLikes
+      }));
+    } else {
+      return leaderboardData.topByParticipations.map((user) => ({
+        username: user.username,
+        score: user.participationCount
+      }));
+    }
   }
 
   // Add suffix to rank
@@ -96,7 +107,7 @@ export default function Leaderboard() {
   function getBgClass(rank: number, isCurrentUser: boolean): string {
     if (isCurrentUser) {
       if (rank === 1) {
-        return 'bg-(--leadboard-first) ';
+        return 'bg-(--leadboard-first) mb-5 p-4 bg-linear-to-r from-(--leadboard-first) via-(--leadboard-third) to-(--leadboard-first) animate-rainbow drop-shadow-[0_0_12px_rgba(255,255,255,0.4)] bg-size-[200%_200%]';
       }
       if (rank === 2) {
         return 'bg-(--leadboard-second)';
@@ -133,7 +144,7 @@ export default function Leaderboard() {
           <p>Your rank :</p>
         </li>
         <li
-          className={`flex justify-between ${bgClass}  rounded-2xl p-2 mb-2 ${isCurrentUser ? 'mb-3' : ''} relative overflow-hidden`}
+          className={`flex justify-between ${bgClass} rounded-2xl p-2 mb-2 ${isCurrentUser ? 'mb-3' : ''} relative overflow-hidden`}
         >
           {/* Starry effect for the three first place*/}
           {isPodium && <PodiumStars />}
@@ -161,18 +172,20 @@ export default function Leaderboard() {
     const currentUser = sortedUsers.find((user) => user.username === currentUsername);
 
     let connectedUserData: (LeaderboardUser & { rank: number }) | null = null;
-    if (userConnected && currentUsername && !currentUser) {
+    if (leaderboardData?.currentUserRank && currentUsername && !currentUser) {
+      const userRank = leaderboardData.currentUserRank;
+
       if (leaderboardType === 'likes') {
         connectedUserData = {
           username: currentUsername,
-          score: userConnected.byLikes.totalLikes,
-          rank: userConnected.byLikes.rank
+          score: userRank.totalLikes,
+          rank: userRank.byLikes?.rank || 0
         };
       } else {
         connectedUserData = {
           username: currentUsername,
-          score: userConnected.byParticipations.participationCount,
-          rank: userConnected.byParticipations.rank
+          score: userRank.byParticipations?.participationCount || 0,
+          rank: userRank.byParticipations?.rank || 0
         };
       }
     }
@@ -216,18 +229,30 @@ export default function Leaderboard() {
         {leaderboardSlots}
 
         {/* Connected user always shown on the bottom of the leaderboard */}
-
         {currentUser && renderUserItem(currentUser, true)}
         {connectedUserData && renderUserItem(connectedUserData, true)}
       </>
     );
   }
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  if (!leaderboardData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>No leaderboard data available</p>
+      </div>
+    );
+  }
+
   // To select which leaderboard to show on mobile
-  const currentLeaderboardData =
-    selectedLeaderboard === 'likes'
-      ? normalizeLeaderboardData(usersLikedLeaderboard)
-      : normalizeLeaderboardData(participationLeaderboard);
+  const currentLeaderboardData = normalizeLeaderboardData(selectedLeaderboard);
 
   return (
     <main className="min-h-screen">
@@ -270,17 +295,17 @@ export default function Leaderboard() {
 
         <div className="lg:flex">
           {/* Mobile: show selected leaderboard */}
-          <ul className="flex justify-center flex-col lg:hidden ml-5 mr-5  bg-(--button-area) p-3 mb-5 rounded-b-3xl">
+          <ul className="flex justify-center flex-col lg:hidden ml-5 mr-5 bg-(--button-area) p-3 mb-5 rounded-b-3xl">
             {renderLeaderboard(currentLeaderboardData, selectedLeaderboard)}
           </ul>
 
           {/* Desktop: show all leaderboard */}
-          <ul className="hidden lg:flex lg:justify-center lg:w-full lg:flex-col lg:ml-5 lg:mr-0  lg:bg-(--button-area) lg:p-3 lg:mb-5 lg:rounded-b-3xl">
-            {renderLeaderboard(normalizeLeaderboardData(usersLikedLeaderboard), 'likes')}
+          <ul className="hidden lg:flex lg:justify-center lg:w-full lg:flex-col lg:ml-5 lg:mr-0 lg:bg-(--button-area) lg:p-3 lg:mb-5 lg:rounded-b-3xl">
+            {renderLeaderboard(normalizeLeaderboardData('likes'), 'likes')}
           </ul>
 
-          <ul className="hidden lg:flex lg:justify-center lg:w-full lg:flex-col lg:mr-5  lg:bg-(--button-area) lg:p-3 lg:mb-5 lg:ml-15 lg:rounded-b-3xl">
-            {renderLeaderboard(normalizeLeaderboardData(participationLeaderboard), 'participation')}
+          <ul className="hidden lg:flex lg:justify-center lg:w-full lg:flex-col lg:mr-5 lg:bg-(--button-area) lg:p-3 lg:mb-5 lg:ml-15 lg:rounded-b-3xl">
+            {renderLeaderboard(normalizeLeaderboardData('participation'), 'participation')}
           </ul>
         </div>
       </section>

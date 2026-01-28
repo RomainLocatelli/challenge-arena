@@ -12,7 +12,7 @@
 :root {
   --background: #f9fafb;
   --foreground: #1a1a1a;
-  --background-header: #eef1f7;
+  --background-header: #e4e7ee;
   --header-button-area: #e4e7ee;
   --button-area: #e4e7ee;
   --button-select: color-mix(in srgb, #8554da 80%, transparent);

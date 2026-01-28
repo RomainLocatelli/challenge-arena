@@ -37,8 +37,18 @@ export default function GamesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const ismd = useMediaQuery('(min-width: 768px)');
-  const itemsPerPage = ismd ? 9 : 6;
+  const isMd = useMediaQuery('(min-width: 768px)');
+  const isL = useMediaQuery('(min-width: 1024px)');
+  const isXL = useMediaQuery('(min-width: 1280px)');
+
+  const itemsPerPage 
+    = isXL
+    ? 15
+    : isL
+    ? 12
+    : isMd
+    ? 9
+    : 6;
 
   useEffect(() => {
     async function getAllGames() {
@@ -112,6 +122,7 @@ export default function GamesPage() {
           setSearchQuery={setSearchQuery}
           setCurrentPage={setCurrentPage}
           setPageBlockStart={setPageBlockStart}
+          page='game'
         />
 
         {/* Games Section */}
@@ -134,7 +145,17 @@ export default function GamesPage() {
 
           {/* Games icons */}
           {!loading && !error && (
-            <div className="mx-auto w-65 grid grid-cols-2 gap-4 md:gap-6 md:w-150 md:grid-cols-3 lg:w-200 ">
+            <div className="
+              mx-auto
+              max-w-7xl
+              grid
+              gap-6
+              grid-cols-1
+              sm:grid-cols-2
+              md:grid-cols-3
+              lg:grid-cols-4
+              xl:grid-cols-5
+            ">
               {paginatedGames.map((game) => (
                 <Link
                   key={game.id}
@@ -171,8 +192,8 @@ export default function GamesPage() {
           <button
             className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
               currentPage === 1
-                ? 'bg-[var(--button-select)] shadow-lg shadow-[#7c39ed]/50 scale-110'
-                : 'bg-[var(--button-area)] border-2 border-transparent hover:bg-[var(--button-select)] hover:border-[var(--button-game-challenge-hover)] hover:shadow-lg hover:shadow-[#7c39ed]/50 hover:scale-110'
+                ? 'bg-(--button-select) shadow-lg shadow-[#7c39ed]/50 scale-110'
+                : 'bg-(--button-area) border-2 border-transparent hover:bg-(--button-select) hover:border-(--button-game-challenge-hover) hover:shadow-lg hover:shadow-[#7c39ed]/50 hover:scale-110'
             }`}
             onClick={() => goToPage(1)}
           >
@@ -187,8 +208,8 @@ export default function GamesPage() {
                 key={page}
                 className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
                   currentPage === page
-                    ? 'bg-[var(--button-select)] shadow-lg shadow-[#7c39ed]/50 scale-110'
-                    : 'bg-[var(--button-area)] border-2 border-transparent hover:bg-[var(--button-select)] hover:border-[var(--button-game-challenge-hover)] hover:shadow-lg hover:shadow-[#7c39ed]/50 hover:scale-110'
+                    ? 'bg-(--button-select) shadow-lg shadow-[#7c39ed]/50 scale-110'
+                    : 'bg-(--button-area) border-2 border-transparent hover:bg-(--button-select) hover:border-(--button-game-challenge-hover) hover:shadow-lg hover:shadow-[#7c39ed]/50 hover:scale-110'
                 }`}
                 onClick={() => goToPage(page)}
               >
@@ -200,7 +221,7 @@ export default function GamesPage() {
           {totalPages > pageBlockStart + 3 && (
             <button
               type="button"
-              className="w-8 h-8 bg-[var(--button-area)] hover:bg-[var(--button-select)] rounded-full flex items-center justify-center border-2 border-transparent hover:border-[var(--button-game-challenge-hover)] hover:shadow-lg hover:shadow-[#7c39ed]/50 hover:scale-110 transition-all duration-300"
+              className="w-8 h-8 bg-(--button-area) hover:bg-(--button-select) rounded-full flex items-center justify-center border-2 border-transparent hover:border-(--button-game-challenge-hover) hover:shadow-lg hover:shadow-[#7c39ed]/50 hover:scale-110 transition-all duration-300"
               onClick={nextBlock}
               aria-label="Afficher les pages suivantes"
             >
