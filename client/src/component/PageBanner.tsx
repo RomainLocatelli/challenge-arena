@@ -9,7 +9,8 @@ export default function PageBanner({ title }: PageBannerProps) {
     <section className="relative flex items-center justify-center py-12 md:py-16 overflow-hidden">
       {/* Pattern léger */}
       <div
-        className="absolute inset-0 opacity-40"
+        className="absolute inset-0 opacity-30"
+
         style={{ backgroundImage: `url("${patternSVG}")` }}
       />
 
