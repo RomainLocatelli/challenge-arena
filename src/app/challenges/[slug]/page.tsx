@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useMemo, useState, useEffect } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/app/context/AuthContext';
+import PopUp from '@/component/Pop--up';
 
 // hook responsive
 function useMediaQuery(query: string) {
@@ -771,8 +772,6 @@ export default function ChallengeDetailsPage() {
 
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
-    console.log(reportTargetId);
-
     try {
       const res = await fetch(`${baseUrl}/reports`, {
         method: 'POST',
@@ -807,27 +806,7 @@ export default function ChallengeDetailsPage() {
   return (
     <div className="min-h-screen ">
       <main className="mx-auto w-full max-w-107.5 md:max-w-5xl px-4 md:px-8 py-5 md:py-8">
-        {showSuccessToast ? (
-          <div className="fixed inset-0 z-60 flex items-center justify-center pointer-events-none">
-            <div
-              className="
-                pointer-events-none
-                rounded-3xl
-                bg-black/70
-                ring-1 ring-white/15
-                shadow-[0_20px_60px_rgba(0,0,0,0.65)]
-                px-8 py-6
-                text-center
-                text-white
-                text-xl md:text-2xl
-                font-semibold
-                animate-fadeInOut
-              "
-            >
-              ✅ Your participation is registered !
-            </div>
-          </div>
-        ) : null}
+        {showSuccessToast ? PopUp('✅ Your participation is registered !') : null}
 
         <div className="rounded-3xl bg-(--background-header)/70 ring-1 ring-background/10 shadow-[0_20px_60px_rgba(0,0,0,0.55)] overflow-hidden">
           <div className="relative h-32 md:h-48 lg:h-64 w-full bg-(--button-area)">
