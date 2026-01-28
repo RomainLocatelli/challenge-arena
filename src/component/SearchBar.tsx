@@ -9,6 +9,7 @@ interface SearchBarProps {
   setFilterModalArea?: (value: boolean) => void;
   setOrderFilterSearchBar?: (value: 'ASC' | 'DESC') => void;
   setFilterSelectorChoice?: (value: 'Popularity' | 'Date added' | 'Alphabetical') => void;
+  page?: string;
 }
 
 export default function SearchBar({
@@ -19,7 +20,8 @@ export default function SearchBar({
   filterModalArea,
   setFilterModalArea,
   setOrderFilterSearchBar,
-  setFilterSelectorChoice
+  setFilterSelectorChoice,
+  page
 }: SearchBarProps) {
   return (
     <div className="mb-6">
@@ -37,14 +39,14 @@ export default function SearchBar({
 
         <input
           type="text"
-          placeholder="Search a challenge..."
+          placeholder={`Search a ${page ?? ''}...`}
           value={searchQuery}
           onChange={(e) => {
             setSearchQuery(e.target.value);
             setCurrentPage(1);
             setPageBlockStart(2);
           }}
-          className="relative w-full rounded-full bg-transparent py-3 pl-14 pr-4  text-center text-xl  focus:outline-none"
+          className="relative w-full rounded-full bg-transparent py-3 pl-14 pr-4  text-center text-xl  focus:outline-none placeholder:text-foreground/50  "
         />
         {setFilterModalArea !== undefined ? (
           <button
