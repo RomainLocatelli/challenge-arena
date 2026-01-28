@@ -85,7 +85,10 @@ export const getChallengeBySlug = async (req: Request, res: Response, next: Next
                   where: { userId },
                   select: { userId: true }
                 }
-              : false
+              : false,
+            _count: {
+              select: { votes: true }
+            }
           },
           orderBy: { createdAt: 'desc' }
         },
