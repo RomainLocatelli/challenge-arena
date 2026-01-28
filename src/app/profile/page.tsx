@@ -142,7 +142,7 @@ export default function ProfilePage() {
         <div className="text-center">
           <p className="text-2xl mb-4">Tu n&apos;es pas connecté</p>
           <Link
-            href="/login"
+            href="/login-register/login"
             className="bg-(--button-game-challenge) hover:(--button-game-challenge-hover) px-6 py-3 rounded-lg inline-block"
           >
             Se connecter

@@ -1,8 +1,13 @@
 'use client';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 
 type Register = {
   username: string;
+  email: string;
+  password: string;
+};
+type LoginData = {
   email: string;
   password: string;
 };
@@ -15,12 +20,14 @@ const passwordRules = [
 ];
 
 export default function AuthRegister() {
+  const router = useRouter();
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const registerUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
@@ -45,6 +52,38 @@ export default function AuthRegister() {
         setErrorMessage('An error happened, please try again later');
       } else {
         setSuccessMessage('Registration successful, time to challenge yourself!');
+        const loginData: LoginData = {
+          email: userEmail,
+          password: userPassword
+        };
+        try {
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+          const response = await fetch(`${apiUrl}/auth/login`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify(loginData)
+          });
+
+          const data = await response.json();
+          if (!response.ok) {
+            // Gérer les erreurs du backend
+            setErrorMessage(data.message || 'Invalid credentials');
+            setIsLoading(false);
+
+            return;
+          }
+
+          // Rediriger vers la page d'accueil (ou dashboard)
+          router.replace('/');
+          router.refresh();
+        } catch (error) {
+          console.error('Login error:', error);
+          setErrorMessage('Network error. Please try again later.');
+          setIsLoading(false);
+        }
       }
     } catch (e) {
       setErrorMessage('An error happened, please try again later');
