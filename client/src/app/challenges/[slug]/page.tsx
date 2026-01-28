@@ -125,6 +125,17 @@ export default function ChallengeDetailsPage() {
     window.setTimeout(() => setShowSuccessToast(false), 2000);
   };
 
+  // Fonction de vérification de connexion
+  const requireAuth = (message: string): boolean => {
+    if (!user) {
+      setReportResponseMessage(message);
+      setShowSuccessReport(true);
+      setTimeout(() => setShowSuccessReport(false), 4000);
+      return false;
+    }
+    return true;
+  };
+
   // Delete Challenge
 
   const confirmDeleteChallenge = async () => {
@@ -515,6 +526,11 @@ export default function ChallengeDetailsPage() {
 
   // Like challenge
   const toggleChallengeLike = async () => {
+    // ⬇️ VÉRIFICATION AJOUTÉE ICI
+    if (!requireAuth('❤️ Please login to like this challenge')) {
+      return; // Stop si pas connecté
+    }
+
     if (!challenge) {
       return;
     }
@@ -538,6 +554,11 @@ export default function ChallengeDetailsPage() {
   };
 
   const toggleParticipationLike = async (p: Participation) => {
+    // ⬇️ VÉRIFICATION AJOUTÉE ICI
+    if (!requireAuth('❤️ Please login to like this participation')) {
+      return; // Stop si pas connecté
+    }
+
     if (!challenge) {
       return;
     }
@@ -552,7 +573,6 @@ export default function ChallengeDetailsPage() {
           credentials: 'include'
         });
 
-        // Met à jour SEULEMENT cette participation
         setParticipations((prev) =>
           prev.map((participation) =>
             participation.id === p.id
@@ -571,7 +591,6 @@ export default function ChallengeDetailsPage() {
           credentials: 'include'
         });
 
-        // Met à jour SEULEMENT cette participation
         setParticipations((prev) =>
           prev.map((participation) =>
             participation.id === p.id
@@ -671,7 +690,7 @@ export default function ChallengeDetailsPage() {
       <div>
         {openReportModal ? (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/50 px-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/80 px-4"
             onMouseDown={(e) => {
               if (e.target === e.currentTarget) {
                 setOpenReportModal(false);
@@ -749,7 +768,7 @@ export default function ChallengeDetailsPage() {
     e: React.SyntheticEvent<EventTarget>
   ) {
     if (!user) {
-      setReportResponseMessage('Require to be connected to report');
+      setReportResponseMessage('⚠️ Please login to report');
       PopUp('pouet');
       const triggerSuccessReport = () => {
         setShowSuccessReport(true);
@@ -821,7 +840,7 @@ export default function ChallengeDetailsPage() {
     <div className="min-h-screen ">
       <main className="mx-auto w-full max-w-107.5 md:max-w-5xl px-4 md:px-8 py-5 md:py-8">
         {showSuccessToast ? PopUp('✅ Your participation is registered !') : null}
-        {showSuccessReport ? PopUp(`🚨 ${reportResponseMessage}`) : null}
+        {showSuccessReport ? PopUp(`${reportResponseMessage}`) : null}
         <div className="rounded-3xl bg-(--background-header)/70 ring-1 ring-background/10 shadow-[0_20px_60px_rgba(0,0,0,0.55)] overflow-hidden">
           <div className="relative h-32 md:h-48 lg:h-64 w-full bg-(--button-area)">
             <Image src={headerImage} alt={title} fill sizes="430px" className="object-cover" />
@@ -846,18 +865,27 @@ export default function ChallengeDetailsPage() {
                   onClick={(e) => {
                     userConnectedCheck(user, challenge, 'CHALLENGE', e);
                   }}
-                  className="mr-5 bg-(--button-delete) hover:bg-(--button-delete-hover) rounded-4xl pr-5 pl-5"
+                  className="mr-5 rounded-2xl px-2 -translate-y-3 hover:scale-150 transition-transform duration-200 cursor-pointer"
                 >
-                  Report
+                  ⚠️
                 </button>
                 <div className="flex flex-col items-center leading-none">
-                  <button
-                    type="button"
-                    onClick={onToggleChallengeLike}
-                    className="relative w-10 h-10 shrink-0 hover:opacity-90"
-                    aria-pressed={challengeHasVoted}
-                    aria-label={challengeHasVoted ? 'Unlike challenge' : 'Like challenge'}
-                  >
+                <button
+                  type="button"
+                  onClick={onToggleChallengeLike}
+                  className={`
+                    relative w-10 h-10 shrink-0 cursor-pointer
+                    transition-transform duration-200
+                    hover:scale-125
+                    ${!user ? 'opacity-40' : 'opacity-100'}
+                  `}
+                  aria-pressed={challengeHasVoted}
+                  aria-label={
+                    !user 
+                      ? 'Sign in to like this challenge' 
+                      : (challengeHasVoted ? 'Unlike challenge' : 'Like challenge')
+                  }
+                >
                     <Image
                       src={challengeHasVoted ? '/like 0.png' : '/like 1.png'}
                       alt={challengeHasVoted ? 'Voted' : 'Not Voted'}
@@ -956,7 +984,7 @@ export default function ChallengeDetailsPage() {
                 </div>
               </div>
 
-              <div className="mt-3 rounded-2xl bg-(--challenge-slug-detail-card)/30 ring-1 ring-background/10 p-3">
+              <div className="mt-3 rounded-2xl bg-(--searchbar-color) ring-1 ring-background/10 p-3">
                 {!isEditing ? (
                   <div className="text-foreground/85 whitespace-pre-wrap wrap-break-word">
                     {description}
@@ -1017,7 +1045,7 @@ export default function ChallengeDetailsPage() {
                 ) : null}
               </div>
 
-              <div className="mt-3 rounded-2xl bg-(--challenge-slug-detail-card)/30 ring-1 ring-background/10 p-3">
+              <div className="mt-3 rounded-2xl bg-(--searchbar-color) ring-1 ring-background/10 p-3">
                 <ul className="space-y-2">
                   {detailsPoints.map((txt, idx) => (
                     <li key={`det-${idx}`} className="flex items-start gap-3">
@@ -1094,7 +1122,7 @@ export default function ChallengeDetailsPage() {
             <div
               key={p.id}
               onClick={() => openViewModal(p.id)}
-              className="cursor-pointer rounded-2xl bg-(--challenge-slug-detail-card)/40 ring-1 ring-background/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] p-4"
+              className="cursor-pointer rounded-2xl bg-(--button-area) ring-1 ring-background/10 shadow-[0_10px_30px_rgba(0,0,0,0.35)] p-4"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
@@ -1122,19 +1150,28 @@ export default function ChallengeDetailsPage() {
                           onClick={(e) => {
                             userConnectedCheck(user, p, 'PARTICIPATION', e);
                           }}
-                          className="mb-2 px-2 mr-5 h-8 py-1 text-xs bg-(--button-delete) hover:bg-(--button-delete-hover) rounded-lg"
+                          className="mr-5 rounded-2xl px-2 -translate-y-3 hover:scale-150 transition-transform duration-200 cursor-pointer"
                           aria-label="Report participation"
                         >
-                          🚨
+                          ⚠️
                         </button>
                       )}
                       <div className="flex flex-col">
                         <button
                           type="button"
                           onClick={() => onToggleParticipationLike(p.id)}
-                          className="relative w-8 h-8 hover:opacity-90"
+                          className={`
+                            relative w-8 h-8 cursor-pointer
+                            transition-transform duration-200
+                            hover:scale-125
+                            ${!user ? 'opacity-40' : 'opacity-100'}
+                          `}
                           aria-pressed={!!p.hasVoted}
-                          aria-label={p.hasVoted ? 'Unlike participation' : 'Like participation'}
+                          aria-label={
+                            !user 
+                              ? 'Sign in to like this participation' 
+                              : (p.hasVoted ? 'Unlike participation' : 'Like participation')
+                          }
                         >
                           <Image
                             src={p.hasVoted ? '/like 0.png' : '/like 1.png'}
@@ -1188,7 +1225,7 @@ export default function ChallengeDetailsPage() {
         {/* Modals */}
         {isModalOpen ? (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/50 px-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/80 px-4"
             onMouseDown={(e) => {
               if (e.target === e.currentTarget) {
                 closeModal();
