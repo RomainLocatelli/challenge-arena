@@ -11,7 +11,7 @@ export default function NotFound() {
         <p>A rat probably stole the page</p>
         <Link
           href={'/'}
-          className="bg-(--button-select) hover:bg-(--button-area) rounded-full p-1 pr-2 pl-2 foreground "
+          className="bg-(--button-select) hover:bg-(--button-game-challenge-hover) rounded-full p-1 pr-2 pl-2 foreground "
         >
           Back to home
         </Link>

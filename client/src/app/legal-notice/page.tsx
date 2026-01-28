@@ -8,17 +8,22 @@ export default function legalNotice() {
           <p>This website is published as part of an academic project.</p>
           <ul className="pl-6">
             <li>
-              Project name: <strong>GamerChallenge</strong>
+              Project name: <strong>ChallengeArena</strong>
             </li>
-            <li>Editor: [Team or Student Name]</li>
-            <li>Contact: contact@example.com</li>
+            <li>
+              Editor: Stwompy, Medou, Shinro, Keerodan{' '}
+              <span className="opacity-0 hover:opacity-100 hover:text-(--button-delete)">
+                and the Discord&apos;s fart sound
+              </span>
+            </li>
+            <li>Contact: support@challengearena.com</li>
           </ul>
         </li>
         <li className="p-3 pb-8">
           <h3 className="pb-2 pl-10 text-xl">Hosting</h3>
           <p>This website is hosted by:</p>
           <ul className="pl-6">
-            <li>[Hosting Provider Name]</li>
+            <li>Railway</li>
             <li>[Hosting Provider Address]</li>
           </ul>
         </li>
