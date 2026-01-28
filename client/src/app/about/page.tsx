@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function AboutPage() {
   const patternSVG = `data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%237c39ed' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E`;
 
@@ -57,26 +59,26 @@ export default function AboutPage() {
           {/* Texte explicatif */}
           <div className="space-y-6 text-slate-300 leading-relaxed text-left md:text-center mb-12">
             <p className="text-base md:text-lg">
-              ChallengeArena was born as our final training project at O'Clock school. Among several options, we chose this one because it truly resonated with us: building a platform where gamers can create challenges, share their best plays, and vote for the most impressive performances.
+              ChallengeArena was born as our final training project at O&apos;Clock school. Among several options, we chose this one because it truly resonated with us: building a platform where gamers can create challenges, share their best plays, and vote for the most impressive performances.
             </p>
 
             <p className="text-base md:text-lg">
-              The idea? A community-driven platform, by gamers, for gamers. Whether you're casual or competitive, everyone belongs here. Create your own challenges, take on others', and let the community decide who deserves the top spot.
+              The idea? A community-driven platform, by gamers, for gamers. Whether you&apos;re casual or competitive, everyone belongs here. Create your own challenges, take on others&apos;, and let the community decide who deserves the top spot.
             </p>
 
             <p className="text-base md:text-lg">
-              Technically, this project pushed us to our limits and taught us a ton. But most importantly, we had a blast building it. We're proud of what we've achieved, and now it's your turn to jump in.
+              Technically, this project pushed us to our limits and taught us a ton. But most importantly, we had a blast building it. We&apos;re proud of what we&apos;ve achieved, and now it&apos;s your turn to jump in.
             </p>
           </div>
 
           {/* Double CTA */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a 
+            <Link 
               href="/challenges"
               className="px-8 py-4 bg-[var(--button-select)] hover:bg-[var(--button-game-challenge-hover)] rounded-lg font-semibold text-white hover:scale-105 transition-all shadow-lg hover:shadow-xl hover:shadow-[#7c39ed]/50 text-center"
             >
               Explore Challenges
-            </a>
+            </Link>
             <a 
               href="/login-register/register"
               className="px-8 py-4 bg-transparent border-2 border-[var(--button-select)] hover:bg-[var(--button-select)] rounded-lg font-semibold text-white hover:scale-105 transition-all text-center"
