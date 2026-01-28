@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useAuth } from './context/AuthContext';
 import ChallengeCard from '@/component/ChallengeCard';
+import PageBanner from '@/component/PageBanner';
+import LoginRegisterCard from '@/component/LoginRegisterCard';
 
 export default function Home() {
   type Game = { id: string; title: string; imageUrl: string; slug: string };
@@ -109,45 +111,10 @@ export default function Home() {
   return (
     <div className="min-h-screen light:-bg-(--background-header)">
       {/* GamerChallenge news area */}
-      <div className="relative h-30 w-80 md:h-60 md:w-160 lg:h-100 lg:w-265 m-5 ml-10 mr-10 rounded-4xl overflow-hidden place-self-center">
-        <Image
-          src="/rat-banner-800px.png"
-          alt="Banner"
-          width={800}
-          height={800}
-          className="absolute inset-0 w-full h-full object-cover object-top"
-        />
-        <div className="absolute inset-0 flex items-center justify-center z-10">
-          <p className="text-4xl  md:text-6xl font-black uppercase tracking-wider bg-linear-to-r from-(--danger-button) via-(--button-select) to-(--danger-button) bg-clip-text text-transparent drop-shadow-[0_4px_15px_rgba(168,85,247,0.7)] transition-all duration-300 hover:scale-105 animate-bounce">
-            Forge your challenge
-          </p>
-        </div>
-      </div>
+      <PageBanner title="Forge your challenge" />
       {!user ? (
-        <div>
-          <p className="text-center">Challenge yourself or others by registering or connecting</p>
-          <nav className="flex justify-center mb-8">
-            <Link href="/login-register/login">
-              <button
-                type="button"
-                className="bg-(--button-area) p-3 rounded-3xl mr-8 mt-6 cursor-pointer"
-              >
-                Login
-              </button>
-            </Link>
-            <Link href="/login-register/register">
-              <button
-                type="button"
-                className="bg-(--button-select) p-3 rounded-3xl  mt-6 cursor-pointer"
-              >
-                Register
-              </button>
-            </Link>
-          </nav>
-        </div>
-      ) : (
-        <p></p>
-      )}
+        <LoginRegisterCard message="Your next challenge awaits. Join the community" />
+      ) : null}
       <div className="">
         <nav className="flex justify-between align-content m-5 items-center-safe">
           <p className="text-center text-xl">
