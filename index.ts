@@ -28,7 +28,7 @@ app.use(
 );
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || 'https://levasseurmickael-server.eddi.cloud',
+    origin: process.env.FRONTEND_URL || '',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
