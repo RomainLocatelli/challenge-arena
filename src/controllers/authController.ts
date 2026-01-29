@@ -32,10 +32,10 @@ export const loginController = async (req: Request, res: Response, next: NextFun
     // ➕ NOUVELLE VÉRIFICATION : si l'utilisateur est banni
     if (user.isBanned) {
       return res.status(403).json({
-        error: "Account banned",
-        message: "Account banned, for any request please contact the support"
+        error: 'Account banned',
+        message: 'Account banned, for any request please contact the support'
       });
-    }    
+    }
 
     // Générer le JWT token
     const token = jwt.sign(
@@ -47,8 +47,10 @@ export const loginController = async (req: Request, res: Response, next: NextFun
     // Définir le cookie avec le token
     res.cookie('accessToken', token, {
       httpOnly: true,
-      secure: false, // ← En dev, on force false pour localhost
-      sameSite: 'lax', // ← Permet cross-origin
+      secure: true, // ← En dev, on force false pour localhost
+      sameSite: 'none', // ← Permet cross-origin
+      domain: process.env.COOKIE_DOMAIN,
+      path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
@@ -88,7 +90,8 @@ export const logOutontroller = async (req: Request, res: Response) => {
   res.clearCookie('accessToken', {
     httpOnly: true,
     secure: true,
-    sameSite: 'lax',
+    sameSite: 'none',
+    domain: process.env.COOKIE_DOMAIN,
     path: '/'
   });
   return res.status(200).json({ message: 'logged out successfully' });

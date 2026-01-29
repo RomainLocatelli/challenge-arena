@@ -21,14 +21,17 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middlewares globaux
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' }
+  })
+);
 app.use(
   cors({
-    origin: [
-      process.env.FRONTEND_URL || 'http://localhost:8008',
-      'http://127.0.0.1:8008' // Accepter aussi 127.0.0.1
-    ],
-    credentials: true
+    origin: process.env.FRONTEND_URL || 'https://levasseurmickael-server.eddi.cloud',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
   })
 );
 app.use(express.json());
@@ -59,5 +62,7 @@ app.use('/', homeRoutes);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`API ready on port ${PORT}`);
+  console.log(`✅ API ready on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV}`);
+  console.log(`Frontend URL: ${process.env.FRONTEND_URL}`);
 });
