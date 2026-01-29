@@ -18,66 +18,66 @@ enum ReportTargetType {
 }
 
 model User {
-  id                   String               @id @default(uuid(7))
-  email                String               @unique
-  username             String               @unique
-  password             String
-  role                 Role                 @default(USER)
-  isDeleted            Boolean              @default(false) @map("is_deleted")
-  deletedAt            DateTime?            @map("deleted_at")
-  isBanned             Boolean              @default(false) @map("is_banned")
-  bannedAt             DateTime?            @map("banned_at")
-  createdAt            DateTime             @default(now()) @map("created_at")
-  updatedAt            DateTime             @updatedAt @map("updated_at")
-  
-  participations       Participation[]
-  challengeVotes       ChallengeVote[]
-  participationVotes   ParticipationVote[]
-  createdChallenges    Challenge[]          @relation("ChallengeCreator")
-  reports              Report[]
+  id        String    @id @default(uuid(7))
+  email     String    @unique
+  username  String    @unique
+  password  String
+  role      Role      @default(USER)
+  isDeleted Boolean   @default(false) @map("is_deleted")
+  deletedAt DateTime? @map("deleted_at")
+  isBanned  Boolean   @default(false) @map("is_banned")
+  bannedAt  DateTime? @map("banned_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  participations     Participation[]
+  challengeVotes     ChallengeVote[]
+  participationVotes ParticipationVote[]
+  createdChallenges  Challenge[]         @relation("ChallengeCreator")
+  reports            Report[]
 
   @@map("users")
 }
 
 model Game {
-  id          String      @id
-  slug        String      @unique
-  title       String
-  imageUrl    String      @map("image_url")
-  
-  challenges  Challenge[]
+  id       String @id
+  slug     String @unique
+  title    String
+  imageUrl String @map("image_url")
+
+  challenges Challenge[]
 
   @@map("games")
 }
 
 model Challenge {
-  id          String       @id @default(uuid(7))
-  slug        String       @unique
-  title       String       @unique
-  scoreFormat String       @map("score_format")
+  id          String   @id @default(uuid(7))
+  slug        String   @unique
+  title       String   @unique
+  scoreFormat String   @map("score_format")
   description String
   details     String?
-  createdBy   String       @map("created_by")
-  gameId      String       @map("game_id")
-  createdAt   DateTime     @default(now()) @map("created_at")
-  updatedAt   DateTime     @updatedAt @map("updated_at")
-  
-  creator         User                @relation("ChallengeCreator", fields: [createdBy], references: [id], onDelete: Cascade)
-  game            Game                @relation(fields: [gameId], references: [id], onDelete: Cascade)
-  participations  Participation[]
-  votes           ChallengeVote[]
+  createdBy   String   @map("created_by")
+  gameId      String   @map("game_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  creator        User            @relation("ChallengeCreator", fields: [createdBy], references: [id], onDelete: Cascade)
+  game           Game            @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  participations Participation[]
+  votes          ChallengeVote[]
 
   @@map("challenges")
 }
 
 model Participation {
-  id            String    @id @default(uuid(7))
-  submissionUrl String?    @map("submission_url")
+  id            String   @id @default(uuid(7))
+  submissionUrl String?  @map("submission_url")
   description   String?
-  userId        String    @map("user_id")
-  challengeId   String    @map("challenge_id")
-  createdAt     DateTime  @default(now()) @map("created_at")
-  
+  userId        String   @map("user_id")
+  challengeId   String   @map("challenge_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+
   user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   challenge Challenge           @relation(fields: [challengeId], references: [id], onDelete: Cascade)
   votes     ParticipationVote[]
@@ -86,11 +86,11 @@ model Participation {
 }
 
 model ChallengeVote {
-  id          String    @id @default(uuid(7))
-  userId      String    @map("user_id")
-  challengeId String    @map("challenge_id")
-  createdAt   DateTime  @default(now()) @map("created_at")
-  
+  id          String   @id @default(uuid(7))
+  userId      String   @map("user_id")
+  challengeId String   @map("challenge_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   challenge Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
 
@@ -99,11 +99,11 @@ model ChallengeVote {
 }
 
 model ParticipationVote {
-  id              String        @id @default(uuid(7))
-  userId          String        @map("user_id")
-  participationId String        @map("participation_id")
-  createdAt       DateTime      @default(now()) @map("created_at")
-  
+  id              String   @id @default(uuid(7))
+  userId          String   @map("user_id")
+  participationId String   @map("participation_id")
+  createdAt       DateTime @default(now()) @map("created_at")
+
   user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   participation Participation @relation(fields: [participationId], references: [id], onDelete: Cascade)
 
@@ -112,15 +112,15 @@ model ParticipationVote {
 }
 
 model Report {
-  id          String            @id @default(uuid(7))
-  reason      String
-  userId      String            @map("user_id")
-  targetType  ReportTargetType  @map("target_type")
-  targetId    String            @map("target_id")
-  createdAt   DateTime          @default(now()) @map("created_at")
-  
+  id         String           @id @default(uuid(7))
+  reason     String
+  userId     String           @map("user_id")
+  targetType ReportTargetType @map("target_type")
+  targetId   String           @map("target_id")
+  createdAt  DateTime         @default(now()) @map("created_at")
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@unique([userId, targetType, targetId])
   @@map("reports")
 }
