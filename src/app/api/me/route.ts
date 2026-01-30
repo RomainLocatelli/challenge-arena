@@ -1,13 +1,18 @@
-// app/api/me/route.ts (Next.js route)
 import { NextResponse } from 'next/server';
 
 export async function GET(req: Request) {
-  const cookie = req.headers.get('cookie'); // récupère le cookie du client
-  const backendUrl = process.env.NEXT_PUBLIC_API_URL;
+  const cookie = req.headers.get('cookie');
+  const backendUrl = process.env.API_INTERNAL_URL;
+
+  if (!backendUrl) {
+    return NextResponse.json({ error: 'API_INTERNAL_URL missing' }, { status: 500 });
+  }
 
   const res = await fetch(`${backendUrl}/auth/me`, {
-    headers: { Cookie: cookie || '' },
-    credentials: 'include'
+    headers: {
+      cookie: cookie ?? ''
+    },
+    cache: 'no-store'
   });
 
   const data = await res.json();

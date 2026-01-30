@@ -63,7 +63,7 @@ export default function Home() {
                 alt="gamerchallenge logo"
                 className="h-40 object-cover rounded-t-4xl"
               ></Image>
-              <h3 className="text-center mt-2">{game.title}</h3>
+              <h3 className="text-center mt-2 truncate w-[200]">{game.title}</h3>
             </Link>
           );
         })}
