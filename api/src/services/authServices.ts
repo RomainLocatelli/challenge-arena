@@ -1,8 +1,9 @@
 import argon2 from 'argon2';
-import { prisma } from '../../lib/prisma.js';
+import { prisma, Prisma } from '../../lib/prisma.js';
 import { AppError } from '../utils/AppError.js';
 import type { RegisterInput } from '../schemas/authSchemas.js';
 import type { LoginInput } from '../schemas/authSchemas.js';
+
 
 //  Hash du mot de passe
 export const register = async (data: RegisterInput) => {
@@ -28,11 +29,13 @@ export const register = async (data: RegisterInput) => {
       ...userWithoutPassword
     } = user;
     return userWithoutPassword;
-  } catch (error: any) {
+  } catch (error) {
     //  Erreur si le user existe déjà
-    if (error.code === 'P2002') {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
       throw new AppError('Email or username already in use', 409);
     }
+  }
 
     throw error;
   }
