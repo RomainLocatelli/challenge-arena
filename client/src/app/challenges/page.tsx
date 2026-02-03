@@ -23,7 +23,6 @@ function useMediaQuery(query: string) {
   return matches;
 }
 
-type Game = { id: string; title: string; imageUrl: string };
 type Challenge = {
   createdAt: string;
   createdBy: string;
@@ -91,8 +90,6 @@ export default function ChallengesPage() {
   const [pageBlockStart, setPageBlockStart] = useState(2);
 
   const [challenges, setChallenges] = useState<Challenge[]>([]);
-  const [games, setGames] = useState<Game[]>([]);
-  const [selectedGameId, setSelectedGameId] = useState<string | null>(null);
   const [filterModalArea, setFilterModalArea] = useState<boolean>(false);
 
   const [orderFilterSearchbar, setOrderFilterSearchBar] = useState<'ASC' | 'DESC'>('ASC');
@@ -111,16 +108,7 @@ export default function ChallengesPage() {
     API CALLS
   ====================== */
 
-  useEffect(() => {
-    async function fetchGames() {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-      const res = await fetch(`${baseUrl}/games`);
-      const data = await res.json();
-      setGames(data.games || []);
-    }
 
-    fetchGames();
-  }, []);
 
   useEffect(() => {
     async function fetchChallenges() {
@@ -160,18 +148,13 @@ export default function ChallengesPage() {
     const q = searchQuery.trim().toLowerCase();
 
     return challenges.filter((c) => {
-      const matchesGame = !selectedGameId || c.gameId === selectedGameId;
-
-      if (!q) {
-        return matchesGame;
-      }
-
+      
       const matchesQuery =
         c.title.toLowerCase().includes(q) || c.game.title.toLowerCase().includes(q);
 
-      return matchesGame && matchesQuery;
+      return matchesQuery;
     });
-  }, [searchQuery, selectedGameId, challenges]);
+  }, [searchQuery, challenges]);
 
   /* ======================
     SORTING
@@ -272,7 +255,7 @@ export default function ChallengesPage() {
             {/* Message si aucun challenge */}
             {filteredChallenges.length === 0 && (
               <p className="mt-6 text-center ">
-                {selectedGameId ? 'No challenge for this game yet' : 'No challenge found.'}
+                No challenge for this game yet or no challenge of this name exist.
               </p>
             )}
           </div>{' '}

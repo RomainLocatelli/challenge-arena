@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import type { FormEvent } from 'react';
+
 
 type LoginData = {
   email: string;
@@ -9,13 +10,13 @@ type LoginData = {
 };
 
 export default function AuthLogin() {
-  const router = useRouter();
+
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault(); // IMPORTANT : empêche le rechargement de la page
     setErrorMessage('');
     setIsLoading(true);
@@ -48,7 +49,7 @@ export default function AuthLogin() {
       // Rediriger vers la page d'accueil (ou dashboard)
       window.location.href = '/';
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('Login error:', error); // eslint-disable-line no-console
       setErrorMessage('Network error. Please try again later.');
       setIsLoading(false);
     }

@@ -51,18 +51,29 @@ export default function GamesPage() {
     : 6;
 
   useEffect(() => {
-    async function getAllGames() {
+  async function getAllGames() {
+    try {
       const registerUrl = process.env.NEXT_PUBLIC_API_URL || '';
       const response = await fetch(`${registerUrl}/games`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch games');
+      }
+      
       const replyDb = await response.json();
 
       // Extraire le tableau games de l'objet
       setGames(replyDb.games || []);
+    } catch (err) {
+      console.error('Error fetching games:', err);  // eslint-disable-line no-console
+      setError('Failed to load games. Please try again later.');
+    } finally {
       setLoading(false);
     }
+  }
 
-    getAllGames();
-  }, []);
+  getAllGames();
+}, []);
 
   const filteredGames = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();

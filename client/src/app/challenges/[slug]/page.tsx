@@ -7,6 +7,7 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/app/context/AuthContext';
 import PopUp from '@/component/Pop--up';
 import LoginRegisterCard from '@/component/LoginRegisterCard';
+import type { SyntheticEvent } from 'react';
 
 // hook responsive
 function useMediaQuery(query: string) {
@@ -765,7 +766,7 @@ export default function ChallengeDetailsPage() {
     user: User,
     p: Participation | ChallengeDetails,
     reportType: 'PARTICIPATION' | 'CHALLENGE',
-    e: React.SyntheticEvent<EventTarget>
+    e: SyntheticEvent<EventTarget>
   ) {
     if (!user) {
       setReportResponseMessage('⚠️ Please login to report');

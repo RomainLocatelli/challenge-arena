@@ -6,12 +6,12 @@ import Footer from '@/component/footer/Footer';
 import { AuthProvider } from './context/AuthContext';
 import { ReactNode } from 'react';
 
-const geistSans = Geist({  // eslint-disable-line no-console
+const _geistSans = Geist({ 
   variable: '--font-geist-sans',
   subsets: ['latin']
 });
 
-const geistMono = Geist_Mono({  // eslint-disable-line no-console
+const _geistMono = Geist_Mono({  
   variable: '--font-geist-mono',
   subsets: ['latin']
 });

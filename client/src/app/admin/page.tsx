@@ -77,7 +77,7 @@ export default function AdminPage() {
   }, [user, router, dataLoading]);
 
   const handleBan = async (userId: string) => {
-    if (!confirm('Ban this user?')) return;
+    if (!confirm('Ban this user?')) {return};
 
     try {
       setActionLoading(userId);
@@ -121,7 +121,7 @@ export default function AdminPage() {
   };
 
   const handleDeleteChallenge = async (challengeId: string) => {
-    if (!confirm('Delete this challenge? (cascade)')) return;
+    if (!confirm('Delete this challenge? (cascade)')) {return};
 
     try {
       setActionLoading(challengeId);
@@ -147,7 +147,7 @@ export default function AdminPage() {
   };
 
   const handleDeleteParticipation = async (participationId: string) => {
-    if (!confirm('Delete this participation? (cascade)')) return;
+    if (!confirm('Delete this participation? (cascade)')) {return};
 
     try {
       setActionLoading(participationId);
@@ -161,8 +161,8 @@ export default function AdminPage() {
   };
 
   const getUserDisplayName = (u: User) => {
-    if (u.isDeleted) return 'Deleted user';
-    if (u.isBanned) return 'Banned user';
+    if (u.isDeleted) {return 'Deleted user'};
+    if (u.isBanned) {return 'Banned user'};
     return u.username;
   };
 

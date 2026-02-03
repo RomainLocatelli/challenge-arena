@@ -135,7 +135,7 @@ export default function GamePage() {
 
       const list = (data.challenges || data || []).map((c: Partial<Challenge>) => ({
         ...c,
-        voteCount: (c as any).voteCount ?? 0
+        voteCount: (c).voteCount ?? 0
       })) as Challenge[];
 
       setChallenges(list);
