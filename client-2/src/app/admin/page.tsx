@@ -34,34 +34,27 @@ export default function AdminPage() {
 
   useEffect(() => {
     async function checkAccessAndLoadData() {
-      console.log('🔍 Check access - user:', user);
-
       // Attendre que le user soit chargé
       if (user === null) {
-        console.log('⏳ User still loading...');
         return;
       }
 
       // Vérifier authentification
       if (!user) {
-        console.log('❌ No user, redirecting to login');
         router.push('/login-register/login');
         return;
       }
 
       // Vérifier droits admin
       if (user.role !== 'ADMIN') {
-        console.log('❌ Not admin, redirecting home');
         router.push('/');
         return;
       }
 
-      console.log('✅ User is admin');
       setLoading(false);
 
       // Charger les données une seule fois
       if (dataLoading) {
-        console.log('📥 Loading data...');
         try {
           const [usersData, challengesData, participationsData] = await Promise.all([
             fetchAllUsers(),
@@ -69,18 +62,11 @@ export default function AdminPage() {
             fetchReportedParticipations()
           ]);
 
-          console.log('✅ Data loaded:', {
-            users: usersData.length,
-            challenges: challengesData.length,
-            participations: participationsData.length
-          });
-
           setUsers(usersData);
           setChallenges(challengesData);
           setParticipations(participationsData);
           setDataLoading(false); // ✅ Mettre à false après chargement
         } catch (err: any) {
-          console.error('💥 Error loading data:', err);
           setError(err.message || 'Failed to load data');
           setDataLoading(false); // ✅ Mettre à false même en cas d'erreur
         }
