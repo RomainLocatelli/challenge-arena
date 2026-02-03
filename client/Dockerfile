@@ -24,6 +24,7 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/next.config.ts ./next.config.ts
 
+
 EXPOSE 8008
 
 CMD ["npx", "next", "start", "-p", "8008", "-H", "0.0.0.0"]
