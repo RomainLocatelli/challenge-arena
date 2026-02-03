@@ -8,7 +8,7 @@ const adapter = new PrismaPg({ connectionString });
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  console.log('🌱 Starting massive seed...');
+  console.log('🌱 Starting massive seed...'); // eslint-disable-line no-console
 
   // Nettoyer la base
   await prisma.participationVote.deleteMany();
@@ -18,7 +18,7 @@ async function main() {
   await prisma.game.deleteMany();
   await prisma.user.deleteMany();
 
-  console.log('✅ Database cleaned');
+  console.log('✅ Database cleaned'); // eslint-disable-line no-console
 
   // Créer 15 users (plus de diversité)
   const hashedPassword = await argon2.hash('Test1234!');
@@ -106,7 +106,7 @@ async function main() {
     })
   ]);
 
-  console.log(`✅ Created ${users.length} users`);
+  console.log(`✅ Created ${users.length} users`); // eslint-disable-line no-console
 
   // Créer 30 jeux (IDs réels de RAWG API)
   const games = await Promise.all([
@@ -344,7 +344,7 @@ async function main() {
     })
   ]);
 
-  console.log(`✅ Created ${games.length} games`);
+  console.log(`✅ Created ${games.length} games`); // eslint-disable-line no-console
 
   // Créer 75 challenges (2-3 par jeu, variété de scoreFormat)
 const challenges = [];
@@ -1245,7 +1245,7 @@ for (const cd of challengeData) {
   );
 }
 
-console.log(`✅ Created ${challenges.length} challenges`);
+console.log(`✅ Created ${challenges.length} challenges`); // eslint-disable-line no-console
 
 
   // Créer 200+ participations (distribution variable)
@@ -1291,7 +1291,7 @@ console.log(`✅ Created ${challenges.length} challenges`);
     }
   }
 
-  console.log(`✅ Created ${participations.length} participations`);
+  console.log(`✅ Created ${participations.length} participations`); // eslint-disable-line no-console
 
   // Créer votes sur participations (distribution réaliste)
   const participationVotes = [];
@@ -1313,13 +1313,13 @@ console.log(`✅ Created ${challenges.length} challenges`);
             }
           })
         );
-      } catch (e) {
+      } catch (e) { // eslint-disable-line @typescript-eslint/no-unused-vars
         // Skip duplicates
       }
     }
   }
 
-  console.log(`✅ Created ${participationVotes.length} participation votes`);
+  console.log(`✅ Created ${participationVotes.length} participation votes`); // eslint-disable-line no-console
 
   // Créer votes sur challenges
   const challengeVotes = [];
@@ -1337,12 +1337,13 @@ console.log(`✅ Created ${challenges.length} challenges`);
             }
           })
         );
-      } catch (e) {
+      } catch (e) { // eslint-disable-line @typescript-eslint/no-unused-vars
         // Skip duplicates
       }
     }
   }
 
+  /* eslint-disable no-console */
   console.log(`✅ Created ${challengeVotes.length} challenge votes`);
 
   console.log('🎉 Massive seed completed!');
@@ -1354,10 +1355,11 @@ console.log(`✅ Created ${challenges.length} challenges`);
   console.log(`   - ${participationVotes.length} participation votes`);
   console.log(`   - ${challengeVotes.length} challenge votes`);
 }
+/* eslint-enable no-console */
 
 main()
   .catch((e) => {
-    console.error(e);
+    console.error(e);  // eslint-disable-line no-console
     process.exit(1);
   })
   .finally(async () => {

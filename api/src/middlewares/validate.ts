@@ -1,7 +1,5 @@
-// middleware de validation avec Zod : valide req.body avec un schéma Zod et retourne une erreur 400 si invalide
-
 import { Request, Response, NextFunction } from 'express';
-import { ZodSchema } from 'zod';
+import { ZodSchema, ZodError } from 'zod';
 import { AppError } from '../utils/AppError.js';
 
 export const validate = (schema: ZodSchema) => {
@@ -9,9 +7,12 @@ export const validate = (schema: ZodSchema) => {
     try {
       schema.parse(req.body);
       next();
-    } catch (error: any) {
-      const message = error.errors?.map((e: any) => e.message).join(', ');
-      next(new AppError(message || 'Validation failed', 400));
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const message = error.issues.map((issue) => issue.message).join(', ');
+        return next(new AppError(message, 400));
+      }
+      next(error);
     }
   };
 };

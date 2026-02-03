@@ -2,7 +2,7 @@
 // createReport : permet a un utilisateur connecté de signaler un challenge ou une participation
 
 import { Request, Response, NextFunction } from 'express';
-import { prisma } from '../../lib/prisma.js';
+import { prisma, Prisma } from '../../lib/prisma.js';
 import { AppError } from '../utils/AppError.js';
 
 // User connecté signale un contenu
@@ -42,10 +42,12 @@ export const createReport = async (req: Request, res: Response, next: NextFuncti
       message: 'Content reported successfully',
       reportId: report.id
     });
-  } catch (error: any) {
-    // Gestion de l'erreur de contrainte unique (user a déjà signalé ce contenu)
-    if (error.code === 'P2002') {
-      return next(new AppError('You have already reported this content', 400));
+  } catch (error) {
+      //  Erreur si le user existe déjà
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+        throw new AppError('Email or username already in use', 409);
+      }
     }
     next(error);
   }

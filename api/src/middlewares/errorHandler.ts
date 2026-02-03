@@ -1,9 +1,9 @@
 // error handler gobal : intercepte toutes les erreurs et retourne la bonne réponse HTTP
 
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import { AppError } from '../utils/AppError.js';
 
-export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
+export const errorHandler = (err: Error, req: Request, res: Response ) => {
   // Si c'est une erreur custom (AppError)
   if (err instanceof AppError) {
     return res.status(err.statusCode).json({
@@ -13,7 +13,7 @@ export const errorHandler = (err: Error, req: Request, res: Response, next: Next
   }
 
   // Sinon, c'est un bug serveur (erreur inconnue)
-  console.error('💥 Unexpected error:', err);
+  console.error('💥 Unexpected error:', err);  // eslint-disable-line no-console
   return res.status(500).json({
     status: 'error',
     message: 'Internal server error'

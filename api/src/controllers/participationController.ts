@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { prisma } from '../../lib/prisma.js';
+import { prisma, Prisma } from '../../lib/prisma.js';
 import { AppError } from '../utils/AppError.js';
 import {
   createParticipationBodySchema,
@@ -79,7 +79,7 @@ export async function updateParticipation(req: Request, res: Response, next: Nex
     }
 
     // Construire l'objet de mise à jour (seulement les champs fournis)
-        const updateData: Record<string, any> = {};
+        const updateData: Prisma.ParticipationUpdateInput = {};
         if (submissionUrl !== undefined) {
           // Si la valeur est null, utiliser la forme Prisma { set: null } pour les champs nullable
           updateData.submissionUrl = submissionUrl === null ? { set: null } : submissionUrl;
@@ -91,7 +91,7 @@ export async function updateParticipation(req: Request, res: Response, next: Nex
         // Mettre à jour
         const updatedParticipation = await prisma.participation.update({
           where: { id },
-          data: updateData as any,
+          data: updateData,
           include: { user: true }
         });
 

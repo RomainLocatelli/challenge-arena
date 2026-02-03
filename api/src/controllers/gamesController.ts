@@ -6,10 +6,19 @@ import { Request, Response, NextFunction } from 'express';
 import { AppError } from '../utils/AppError.js';
 import { prisma } from '../../lib/prisma.js';
 
-const RAWG_API_KEY = process.env.RAWG_API_KEY;
-const RAWG_BASE_URL = 'https://api.rawg.io/api';
+
 
 export const searchGames = async (req: Request, res: Response, next: NextFunction) => {
+  const RAWG_API_KEY = process.env.RAWG_API_KEY;
+  const RAWG_BASE_URL = process.env.RAWG_BASE_URL;
+
+  type GameRawgSearchResult = {
+    id: number;
+    slug: string;
+    name: string;
+    background_image: string;
+  };
+
   try {
     const { q } = req.query;
 
@@ -20,7 +29,6 @@ export const searchGames = async (req: Request, res: Response, next: NextFunctio
     const response = await fetch(
       `${RAWG_BASE_URL}/games?search=${encodeURIComponent(q)}&key=${RAWG_API_KEY}`
     );
-
     if (!response.ok) {
       throw new AppError('RAWG API unavailable', 503);
     }
@@ -28,7 +36,7 @@ export const searchGames = async (req: Request, res: Response, next: NextFunctio
     const data = await response.json();
 
     res.json({
-      results: data.results.map((game: any) => ({
+      results: data.results.map((game: GameRawgSearchResult) => ({
         id: game.id,
         slug: game.slug,
         name: game.name,
@@ -53,10 +61,41 @@ export const getAllGames = async (req: Request, res: Response, next: NextFunctio
 };
 
 export const getGameBySlug = async (req: Request, res: Response, next: NextFunction) => {
+
+  type PrismaChallengeWithCount = {
+    id: string; // ← UUID, donc string
+    slug: string;
+    title: string;
+    scoreFormat: string;
+    description: string;
+    details: string | null;
+    createdBy: string;
+    gameId: string; // ← string aussi
+    createdAt: Date;
+    updatedAt: Date;
+    game: {
+      id: string;
+      slug: string;
+      title: string;
+      imageUrl: string;
+    };
+    _count: {
+      votes: number;
+    };
+  };
+
+  type GameWithChallenges = {
+    id: string;
+    slug: string;
+    title: string;
+    imageUrl: string;
+    challenges: PrismaChallengeWithCount[];
+  };
+
   try {
     const { slug } = req.params;
 
-    const game = await prisma.game.findUnique({
+    const game: GameWithChallenges | null = await prisma.game.findUnique({
       where: { slug },
       include: {
         challenges: {
@@ -76,13 +115,12 @@ export const getGameBySlug = async (req: Request, res: Response, next: NextFunct
 
     // Formate la réponse pour ajouter voteCount et retirer _count
     res.json({
-      game: {
-        ...game,
-        challenges: game.challenges.map((c) => ({
-          ...c,
-          voteCount: c._count.votes,
-          _count: undefined // ← Retire _count de la réponse
-        }))
+  game: {
+    ...game,
+    challenges: game.challenges.map(({ _count, game: _, ...challenge }) => ({
+      ...challenge,
+      voteCount: _count.votes
+    }))
       }
     });
   } catch (error) {

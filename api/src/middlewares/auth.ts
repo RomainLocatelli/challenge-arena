@@ -43,13 +43,16 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 
     // Passer au middleware/controller suivant
     next();
-  } catch (error: any) {
+  } catch (error) {
     // Gestion des erreurs JWT spécifiques
-    if (error.name === 'JsonWebTokenError') {
+    if (error instanceof jwt.JsonWebTokenError) {
       return next(new AppError('Invalid token', 401));
     }
-    if (error.name === 'TokenExpiredError') {
+    if (error instanceof jwt.TokenExpiredError) {
       return next(new AppError('Token expired', 401));
+    }
+    if (error instanceof jwt.NotBeforeError) {
+      return next(new AppError('Token not active yet', 401));
     }
     // Autres erreurs
     next(error);

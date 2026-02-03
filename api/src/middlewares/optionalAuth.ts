@@ -18,6 +18,7 @@ export const optionalAuth = (req: Request, res: Response, next: NextFunction) =>
     
     next();
   } catch (error) {
+    console.error('Optional auth error:', error);  // eslint-disable-line no-console
     // Token invalide = pas connecté = OK
     req.userId = undefined;
     next();

@@ -53,8 +53,8 @@ npx prisma migrate dev
 
 ## Accès
 
-- **Frontend** : http://localhost:8008
-- **API** : http://localhost:3000
+- **Frontend** : <http://localhost:8008>
+- **API** : <http://localhost:3000>
 - **Base de données** : localhost:5433
 
 ## Scripts utiles

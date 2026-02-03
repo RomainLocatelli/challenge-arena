@@ -57,9 +57,9 @@ npx prisma migrate dev
 
 Une fois lancé, accédez à :
 
-- **Frontend** : http://localhost:8008
-- **API** : http://localhost:3000
-- **Prisma Studio** (gestion DB) : http://localhost:5555
+- **Frontend** : <http://localhost:8008>
+- **API** : <http://localhost:3000>
+- **Prisma Studio** (gestion DB) : <http://localhost:5555>
 
 ---
 
@@ -67,7 +67,7 @@ Une fois lancé, accédez à :
 
 ### Structure du Projet
 
-```
+```bash
 gamerchallenge/
 ├── api/                    # Backend Express + Prisma
 │   ├── src/
@@ -177,6 +177,7 @@ Pour la liste complète, consultez les fichiers dans `api/src/routes/`.
    ```
 
 4. **Pousser et créer une Pull Request**
+
    ```bash
    git push origin feature/ma-fonctionalite
    ```
@@ -258,7 +259,7 @@ Développé par l'équipe **O-clock Dublin**
 
 Pour toute question ou suggestion :
 
-- 📧 **Email** : contact@gamerchallenge.com
+- 📧 **Email** : <contact@gamerchallenge.com>
 - 🐛 **Signaler un bug** : [Créer une issue](https://github.com/O-clock-Dublin/projet-gamerchallenges/issues)
 - 💬 **Discussions** : [Discussions GitHub](https://github.com/O-clock-Dublin/projet-gamerchallenges/discussions)
 
@@ -276,4 +277,4 @@ Pour toute question ou suggestion :
 
 ---
 
-**Made with ❤️ for gamers by gamers**
+## Made with ❤️ for gamers by gamers

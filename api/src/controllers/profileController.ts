@@ -4,7 +4,7 @@
 // deleteProfile : soft delete => isDeleted: true + anonymisation (username, email)
 
 import { Request, Response, NextFunction } from 'express';
-import { prisma } from '../../lib/prisma.js';
+import { prisma, Prisma } from '../../lib/prisma.js';
 import { AppError } from '../utils/AppError.js';
 import argon2 from 'argon2';
 
@@ -158,7 +158,7 @@ export const updateProfile = async (req: Request, res: Response, next: NextFunct
     }
 
     // Préparer les données à mettre à jour
-    const dataToUpdate: any = {};
+    const dataToUpdate: Prisma.UserUpdateInput = {};
     if (username) {
       dataToUpdate.username = username;
     }
@@ -185,24 +185,26 @@ export const updateProfile = async (req: Request, res: Response, next: NextFunct
       message: 'Profile updated successfully',
       user: updatedUser
     });
-  } catch (error: any) {
+  } catch (error) {
     // Gérer l'erreur Prisma de contrainte unique
-    if (error.code === 'P2002') {
-      // L'info est cachée dans driverAdapterError avec ton adaptateur
-      const fields = error.meta?.driverAdapterError?.cause?.constraint?.fields;
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        const meta = error.meta as any; // eslint-disable-line @typescript-eslint/no-explicit-any
+        const fields = meta?.driverAdapterError?.cause?.constraint?.fields;
 
-      if (Array.isArray(fields)) {
-        if (fields.includes('username')) {
-          return next(new AppError('This username is already in use by another user', 409));
+        if (Array.isArray(fields)) {
+          if (fields.includes('username')) {
+            return next(new AppError('This username is already in use by another user', 409));
+          }
+
+          if (fields.includes('email')) {
+            return next(new AppError('This email address is already in use by another user', 409));
+          }
         }
 
-        if (fields.includes('email')) {
-          return next(new AppError('This email address is already in use by another user', 409));
-        }
+        // Fallback
+        return next(new AppError('This information is already in use', 409));
       }
-
-      // Fallback
-      return next(new AppError('This information is already in use', 409));
     }
 
     // Autres erreurs
