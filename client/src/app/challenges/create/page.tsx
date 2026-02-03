@@ -12,18 +12,6 @@ type RawgGame = {
   background_image: string | null;
 };
 
-// hook responsive
-function useMediaQuery(query: string) {
-  const [matches, setMatches] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia(query);
-    const onChange = () => setMatches(mq.matches);
-    onChange();
-    mq.addEventListener?.('change', onChange);
-    return () => mq.removeEventListener?.('change', onChange);
-  }, [query]);
-  return matches;
-}
 
 export default function CreateChallengePage() {
   const router = useRouter();
@@ -65,7 +53,7 @@ export default function CreateChallengePage() {
       setSearchResults(data.results || []);
       setShowDropdown(true);
     } catch (error) {
-      console.error('Search error:', error);
+      console.error('Search error:', error); // eslint-disable-line no-console
       setSearchResults([]);
     } finally {
       setIsSearching(false);
@@ -88,7 +76,7 @@ export default function CreateChallengePage() {
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [searchQuery]);
+  }, [searchQuery, shouldSearch]);
 
   const headerImage = selectedGame?.background_image || '/real-rat.png';
 
@@ -139,7 +127,7 @@ export default function CreateChallengePage() {
       const data = await response.json();
       router.push(`/challenges/${data.challenge.slug}`);
     } catch (error) {
-      console.error('Error creating challenge:', error);
+      console.error('Error creating challenge:', error); // eslint-disable-line no-console
       alert('Erreur lors de la création du challenge. Vérifie la console.');
     }
   };

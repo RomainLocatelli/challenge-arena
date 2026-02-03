@@ -66,8 +66,9 @@ export default function AdminPage() {
           setChallenges(challengesData);
           setParticipations(participationsData);
           setDataLoading(false); // ✅ Mettre à false après chargement
-        } catch (err: any) {
-          setError(err.message || 'Failed to load data');
+        } catch (err) {
+          const message = err instanceof Error ? err.message : 'Failed to load data';
+          setError(message);
           setDataLoading(false); // ✅ Mettre à false même en cas d'erreur
         }
       }
@@ -87,8 +88,9 @@ export default function AdminPage() {
           u.id === userId ? { ...u, isBanned: true, bannedAt: new Date().toISOString() } : u
         )
       );
-    } catch (err: any) {
-      alert(err.message || 'Error');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Error';
+      alert(message);
     } finally {
       setActionLoading(null);
     }
@@ -101,8 +103,9 @@ export default function AdminPage() {
       setUsers((prev) =>
         prev.map((u) => (u.id === userId ? { ...u, isBanned: false, bannedAt: null } : u))
       );
-    } catch (err: any) {
-      alert(err.message || 'Error');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Error';
+      alert(message);
     } finally {
       setActionLoading(null);
     }
@@ -113,8 +116,9 @@ export default function AdminPage() {
       setActionLoading(challengeId);
       await approveContent('CHALLENGE', challengeId);
       setChallenges((prev) => prev.filter((c) => c.id !== challengeId));
-    } catch (err: any) {
-      alert(err.message || 'Error');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Error';
+      alert(message);
     } finally {
       setActionLoading(null);
     }
@@ -127,8 +131,9 @@ export default function AdminPage() {
       setActionLoading(challengeId);
       await deleteReportedChallenge(challengeId);
       setChallenges((prev) => prev.filter((c) => c.id !== challengeId));
-    } catch (err: any) {
-      alert(err.message || 'Error');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Error';
+      alert(message);
     } finally {
       setActionLoading(null);
     }
@@ -139,8 +144,9 @@ export default function AdminPage() {
       setActionLoading(participationId);
       await approveContent('PARTICIPATION', participationId);
       setParticipations((prev) => prev.filter((p) => p.id !== participationId));
-    } catch (err: any) {
-      alert(err.message || 'Error');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Error';
+      alert(message);
     } finally {
       setActionLoading(null);
     }
@@ -153,8 +159,9 @@ export default function AdminPage() {
       setActionLoading(participationId);
       await deleteReportedParticipation(participationId);
       setParticipations((prev) => prev.filter((p) => p.id !== participationId));
-    } catch (err: any) {
-      alert(err.message || 'Error');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Error';
+      alert(message);
     } finally {
       setActionLoading(null);
     }
