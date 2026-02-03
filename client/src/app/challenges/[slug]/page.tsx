@@ -605,7 +605,7 @@ export default function ChallengeDetailsPage() {
         );
       }
     } catch (error) {
-      console.error('Error toggling participation vote:', error);
+      console.error('Error toggling participation vote:', error); // eslint-disable-line no-console 
     }
   };
 
@@ -831,6 +831,7 @@ export default function ChallengeDetailsPage() {
       setReportTargetType('CHALLENGE');
       setReportTargetId('');
     } catch (error) {
+      console.error('Error sending report:', error); // eslint-disable-line no-console
       PopUp('');
     }
   };
