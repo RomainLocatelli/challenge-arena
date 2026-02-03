@@ -64,7 +64,9 @@ app.use('/', homeRoutes);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
+  /* eslint-disable no-console */
   console.log(`✅ API ready on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV}`);
   console.log(`Frontend URL: ${process.env.FRONTEND_URL}`);
+  /* eslint-enable no-console */
 });
