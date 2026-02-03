@@ -8,8 +8,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "db:deploy": "prisma migrate deploy",
-    "db:generate": "prisma generate",
+    "db:deploy": "dotenv -e ../.env -- prisma migrate deploy",
+    "db:generate": "dotenv -e ../.env -- prisma generate",
     "db:migrate": "prisma migrate dev",
     "seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
