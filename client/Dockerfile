@@ -21,4 +21,4 @@ COPY --from=builder /app/node_modules ./node_modules
 
 EXPOSE 8008
 
-CMD ["npm", "start"]
+CMD ["npx", "next", "dev", "--hostname", "0.0.0.0", "--port", "8008"]

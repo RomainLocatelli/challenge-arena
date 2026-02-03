@@ -14,8 +14,7 @@ export function LogoutButton({ onLogout }: LogoutButtonProps) {
       method: 'POST',
       credentials: 'include'
     });
-    router.replace('/');
-    router.refresh();
+    window.location.href = '/';
     onLogout?.();
   };
   return (

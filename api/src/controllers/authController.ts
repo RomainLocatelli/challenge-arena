@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import * as authService from '../services/authServices.js';
 import jwt from 'jsonwebtoken';
+import { getAuthCookieOptions } from '../utils/cookie.js';
 
 export const registerController = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -46,11 +47,7 @@ export const loginController = async (req: Request, res: Response, next: NextFun
 
     // Définir le cookie avec le token
     res.cookie('accessToken', token, {
-      httpOnly: true,
-      secure: true, // ← En dev, on force false pour localhost
-      sameSite: 'none', // ← Permet cross-origin
-      domain: process.env.COOKIE_DOMAIN,
-      path: '/',
+      ...getAuthCookieOptions(),
       maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
@@ -87,12 +84,6 @@ export const meController = async (req: Request, res: Response, next: NextFuncti
 };
 
 export const logOutontroller = async (req: Request, res: Response) => {
-  res.clearCookie('accessToken', {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'none',
-    domain: process.env.COOKIE_DOMAIN,
-    path: '/'
-  });
+  res.clearCookie('accessToken', getAuthCookieOptions());
   return res.status(200).json({ message: 'logged out successfully' });
 };

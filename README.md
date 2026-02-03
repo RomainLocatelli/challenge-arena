@@ -94,4 +94,5 @@ gamerchallenge/
 2. Fais tes modifications
 3. Lance `npm run lint && npm run format`
 4. Commit et push
-5. Ouvre une Pull Request vers `dev`
+5.
+6. Ouvre une Pull Request vers `dev`

@@ -19,6 +19,8 @@ import cookieParser from 'cookie-parser';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+app.set('trust proxy', true);
 
 // Middlewares globaux
 app.use(
@@ -28,9 +30,9 @@ app.use(
 );
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || '',
+    origin: FRONTEND_URL,
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
   })
 );

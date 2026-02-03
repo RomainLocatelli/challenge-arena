@@ -24,62 +24,60 @@ export default function AdminPage() {
   const router = useRouter();
 
   const [activeTab, setActiveTab] = useState<Tab>('users');
-
   const [users, setUsers] = useState<User[]>([]);
-  const [usersLoading, setUsersLoading] = useState(true);
-
   const [challenges, setChallenges] = useState<ReportedChallenge[]>([]);
-
   const [participations, setParticipations] = useState<ReportedParticipation[]>([]);
-
   const [error, setError] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [dataLoading, setDataLoading] = useState(true); // ✅ Renommé pour clarté
 
   useEffect(() => {
-    if (!user) {
-      router.push('/login-register/login');
-      return;
-    }
+    async function checkAccessAndLoadData() {
+      // Attendre que le user soit chargé
+      if (user === null) {
+        return;
+      }
 
-    if (user.role !== 'ADMIN') {
-      router.push('/');
-      return;
-    }
-  }, [user, router]);
+      // Vérifier authentification
+      if (!user) {
+        router.push('/login-register/login');
+        return;
+      }
 
-  useEffect(() => {
-    async function loadData() {
-      try {
-        setUsersLoading(true);
+      // Vérifier droits admin
+      if (user.role !== 'ADMIN') {
+        router.push('/');
+        return;
+      }
 
-        // Charger users
-        const usersData = await fetchAllUsers();
-        setUsers(usersData);
+      setLoading(false);
 
-        // Charger challenges et participations en parallèle (juste pour les compter)
-        const [challengesData, participationsData] = await Promise.all([
-          fetchReportedChallenges(),
-          fetchReportedParticipations()
-        ]);
+      // Charger les données une seule fois
+      if (dataLoading) {
+        try {
+          const [usersData, challengesData, participationsData] = await Promise.all([
+            fetchAllUsers(),
+            fetchReportedChallenges(),
+            fetchReportedParticipations()
+          ]);
 
-        setChallenges(challengesData);
-        setParticipations(participationsData);
-      } catch (err: any) {
-        setError(err.message || 'Failed to load data');
-      } finally {
-        setUsersLoading(false);
+          setUsers(usersData);
+          setChallenges(challengesData);
+          setParticipations(participationsData);
+          setDataLoading(false); // ✅ Mettre à false après chargement
+        } catch (err: any) {
+          setError(err.message || 'Failed to load data');
+          setDataLoading(false); // ✅ Mettre à false même en cas d'erreur
+        }
       }
     }
 
-    if (user?.role === 'ADMIN') {
-      loadData();
-    }
-  }, [user]);
+    checkAccessAndLoadData();
+  }, [user, router, dataLoading]);
 
   const handleBan = async (userId: string) => {
-    if (!confirm('Ban this user?')) {
-      return;
-    }
+    if (!confirm('Ban this user?')) return;
 
     try {
       setActionLoading(userId);
@@ -123,9 +121,7 @@ export default function AdminPage() {
   };
 
   const handleDeleteChallenge = async (challengeId: string) => {
-    if (!confirm('Delete this challenge? (cascade)')) {
-      return;
-    }
+    if (!confirm('Delete this challenge? (cascade)')) return;
 
     try {
       setActionLoading(challengeId);
@@ -151,9 +147,7 @@ export default function AdminPage() {
   };
 
   const handleDeleteParticipation = async (participationId: string) => {
-    if (!confirm('Delete this participation? (cascade)')) {
-      return;
-    }
+    if (!confirm('Delete this participation? (cascade)')) return;
 
     try {
       setActionLoading(participationId);
@@ -167,29 +161,36 @@ export default function AdminPage() {
   };
 
   const getUserDisplayName = (u: User) => {
-    if (u.isDeleted) {
-      return 'Deleted user';
-    }
-    if (u.isBanned) {
-      return 'Banned user';
-    }
+    if (u.isDeleted) return 'Deleted user';
+    if (u.isBanned) return 'Banned user';
     return u.username;
   };
 
+  // Afficher loading pendant vérification accès
+  if (loading || user === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  // L'utilisateur n'a pas accès
   if (!user || user.role !== 'ADMIN') {
     return null;
   }
 
+  // Afficher erreur si le chargement a échoué
   if (error) {
     return (
-      <div className="min-h-screen  flex items-center justify-center">
-        <p className="text-(--error-text-message)">Error : {error}</p>
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-(--error-text-message)">Error: {error}</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen  ">
+    <div className="min-h-screen">
       <main className="px-4 md:px-8 py-6 max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold mb-6 border-l-4 border-(--button-select) pl-3">
           Moderation
@@ -200,7 +201,7 @@ export default function AdminPage() {
             onClick={() => setActiveTab('users')}
             className={`px-4 py-2 rounded-lg font-semibold transition ${
               activeTab === 'users'
-                ? 'bg-(--button-select) '
+                ? 'bg-(--button-select)'
                 : 'bg-(--background-header) text-foreground/70 hover:bg-(--background-header)/50'
             }`}
           >
@@ -210,7 +211,7 @@ export default function AdminPage() {
             onClick={() => setActiveTab('challenges')}
             className={`px-4 py-2 rounded-lg font-semibold transition ${
               activeTab === 'challenges'
-                ? 'bg-(--button-select) '
+                ? 'bg-(--button-select)'
                 : 'bg-(--background-header) text-foreground/70 hover:bg-(--background-header)/50'
             }`}
           >
@@ -220,7 +221,7 @@ export default function AdminPage() {
             onClick={() => setActiveTab('participations')}
             className={`px-4 py-2 rounded-lg font-semibold transition ${
               activeTab === 'participations'
-                ? 'bg-(--button-select) '
+                ? 'bg-(--button-select)'
                 : 'bg-(--background-header) text-foreground/70 hover:bg-(--background-header)/50'
             }`}
           >
@@ -232,7 +233,7 @@ export default function AdminPage() {
           {activeTab === 'users' && (
             <UsersTab
               users={users}
-              loading={usersLoading}
+              loading={dataLoading} // ✅ Utiliser dataLoading au lieu de usersLoading
               actionLoading={actionLoading}
               onBan={handleBan}
               onUnban={handleUnban}
@@ -243,7 +244,7 @@ export default function AdminPage() {
           {activeTab === 'challenges' && (
             <ChallengesTab
               challenges={challenges}
-              loading={usersLoading}
+              loading={dataLoading} // ✅ Utiliser dataLoading
               actionLoading={actionLoading}
               onApprove={handleApproveChallenge}
               onDelete={handleDeleteChallenge}
@@ -253,7 +254,7 @@ export default function AdminPage() {
           {activeTab === 'participations' && (
             <ParticipationsTab
               participations={participations}
-              loading={usersLoading}
+              loading={dataLoading} // ✅ Utiliser dataLoading
               actionLoading={actionLoading}
               onApprove={handleApproveParticipation}
               onDelete={handleDeleteParticipation}
@@ -265,6 +266,7 @@ export default function AdminPage() {
   );
 }
 
+// Les composants UsersTab, ChallengesTab, ParticipationsTab restent identiques
 function UsersTab({
   users,
   loading,
@@ -281,7 +283,11 @@ function UsersTab({
   getUserDisplayName: (u: User) => string;
 }) {
   if (loading) {
-    return <div className="p-6 text-center">Loading...</div>;
+    return <div className="p-6 text-center">Loading users...</div>;
+  }
+
+  if (users.length === 0) {
+    return <div className="p-6 text-center text-foreground/70">No users found</div>;
   }
 
   return (
