@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { cookies } from 'next/headers';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import Header from '@/component/header/Header';
@@ -7,12 +6,12 @@ import Footer from '@/component/footer/Footer';
 import { AuthProvider } from './context/AuthContext';
 import { ReactNode } from 'react';
 
-const geistSans = Geist({
+const geistSans = Geist({  // eslint-disable-line no-console
   variable: '--font-geist-sans',
   subsets: ['latin']
 });
 
-const geistMono = Geist_Mono({
+const geistMono = Geist_Mono({  // eslint-disable-line no-console
   variable: '--font-geist-mono',
   subsets: ['latin']
 });

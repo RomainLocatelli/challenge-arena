@@ -1,13 +1,11 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 
 interface LogoutButtonProps {
   onLogout?: () => void;
 }
 export function LogoutButton({ onLogout }: LogoutButtonProps) {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-  const router = useRouter();
 
   const logout = async () => {
     await fetch(`${apiUrl}/auth/logout`, {

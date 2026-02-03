@@ -31,7 +31,7 @@ export async function fetchGames(): Promise<Game[]> {
     const data = await res.json();
     return data.games;
   } catch (error) {
-    console.error('Error fetching games:', error);
+    console.error('Error fetching games:', error); // eslint-disable-line no-console
     throw error;
   }
 }
@@ -50,7 +50,7 @@ export async function searchGames(query: string): Promise<GameSearchResult[]> {
     const data = await res.json();
     return data.results;
   } catch (error) {
-    console.error('Error searching games:', error);
+    console.error('Error searching games:', error); // eslint-disable-line no-console
     throw error;
   }
 }
@@ -69,12 +69,12 @@ export async function fetchGameById(id: string): Promise<Game> {
     const data = await res.json();
     return data.game;
   } catch (error) {
-    console.error('Error fetching game:', error);
+    console.error('Error fetching game:', error); // eslint-disable-line no-console
     throw error;
   }
 }
 
-// ✅ Types pour la page challenge details
+// ==================== CHALLENGE API ==================== // eslint-disable-line 
 export interface ChallengeParticipation {
   id: string;
   userId: string;
@@ -253,7 +253,7 @@ export async function fetchAllUsers(): Promise<User[]> {
     const data = await res.json();
     return data.users;
   } catch (error) {
-    console.error('Error fetching users:', error);
+    console.error('Error fetching users:', error); // eslint-disable-line no-console
     throw error;
   }
 }
@@ -273,7 +273,7 @@ export async function banUser(userId: string): Promise<void> {
       throw new Error(data.message || `Failed to ban user: ${res.status}`);
     }
   } catch (error) {
-    console.error('Error banning user:', error);
+    console.error('Error banning user:', error); // eslint-disable-line no-console
     throw error;
   }
 }
@@ -293,7 +293,7 @@ export async function unbanUser(userId: string): Promise<void> {
       throw new Error(data.message || `Failed to unban user: ${res.status}`);
     }
   } catch (error) {
-    console.error('Error unbanning user:', error);
+    console.error('Error unbanning user:', error); // eslint-disable-line no-console
     throw error;
   }
 }
@@ -375,7 +375,7 @@ export async function fetchReportedChallenges(): Promise<ReportedChallenge[]> {
     const data = await res.json();
     return data.challenges;
   } catch (error) {
-    console.error('Error fetching reported challenges:', error);
+    console.error('Error fetching reported challenges:', error); // eslint-disable-line no-console
     throw error;
   }
 }
@@ -396,7 +396,7 @@ export async function fetchReportedParticipations(): Promise<ReportedParticipati
     const data = await res.json();
     return data.participations;
   } catch (error) {
-    console.error('Error fetching reported participations:', error);
+    console.error('Error fetching reported participations:', error); // eslint-disable-line no-console
     throw error;
   }
 }
@@ -423,7 +423,7 @@ export async function approveContent(
       throw new Error(data.message || `Failed to approve content: ${res.status}`);
     }
   } catch (error) {
-    console.error('Error approving content:', error);
+    console.error('Error approving content:', error); // eslint-disable-line no-console
     throw error;
   }
 }
@@ -443,7 +443,7 @@ export async function deleteReportedChallenge(challengeId: string): Promise<void
       throw new Error(data.message || `Failed to delete challenge: ${res.status}`);
     }
   } catch (error) {
-    console.error('Error deleting challenge:', error);
+    console.error('Error deleting challenge:', error); // eslint-disable-line no-console
     throw error;
   }
 }
@@ -463,7 +463,7 @@ export async function deleteReportedParticipation(participationId: string): Prom
       throw new Error(data.message || `Failed to delete participation: ${res.status}`);
     }
   } catch (error) {
-    console.error('Error deleting participation:', error);
+    console.error('Error deleting participation:', error); // eslint-disable-line no-console
     throw error;
   }
 }

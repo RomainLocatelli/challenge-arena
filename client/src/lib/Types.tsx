@@ -82,7 +82,7 @@ export interface LeaderboardResponse {
 }
 
 // Interface pour les top challenges (page d'accueil)
-export interface TopChallenge extends Challenge {
+export interface TopChallenge extends Challenge {  // eslint-disable-line @typescript-eslint/no-empty-object-type
   // Déjà tout inclus dans Challenge
 }
 

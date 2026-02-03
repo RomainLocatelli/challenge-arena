@@ -27,7 +27,7 @@ export default function AuthRegister() {
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+
 
   const registerUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
@@ -71,7 +71,7 @@ export default function AuthRegister() {
           if (!response.ok) {
             // Gérer les erreurs du backend
             setErrorMessage(data.message || 'Invalid credentials');
-            setIsLoading(false);
+
 
             return;
           }
@@ -80,8 +80,9 @@ export default function AuthRegister() {
           router.replace('/');
           router.refresh();
         } catch (error) {
+          console.error('Login error:', error); // eslint-disable-line no-console
           setErrorMessage('Network error. Please try again later.');
-          setIsLoading(false);
+
         }
       }
     } catch (e) {

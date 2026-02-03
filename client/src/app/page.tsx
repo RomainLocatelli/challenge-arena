@@ -27,7 +27,7 @@ export default function Home() {
         const data: HomePageData = await response.json();
         setHomeData(data);
       } catch (error) {
-        console.error('Error fetching home data:', error);
+        console.error('Error fetching home data:', error); // eslint-disable-line no-console
       } finally {
         setLoading(false);
       }
