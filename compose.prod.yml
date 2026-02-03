@@ -13,6 +13,7 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       NODE_ENV: production
       RAWG_API_KEY: ${RAWG_API_KEY}
+      RAWG_BASE_URL: ${RAWG_BASE_URL}
       COOKIE_DOMAIN: ${COOKIE_DOMAIN}
       FRONTEND_URL: ${FRONTEND_URL}
     depends_on:
