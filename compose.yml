@@ -9,7 +9,9 @@ services:
     environment:
       DATABASE_URL: ${DATABASE_URL}
       JWT_SECRET: ${JWT_SECRET}
+      RAWG_API_KEY: ${RAWG_API_KEY}
       COOKIE_DOMAIN: ${COOKIE_DOMAIN}
+      FRONTEND_URL: ${FRONTEND_URL}
       NODE_ENV: development
     depends_on:
       my-little-db:
@@ -52,6 +54,8 @@ services:
       - "8008:8008"
     environment:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+      NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL}
+      API_INTERNAL_URL: ${API_INTERNAL_URL}
       NODE_ENV: development
       PORT: 8008
     depends_on:
