@@ -49,7 +49,7 @@ export const loginController = async (req: Request, res: Response, next: NextFun
       httpOnly: true,
       secure: true, // ← En dev, on force false pour localhost
       sameSite: 'none', // ← Permet cross-origin
-      domain: process.env.COOKIE_DOMAIN,
+      domain: 'api-production-4dec.up.railway.app',
       path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000
     });
@@ -91,7 +91,7 @@ export const logOutontroller = async (req: Request, res: Response) => {
     httpOnly: true,
     secure: true,
     sameSite: 'none',
-    domain: process.env.COOKIE_DOMAIN,
+    domain: 'api-production-4dec.up.railway.app',
     path: '/'
   });
   return res.status(200).json({ message: 'logged out successfully' });

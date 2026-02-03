@@ -4,7 +4,7 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { AppError } from '../utils/AppError.js';
-import { prisma } from '../../lib/prisma';
+import { prisma } from '../../lib/prisma.js';
 
 const RAWG_API_KEY = process.env.RAWG_API_KEY;
 const RAWG_BASE_URL = 'https://api.rawg.io/api';
@@ -55,15 +55,15 @@ export const getAllGames = async (req: Request, res: Response, next: NextFunctio
 export const getGameBySlug = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { slug } = req.params;
-    
+
     const game = await prisma.game.findUnique({
       where: { slug },
       include: {
         challenges: {
           include: {
-            game: true,  // ← Inclut l'objet game dans chaque challenge
+            game: true, // ← Inclut l'objet game dans chaque challenge
             _count: {
-              select: { votes: true }  // ← Compte les votes
+              select: { votes: true } // ← Compte les votes
             }
           }
         }
@@ -81,7 +81,7 @@ export const getGameBySlug = async (req: Request, res: Response, next: NextFunct
         challenges: game.challenges.map((c) => ({
           ...c,
           voteCount: c._count.votes,
-          _count: undefined  // ← Retire _count de la réponse
+          _count: undefined // ← Retire _count de la réponse
         }))
       }
     });

@@ -19,6 +19,7 @@ import cookieParser from 'cookie-parser';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+app.set('trust proxy', true);
 
 // Middlewares globaux
 app.use(
@@ -28,9 +29,9 @@ app.use(
 );
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || '',
+    origin: 'https://client-production-7dff.up.railway.app',
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
   })
 );
