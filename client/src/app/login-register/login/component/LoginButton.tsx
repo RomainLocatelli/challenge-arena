@@ -10,8 +10,7 @@ export function LogoutButton() {
       method: 'POST',
       credentials: 'include'
     });
-    router.replace('/');
-    router.refresh();
+    window.location.href = '/';
   };
   return <button onClick={logout}>Disconnect</button>;
 }

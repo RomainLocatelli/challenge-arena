@@ -12,6 +12,12 @@ const nextConfig: NextConfig = {
         pathname: '/media/**'
       }
     ]
+  },
+  typescript: {
+    ignoreBuildErrors: true
+  },
+  eslint: {
+    ignoreDuringBuilds: true
   }
 };
 

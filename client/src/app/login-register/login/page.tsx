@@ -46,8 +46,7 @@ export default function AuthLogin() {
       }
 
       // Rediriger vers la page d'accueil (ou dashboard)
-      router.replace('/');
-      router.refresh();
+      window.location.href = '/';
     } catch (error) {
       console.error('Login error:', error);
       setErrorMessage('Network error. Please try again later.');

@@ -23,37 +23,11 @@ export const metadata: Metadata = {
     'Discover community-made gaming challenges. Create your own, compete with players worldwide, and vote for the best performances.'
 };
 
-export default async function RootLayout({
-  children
-}: Readonly<{
-  children: ReactNode;
-}>) {
-  let user = null;
-  const cookieStore = await cookies();
-
-  try {
-    const cookieHeader = cookieStore
-      .getAll()
-      .map((cookie) => `${cookie.name}=${cookie.value}`)
-      .join('; ');
-    const res = await fetch('http://api:3000/auth/me', {
-      headers: {
-        Cookie: cookieHeader
-      },
-      credentials: 'include',
-      cache: 'no-store'
-    });
-
-    const data = await res.json();
-    user = data.user;
-  } catch (err) {
-    // silent err
-  }
-
+export default async function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <AuthProvider user={user}>
+      <body className="antialiased">
+        <AuthProvider>
           <Header />
           {children}
           <Footer />
