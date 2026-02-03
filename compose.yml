@@ -7,13 +7,15 @@ services:
     environment:
       DATABASE_URL: ${DATABASE_URL}
       JWT_SECRET: ${JWT_SECRET}
+      COOKIE_DOMAIN: ${COOKIE_DOMAIN}
+      NODE_ENV: development
     depends_on:
       my-little-db:
         condition: service_healthy
     volumes:
       - ./api:/app
-      # - /app/node_modules
-      # - /app/generated
+      - /app/node_modules
+      - /app/generated
     command: npm run devdb
     networks:
       - gamer-network
@@ -46,12 +48,13 @@ services:
       - "8008:8008"
     environment:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+      NODE_ENV: development
       PORT: 8008
     depends_on:
       - api
     volumes:
       - ./client:/app
-      # - /app/node_modules
+      - /app/node_modules
       - /app/.next
     command: npm run dev
     networks:
