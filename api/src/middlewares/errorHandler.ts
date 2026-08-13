@@ -12,6 +12,14 @@ export const errorHandler = (err: Error, req: Request, res: Response, next: Next
     });
   }
 
+  // Erreur de parsing JSON (body malformé, envoyé par express.json())
+  if (err instanceof SyntaxError && 'body' in err) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Invalid JSON body'
+    });
+  }
+
   // Sinon, c'est un bug serveur (erreur inconnue)
   console.error('💥 Unexpected error:', err);
   return res.status(500).json({
