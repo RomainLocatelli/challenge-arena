@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - romain-solo-deploy
+  pull_request:
+    branches:
+      - romain-solo-deploy
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: ciuser
+          POSTGRES_PASSWORD: cipassword
+          POSTGRES_DB: challengearena_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ciuser -d challengearena_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://ciuser:cipassword@localhost:5432/challengearena_test
+      DATABASE_URL_TEST: postgresql://ciuser:cipassword@localhost:5432/challengearena_test
+      JWT_SECRET: ci_test_secret_not_for_production
+      NODE_ENV: test
+
+    defaults:
+      run:
+        working-directory: api
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+          cache-dependency-path: api/package-lock.json
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: Vérifier la qualité du code (lint)
+        run: npm run lint
+
+      - name: Générer le client Prisma
+        run: npm run db:generate
+
+      - name: Appliquer les migrations sur la base de test
+        run: npm run db:deploy
+
+      - name: Build TypeScript
+        run: npm run build
+
+      - name: Lancer les tests automatisés
+        run: npm run test

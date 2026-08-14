@@ -5,7 +5,7 @@ import globals from 'globals';
 export default [
   // Configuration de base
   {
-    ignores: ['node_modules/', 'dist/', 'coverage/', 'prisma/migrations/', '*.lock']
+    ignores: ['node_modules/', 'dist/', 'coverage/', 'prisma/migrations/', 'generated/', '*.lock']
   },
 
   // Configuration pour les fichiers TypeScript
