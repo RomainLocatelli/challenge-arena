@@ -142,6 +142,12 @@ export const createChallenge = async (req: Request, res: Response, next: NextFun
       throw new AppError('Missing required fields', 400);
     }
 
+    // Vérifier qu'un challenge avec ce titre n'existe pas déjà
+    const existingChallenge = await prisma.challenge.findUnique({ where: { title } });
+    if (existingChallenge) {
+      throw new AppError('A challenge with this title already exists', 409);
+    }
+
     // Générer le slug du challenge depuis le titre
     const challengeSlug = title
       .toLowerCase()
