@@ -1,6 +1,10 @@
 ### Variables
-@baseUrl = http://localhost:3000
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMTliYmNkMS0xNDQ0LTcyZWQtYjVhNS05Yzc4YzYxNjk1ZGUiLCJlbWFpbCI6InRlc3R1c2VyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzY4Mzk5Mzk5LCJleHAiOjE3NjkwMDQxOTl9.yWAi1iR9DTekmJqwwhkwJ27D-9FYi5WMfJ1sc2Y1SB0
+@baseUrl = https://api-production-ff70b7.up.railway.app
+
+### ℹ️ "Remember Cookies For Subsequent Requests" reste DÉSACTIVÉ.
+### Les tests nécessitant une authentification chaînent explicitement
+### le cookie de la requête "login" via {{login.response.headers.Set-Cookie}}.
+
 ### 1. Register un nouvel utilisateur
 POST {{baseUrl}}/auth/register
 Content-Type: application/json
@@ -11,7 +15,8 @@ Content-Type: application/json
   "password": "Test1234!"
 }
 
-### 2. Login (copie le token dans @token)
+### 2. Login (nommée "login" pour être réutilisée par les tests suivants)
+# @name login
 POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
@@ -20,7 +25,7 @@ Content-Type: application/json
   "password": "Test1234!"
 }
 
-### 3. Login avec mauvais email (devrait échouer ❌)
+### 3. Login avec mauvais email (devrait échouer ❌) — isolé, pas besoin d'auth
 POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
@@ -29,17 +34,14 @@ Content-Type: application/json
   "password": "Test1234!"
 }
 
-### 4. GET /me AVEC token (devrait fonctionner ✅)
+### 4. GET /me AVEC cookie (devrait fonctionner ✅)
+### 2 clics : lancez d'abord le test 2 (login) ci-dessus, puis celui-ci
 GET {{baseUrl}}/auth/me
-Authorization: Bearer {{token}}
+Cookie: {{login.response.headers.Set-Cookie}}
 
-### 5. GET /me SANS token (devrait échouer ❌)
+### 5. GET /me SANS cookie (devrait échouer ❌) — totalement isolé, aucune dépendance
 GET {{baseUrl}}/auth/me
 
-### 6. GET /me avec token invalide (devrait échouer ❌)
+### 6. GET /me avec un header Authorization quelconque, ignoré par l'API (devrait échouer ❌)
 GET {{baseUrl}}/auth/me
 Authorization: Bearer token_bidon_123
-
-### 7. GET /me sans "Bearer" (devrait échouer ❌)
-GET {{baseUrl}}/auth/me
-Authorization: token_sans_bearer

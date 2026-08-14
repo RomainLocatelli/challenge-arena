@@ -1,8 +1,12 @@
 ### Variables
-@baseUrl = http://localhost:3000
-@token = YOUR_TOKEN_HERE
+@baseUrl = https://api-production-ff70b7.up.railway.app
 
-### 1. Login pour obtenir un token
+### ℹ️ "Remember Cookies For Subsequent Requests" reste DÉSACTIVÉ.
+### Les tests nécessitant une authentification chaînent explicitement
+### le cookie de la requête "login" via {{login.response.headers.Set-Cookie}}.
+
+### 1. Login pour obtenir un cookie de session
+# @name login
 POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
@@ -13,11 +17,11 @@ Content-Type: application/json
 
 ### 2. Get Profile (récupère les infos utilisateur + challenges + participations)
 GET {{baseUrl}}/profile
-Authorization: Bearer {{token}}
+Cookie: {{login.response.headers.Set-Cookie}}
 
-### 3. Update Profile
+### 3. Update Profile (clic 1 — modifie temporairement)
 PATCH {{baseUrl}}/profile
-Authorization: Bearer {{token}}
+Cookie: {{login.response.headers.Set-Cookie}}
 Content-Type: application/json
 
 {
@@ -25,5 +29,17 @@ Content-Type: application/json
   "email": "newemail@example.com"
 }
 
-### 4. Get Profile sans token (devrait échouer ❌)
+### 3bis. Restaure le profil d'origine (clic 2 — à lancer juste après le test 3)
+### ⚠️ Utilise le même cookie "login" (obtenu AVANT le changement d'email,
+### donc encore valide même après l'update — le cookie ne dépend pas de l'email)
+PATCH {{baseUrl}}/profile
+Cookie: {{login.response.headers.Set-Cookie}}
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "email": "testuser@example.com"
+}
+
+### 4. Get Profile sans token/cookie (devrait échouer ❌)
 GET {{baseUrl}}/profile

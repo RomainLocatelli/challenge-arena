@@ -1,0 +1,121 @@
+# En prod :
+@baseUrl = https://api-production-ff70b7.up.railway.app
+# En local : 
+# @baseUrl = http://localhost:3000
+
+###############################################
+# FUZZING — Endpoint /auth/login
+# Objectif : envoyer des entrées invalides/malformées
+# et vérifier que l'API répond proprement (400/401/422)
+# sans jamais planter (500) ni exposer d'infos internes.
+###############################################
+
+### 1. Champs vides
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "",
+  "password": ""
+}
+
+### 2. Champs absents (JSON vide)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{}
+
+### 3. Valeurs null
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": null,
+  "password": null
+}
+
+### 4. Mauvais types (nombre à la place d'une chaîne)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": 12345,
+  "password": true
+}
+
+### 5. Tentative d'injection SQL classique
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "' OR '1'='1",
+  "password": "' OR '1'='1"
+}
+
+### 6. Tentative d'injection SQL avec commentaire
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@test.com'--",
+  "password": "whatever"
+}
+
+### 7. Chaîne extrêmement longue (potentiel dépassement de buffer)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@test.com",
+  "password": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+}
+
+### 8. Caractères spéciaux / Unicode / emojis
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "test🔥@💀.com",
+  "password": "パスワード123!@#$%^&*()"
+}
+
+### 9. Tentative XSS dans le champ email
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "<script>alert('xss')</script>",
+  "password": "test1234"
+}
+
+### 10. JSON malformé (syntaxe cassée volontairement)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@test.com"
+  "password": "test1234"
+}
+
+### 11. Content-Type incorrect (texte brut au lieu de JSON)
+POST {{baseUrl}}/auth/login
+Content-Type: text/plain
+
+email=test@test.com&password=test1234
+
+### 12. Tableau au lieu d'objet
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+["email", "password"]
+
+###############################################
+# CE QU'IL FAUT VÉRIFIER POUR CHAQUE REQUÊTE
+###############################################
+# ✅ Bon comportement : 400 / 401 / 422 avec un message d'erreur générique
+#    (ex: "Invalid credentials" ou "Invalid request body")
+# ❌ Mauvais comportement à noter si observé :
+#    - 500 Internal Server Error → l'API plante sur une entrée mal formée
+#    - Stack trace ou détails internes exposés dans la réponse
+#    - Un des cas d'injection retourne un 200 (contournement de l'authentification)
+#    - Un timeout anormalement long (potentiel DoS avec la chaîne longue)

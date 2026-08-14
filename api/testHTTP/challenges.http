@@ -1,6 +1,19 @@
 ### Variables
-@baseUrl = http://localhost:3000
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMTliZGFmOC02M2IzLTcwMGQtOTU3OC0wNWY4ZTViYTYzM2IiLCJlbWFpbCI6ImFsaWNlQGV4YW1wbGUuY29tIiwiaWF0IjoxNzY4OTA1NTUzLCJleHAiOjE3Njk1MTAzNTN9.GYYWL48fOuDBQ65BLygrf9sldUn7VsmlVs8edMN00Dg
+@baseUrl = https://api-production-ff70b7.up.railway.app
+
+### ℹ️ "Remember Cookies For Subsequent Requests" reste DÉSACTIVÉ.
+### Toutes les requêtes authentifiées chaînent explicitement le cookie
+### de la requête "login" via {{login.response.headers.Set-Cookie}}.
+
+### 0. Login pour obtenir un cookie de session
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "testuser@example.com",
+  "password": "Test1234!"
+}
 
 ### ============================================
 ### PHASE 1 : Nouveau jeu → Création en BDD
@@ -10,9 +23,10 @@
 GET {{baseUrl}}/games/hollow-knight
 
 ### 1.2 Créer 1er challenge avec Hollow Knight
+# @name challenge1
 POST {{baseUrl}}/challenges
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Cookie: {{login.response.headers.Set-Cookie}}
 
 {
   "title": "Hollow Knight - No Damage",
@@ -27,18 +41,15 @@ Authorization: Bearer {{token}}
 ### 1.3 Vérifier que Hollow Knight EXISTE (200)
 GET {{baseUrl}}/games/hollow-knight
 
-### 1.4 Vérifier le nombre total de jeux (doit avoir Hollow Knight dans la liste)
-GET {{baseUrl}}/games
-
-
 ### ============================================
 ### PHASE 2 : Jeu existant → Pas de duplication
 ### ============================================
 
 ### 2.1 Créer 2e challenge avec le MÊME jeu (Hollow Knight)
+# @name challenge2
 POST {{baseUrl}}/challenges
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Cookie: {{login.response.headers.Set-Cookie}}
 
 {
   "title": "Hollow Knight - Steel Soul",
@@ -50,12 +61,8 @@ Authorization: Bearer {{token}}
   "gameImageUrl": "https://media.rawg.io/media/games/4cf/4cfc6b7f1850590a4634b08bfab308ab.jpg"
 }
 
-### 2.2 Vérifier que Hollow Knight a 2 challenges
+### 2.2 Vérifier que Hollow Knight a bien 2 challenges liés (preuve qu'il n'y a pas eu de doublon de jeu)
 GET {{baseUrl}}/games/hollow-knight
-
-### 2.3 Vérifier le nombre total de jeux (doit toujours être 1 jeu Hollow Knight)
-GET {{baseUrl}}/games
-
 
 ### ============================================
 ### PHASE 3 : Nouveau jeu différent → Ajout en BDD
@@ -65,9 +72,10 @@ GET {{baseUrl}}/games
 GET {{baseUrl}}/games/celeste
 
 ### 3.2 Créer challenge avec Celeste
+# @name challenge3
 POST {{baseUrl}}/challenges
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Cookie: {{login.response.headers.Set-Cookie}}
 
 {
   "title": "Celeste - All B-Sides",
@@ -82,44 +90,14 @@ Authorization: Bearer {{token}}
 ### 3.3 Vérifier que Celeste EXISTE (200)
 GET {{baseUrl}}/games/celeste
 
-### 3.4 Vérifier le nombre total de jeux (doit avoir 2 jeux maintenant)
-GET {{baseUrl}}/games
-
-
 ### ============================================
-### PHASE 4 : Validation des données
+### PHASE 4 : Cas d'erreur
 ### ============================================
 
-### 4.1 Vérifier les infos de Hollow Knight
-# Attendu :
-# - id: "22321"
-# - title: "Hollow Knight"
-# - slug: "hollow-knight"
-# - imageUrl: correct
-# - 2 challenges
-GET {{baseUrl}}/games/hollow-knight
-
-### 4.2 Vérifier les infos de Celeste
-# Attendu :
-# - id: "22636"
-# - title: "Celeste"
-# - slug: "celeste"
-# - imageUrl: correct
-# - 1 challenge
-GET {{baseUrl}}/games/celeste
-
-### 4.3 Liste tous les challenges (doit avoir 3 challenges)
-GET {{baseUrl}}/challenges
-
-
-### ============================================
-### PHASE 5 : Cas d'erreur
-### ============================================
-
-### 5.1 Sans gameId (400)
+### 4.1 Sans gameId (400)
 POST {{baseUrl}}/challenges
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Cookie: {{login.response.headers.Set-Cookie}}
 
 {
   "title": "Test",
@@ -130,10 +108,10 @@ Authorization: Bearer {{token}}
   "gameImageUrl": ""
 }
 
-### 5.2 Sans gameTitle (400)
+### 4.2 Sans gameTitle (400)
 POST {{baseUrl}}/challenges
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Cookie: {{login.response.headers.Set-Cookie}}
 
 {
   "title": "Test",
@@ -144,10 +122,10 @@ Authorization: Bearer {{token}}
   "gameImageUrl": ""
 }
 
-### 5.3 Sans gameSlug (400)
+### 4.3 Sans gameSlug (400)
 POST {{baseUrl}}/challenges
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Cookie: {{login.response.headers.Set-Cookie}}
 
 {
   "title": "Test",
@@ -158,7 +136,7 @@ Authorization: Bearer {{token}}
   "gameImageUrl": ""
 }
 
-### 5.4 Sans auth (401)
+### 4.4 Sans auth (401)
 POST {{baseUrl}}/challenges
 Content-Type: application/json
 
@@ -171,3 +149,23 @@ Content-Type: application/json
   "gameSlug": "test-game",
   "gameImageUrl": ""
 }
+
+### ============================================
+### PHASE 5 : Reset — suppression des challenges créés
+### ⚠️ Les jeux (Hollow Knight, Celeste) resteront en base
+### (pas de route DELETE /games). Pour rejouer proprement
+### les phases 1.1/3.1, changez temporairement de jeu
+### (autre gameId/slug) à la prochaine exécution.
+### ============================================
+
+### 5.1 Supprimer le challenge Hollow Knight n°1
+DELETE {{baseUrl}}/challenges/{{challenge1.response.body.$.challenge.id}}
+Cookie: {{login.response.headers.Set-Cookie}}
+
+### 5.2 Supprimer le challenge Hollow Knight n°2
+DELETE {{baseUrl}}/challenges/{{challenge2.response.body.$.challenge.id}}
+Cookie: {{login.response.headers.Set-Cookie}}
+
+### 5.3 Supprimer le challenge Celeste
+DELETE {{baseUrl}}/challenges/{{challenge3.response.body.$.challenge.id}}
+Cookie: {{login.response.headers.Set-Cookie}}
