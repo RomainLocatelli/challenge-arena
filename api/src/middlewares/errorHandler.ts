@@ -2,6 +2,7 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { AppError } from '../utils/AppError.js';
+import { ZodError } from 'zod';
 
 export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
   // Si c'est une erreur custom (AppError)
@@ -17,6 +18,16 @@ export const errorHandler = (err: Error, req: Request, res: Response, next: Next
     return res.status(400).json({
       status: 'error',
       message: 'Invalid JSON body'
+    });
+  }
+
+  // Erreur de validation Zod non catchée par le middleware validate()
+  // (cas des .parse() appelés directement dans certains contrôleurs)
+  if (err instanceof ZodError) {
+    const message = err.issues.map((e) => e.message).join(', ');
+    return res.status(400).json({
+      status: 'error',
+      message: message || 'Validation failed'
     });
   }
 
