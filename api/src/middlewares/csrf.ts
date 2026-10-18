@@ -7,9 +7,9 @@ const UNSAFE_METHODS = ['POST', 'PUT', 'PATCH', 'DELETE'];
 // Renvoie l'origine de la requête (ex : "https://challengearena.fr"), ou null si absente
 function getRequestOrigin(req: Request): string | null {
   const origin = req.get('origin');
-    if (origin) {
+  if (origin) {
     return origin;
-  };
+  }
 
   // Repli : certains navigateurs n'envoient que le Referer
   const referer = req.get('referer');
@@ -47,4 +47,4 @@ export function csrfProtection(allowedOrigin: string) {
 
     return next();
   };
-};
+}

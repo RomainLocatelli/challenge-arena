@@ -59,7 +59,9 @@ describe('CSRF protection middleware', () => {
 
   test('When only a foreign Referer is sent, returns 403', async () => {
     // Act
-    const response = await request(testApp).post('/test').set('Referer', 'https://evil.example.com/page');
+    const response = await request(testApp)
+      .post('/test')
+      .set('Referer', 'https://evil.example.com/page');
 
     // Assert
     expect(response.status).toBe(403);
