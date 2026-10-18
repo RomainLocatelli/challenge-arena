@@ -4,6 +4,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import { logger } from './src/middlewares/logger.js';
 import { errorHandler } from './src/middlewares/errorHandler.js';
+import { csrfProtection } from './src/middlewares/csrf.js';
 import authRoutes from './src/routes/authRoutes.js';
 import gamesRoutes from './src/routes/games.js';
 import challengesRoutes from './src/routes/challenges.js';
@@ -38,6 +39,7 @@ app.use(
 app.use(express.json());
 app.use(logger);
 app.use(cookieParser());
+app.use(csrfProtection(FRONTEND_URL));
 
 // Routes API
 app.use('/auth', authRoutes);
