@@ -26,7 +26,7 @@ Projet de fin de formation **Concepteur Développeur d'Applications** (titre RNC
 | Front-end | Next.js 16 (SSR / ISR), React 19, TypeScript, Tailwind CSS 4 |
 | Back-end | Node.js, Express 5, TypeScript, Zod 4 |
 | Base de données | PostgreSQL 18, Prisma 7 (ORM, migrations, seed) |
-| Sécurité | JWT httpOnly, Argon2, Helmet, CORS, validation Zod |
+| Sécurité | JWT httpOnly, Argon2, Helmet, CORS, protection CSRF (vérification de l'origine), validation Zod |
 | Tests | Vitest, Supertest, fuzzing, tests de charge (autocannon) |
 | DevOps | Docker / Docker Compose, Dockerfile de production multi-stage, GitHub Actions |
 
@@ -44,11 +44,11 @@ Projet de fin de formation **Concepteur Développeur d'Applications** (titre RNC
                                    └──────────────┘
 ```
 
-L'API suit une organisation en couches : `routes` → `middlewares` (authentification, rôles, validation Zod) → `controllers` → `services` → Prisma. Les erreurs sont centralisées dans un gestionnaire unique qui distingue les erreurs métier (400, 401, 403, 404, 409) des erreurs serveur.
+L'API suit une organisation en couches : `routes` → `middlewares` (protection CSRF, authentification, rôles, validation Zod) → `controllers` → `services` → Prisma. Les erreurs sont centralisées dans un gestionnaire unique qui distingue les erreurs métier (400, 401, 403, 404, 409) des erreurs serveur.
 
 ## Qualité et tests
 
-La suite automatisée compte **85 tests d'intégration** répartis sur 7 fichiers, exécutés sur une base PostgreSQL de test isolée et réinitialisée avant chaque test.
+La suite automatisée compte **93 tests** répartis sur 8 fichiers. Les tests d'intégration s'exécutent sur une base PostgreSQL de test isolée et réinitialisée avant chaque test.
 
 | Fichier | Tests | Périmètre |
 |---|---|---|
@@ -57,12 +57,15 @@ La suite automatisée compte **85 tests d'intégration** répartis sur 7 fichier
 | `profile.test.ts` | 13 | Consultation, modification, suppression, anonymisation |
 | `moderation.test.ts` | 13 | Validation, bannissement, rôles |
 | `fuzzing-login.test.ts` | 12 | Injection SQL, XSS, JSON malformé, types incorrects |
+| `csrf.test.ts` | 8 | Origine autorisée, étrangère ou `null`, repli sur le Referer, branchement sur l'API |
 | `auth.test.ts` | 6 | Inscription, connexion, session |
 | `reports.test.ts` | 6 | Signalements |
 
 Ces tests ont permis de détecter et corriger trois bugs réels, chacun renvoyant une erreur 500 au lieu du bon code : JSON malformé (400), erreurs de validation Zod hors middleware (400) et titre de challenge en double (409).
 
-La CI GitHub Actions rejoue à chaque push : installation, lint, génération du client Prisma, migrations, build TypeScript et tests.
+**Protection CSRF.** En production, le cookie d'authentification est en `sameSite: 'none'` pour fonctionner entre deux domaines, ce qui l'expose aux attaques CSRF (point relevé par le jury du titre CDA). Un middleware vérifie désormais l'en-tête `Origin` (repli sur `Referer`) de chaque requête POST, PUT, PATCH et DELETE, et renvoie 403 si elle ne vient pas du front-end, comme le recommande l'OWASP.
+
+La CI GitHub Actions rejoue à chaque push et pull request : installation, lint, génération du client Prisma, migrations, build TypeScript et tests.
 
 ## Lancer le projet en local
 
@@ -135,10 +138,10 @@ Projet réalisé en janvier 2026 par Quentin Caffray, Mickaël Levasseur, Loup K
 **Ma contribution (Romain Locatelli)**
 
 - *En équipe* : principal contributeur du back-end. Mise en place du projet (structure, Prisma, Docker, middlewares), endpoints jeux, challenges, classement et profil, proxy RAWG, système de modération, suppression avec anonymisation, seed de données. Côté front : autocomplétion des jeux, pages Aide et À propos, composant `ChallengeCard`.
-- *En autonomie (août 2026)* : écriture des 85 tests automatisés et des cas de fuzzing, correction des bugs détectés, Dockerfile de production multi-stage, pipeline CI GitHub Actions, déploiement et tests de charge.
+- *En autonomie (août 2026)* : écriture des tests automatisés et des cas de fuzzing, correction des bugs détectés, protection CSRF, Dockerfile de production multi-stage, pipeline CI GitHub Actions, déploiement et tests de charge.
 
 ## Pistes d'amélioration
 
-- Protection CSRF dédiée et limitation du nombre de tentatives de connexion
+- Limitation du nombre de tentatives de connexion (rate limiting)
 - Notifications, abonnements à des joueurs ou à des jeux
 - Internationalisation
